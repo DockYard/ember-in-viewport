@@ -27,6 +27,9 @@ test('Component is active when in viewport', function(assert) {
   andThen(() => {
     const component = lookupComponent(application, 'foo-bar');
 
+    // debugger;
+    // pauseTest();
+
     assert.ok(find('.fooBar.active').length);
   });
 });

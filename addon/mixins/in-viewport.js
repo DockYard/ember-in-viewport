@@ -26,10 +26,36 @@ const listeners = [
 ];
 
 export default Ember.Mixin.create({
-  viewportEntered   : false,
-  viewportTimeout   : 100,
-  viewportTolerance : 0,
-  viewportExited    : not('viewportEntered').readOnly(),
+  viewportEntered     : false,
+  viewportExited      : not('viewportEntered').readOnly(),
+
+  // options
+  viewportSpy         : false,
+  viewportRefreshRate : 100,
+  viewportTolerance   : 0,
+
+  _setupObserverIfNotSpying: on('init', function() {
+    const viewportSpy = get(this, 'viewportSpy');
+
+    if (!viewportSpy) {
+      this.addObserver('viewportEntered', this, this._viewportDidEnter);
+    }
+  }),
+
+  _setup: on('didInsertElement', function() {
+    if (!canUseDOM) { return; }
+
+    this._setInitialViewport(document);
+
+    forEach(listeners, (listener) => {
+      const { context, event } = listener;
+      this._bindListeners(context, event);
+    });
+  }),
+
+  _teardown: on('willDestroyElement', function() {
+    this._unbindListeners();
+  }),
 
   _setViewportEntered(context=null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
@@ -39,27 +65,22 @@ export default Ember.Mixin.create({
     const height             = $(context) ? $(context).height() : 0;
     const width              = $(context) ? $(context).width()  : 0;
     const boundingClientRect = this.$() ? this.$()[0].getBoundingClientRect() : null;
+    const viewportEntered    = isInViewport(boundingClientRect, height, width, tolerance);
 
     if (boundingClientRect) {
-      set(this, 'viewportEntered', isInViewport(
-        boundingClientRect,
-        height,
-        width,
-        tolerance
-      ));
+      set(this, 'viewportEntered', viewportEntered);
     }
   },
 
-  _setup: on('didInsertElement', function() {
-    if (!canUseDOM) { return; }
+  _viewportDidEnter() {
+    const viewportEntered = get(this, 'viewportEntered');
+    const viewportSpy     = get(this, 'viewportSpy');
 
-    forEach(listeners, (listener) => {
-      const { context, event } = listener;
-
-      this._setInitialViewport(context);
-      this._bindListeners(context, event);
-    });
-  }),
+    if (!viewportSpy && viewportEntered) {
+      this._unbindListeners();
+      this.removeObserver('viewportEntered', this, this._viewportDidEnter);
+    }
+  },
 
   _setInitialViewport(context) {
     return scheduleOnce('afterRender', this, function() {
@@ -70,10 +91,10 @@ export default Ember.Mixin.create({
   _scrollHandler(context=null) {
     Ember.assert('You must pass a valid context to _scrollHandler', context);
 
-    const viewportTimeout = get(this, 'viewportTimeout');
+    const viewportRefreshRate = get(this, 'viewportRefreshRate');
     debounce(this, function() {
       this._setViewportEntered(context);
-    }, viewportTimeout);
+    }, viewportRefreshRate);
   },
 
   _bindListeners(context, event) {
@@ -86,10 +107,10 @@ export default Ember.Mixin.create({
     });
   },
 
-  _unbindListeners: on('willDestroyElement', function() {
+  _unbindListeners() {
     forEach(listeners, (listener) => {
       const { context, event } = listener;
       $(context).off(event);
     });
-  })
+  }
 });
