@@ -5,6 +5,7 @@ import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 const {
   get: get,
   set: set,
+  setProperties,
   computed,
   run,
   on,
@@ -26,23 +27,14 @@ const listeners = [
 ];
 
 export default Ember.Mixin.create({
-  viewportEntered     : false,
-  viewportExited      : not('viewportEntered').readOnly(),
+  viewportExited: not('viewportEntered').readOnly(),
 
-  // options
-  viewportSpy         : false,
-  viewportRefreshRate : 100,
-  viewportTolerance   : 0,
-
-  _setupObserverIfNotSpying: on('init', function() {
-    const viewportSpy = get(this, 'viewportSpy');
-
-    if (!viewportSpy) {
-      this.addObserver('viewportEntered', this, this._viewportDidEnter);
-    }
+  _setup: on('init', function() {
+    this._setInitialState();
+    this._setupObserverIfNotSpying();
   }),
 
-  _setup: on('didInsertElement', function() {
+  _setupListeners: on('didInsertElement', function() {
     if (!canUseDOM) { return; }
 
     this._setInitialViewport(document);
@@ -56,6 +48,28 @@ export default Ember.Mixin.create({
   _teardown: on('willDestroyElement', function() {
     this._unbindListeners();
   }),
+
+  _setInitialState() {
+    setProperties(this, {
+      viewportEntered     : false,
+      viewportSpy         : false,
+      viewportRefreshRate : 100,
+      viewportTolerance   : {
+        top    : 0,
+        left   : 0,
+        bottom : 0,
+        right  : 0
+      }
+    });
+  },
+
+  _setupObserverIfNotSpying() {
+    const viewportSpy = get(this, 'viewportSpy');
+
+    if (!viewportSpy) {
+      this.addObserver('viewportEntered', this, this._viewportDidEnter);
+    }
+  },
 
   _setViewportEntered(context=null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
