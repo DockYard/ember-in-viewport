@@ -14,7 +14,8 @@ const {
 
 const {
   scheduleOnce,
-  debounce
+  debounce,
+  bind
 } = run;
 
 const { not }     = computed;
@@ -26,31 +27,15 @@ const listeners = [
   { context: document, event: 'touchmove.scrollable' }
 ];
 
+let rAFID    = 0;
+let $cachedEl;
+
 export default Ember.Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
-  _setup: on('init', function() {
-    this._setInitialState();
-    this._setupObserverIfNotSpying();
-  }),
-
-  _setupListeners: on('didInsertElement', function() {
-    if (!canUseDOM) { return; }
-
-    this._setInitialViewport(document);
-
-    forEach(listeners, (listener) => {
-      const { context, event } = listener;
-      this._bindListeners(context, event);
-    });
-  }),
-
-  _teardown: on('willDestroyElement', function() {
-    this._unbindListeners();
-  }),
-
-  _setInitialState() {
+  _setInitialState: on('init', function() {
     setProperties(this, {
+      viewportUseRAF      : true,
       viewportEntered     : false,
       viewportSpy         : false,
       viewportRefreshRate : 100,
@@ -61,7 +46,29 @@ export default Ember.Mixin.create({
         right  : 0
       }
     });
-  },
+  }),
+
+  _setupElement: on('didInsertElement', function() {
+    if (!canUseDOM) { return; }
+
+    const viewportUseRAF = get(this, 'viewportUseRAF');
+
+    this._setInitialViewport(window);
+    this._setupObserverIfNotSpying();
+
+    if (viewportUseRAF) {
+      this._setViewportEntered(window);
+    } else {
+      forEach(listeners, (listener) => {
+        const { context, event } = listener;
+        this._bindListeners(context, event);
+      });
+    }
+  }),
+
+  _teardown: on('willDestroyElement', function() {
+    this._unbindListeners();
+  }),
 
   _setupObserverIfNotSpying() {
     const viewportSpy = get(this, 'viewportSpy');
@@ -75,14 +82,27 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
     if (!canUseDOM) { return; }
 
-    const tolerance          = get(this, 'viewportTolerance');
-    const height             = $(context) ? $(context).height() : 0;
-    const width              = $(context) ? $(context).width()  : 0;
-    const boundingClientRect = this.$() ? this.$()[0].getBoundingClientRect() : null;
-    const viewportEntered    = isInViewport(boundingClientRect, height, width, tolerance);
+    let boundingClientRect;
 
-    if (boundingClientRect) {
-      set(this, 'viewportEntered', viewportEntered);
+    if ($cachedEl) {
+      boundingClientRect = $cachedEl[0].getBoundingClientRect();
+    } else {
+      $cachedEl           = this.$();
+      boundingClientRect = $cachedEl[0].getBoundingClientRect();
+    }
+
+    const viewportUseRAF  = get(this, 'viewportUseRAF');
+    const tolerance       = get(this, 'viewportTolerance');
+    const height          = $(context) ? $(context).height() : 0;
+    const width           = $(context) ? $(context).width()  : 0;
+    const viewportEntered = isInViewport(boundingClientRect, height, width, tolerance);
+
+    set(this, 'viewportEntered', viewportEntered);
+
+    if ($cachedEl && viewportUseRAF) {
+      rAFID = window.requestAnimationFrame(
+        bind(this, this._setViewportEntered, context)
+      );
     }
   },
 
@@ -122,6 +142,8 @@ export default Ember.Mixin.create({
   },
 
   _unbindListeners() {
+    window.cancelAnimationFrame(rAFID);
+
     forEach(listeners, (listener) => {
       const { context, event } = listener;
       $(context).off(event);
