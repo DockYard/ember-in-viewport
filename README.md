@@ -5,7 +5,7 @@
 
 This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the more resource heavy Ember run loop and event listeners. 
 
-This software is not ready for production use. Use at your own risk.
+This software will not be ready for production use until `1.0.0`. 
 
 ## Usage
 Usage is simple. First, add the mixin to your `Component`:
@@ -36,7 +36,7 @@ This hook fires whenever the `Component` leaves the viewport.
 ### Advanced usage (options)
 The mixin comes with some options:
 
-- `viewportSpy: boolean` (Does not work properly: See [issues](#issues)})
+- `viewportSpy: boolean` (Does not work properly: See [issues](#issues))
 
   Default: `false`
 
@@ -46,13 +46,13 @@ The mixin comes with some options:
 
   Default: `100`
 
-  This value determines how often the mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
+  If `requestAnimationFrame` is not present, this value determines how often the mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
 
-- `viewportTolerance: number`
+- `viewportTolerance: object`
 
-  Default: `0`
+  Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
 
-  This value determines how accurately the `Component` needs to be within the viewport for it to be considered as entered. At `0`, this means that the `Component'`s element must be completely inside of the viewport to be considered as entered. For example, if this was set to `50`, the component would have entered the viewport if it's top or bottom was within `50px` from the window.
+  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered. 
 
 ## Issues
 The main issue at the moment is with unbinding listeners and clearing the `requestAnimationFrame` recursive cycle. This is preventing work on the `viewportSpy` option, which clears all listeners after a `Component` has entered the viewport at least once. 
@@ -60,7 +60,7 @@ The main issue at the moment is with unbinding listeners and clearing the `reque
 - [ ] `_unbindListeners()` should clear the instance of the `requestAnimationFrame` recursion (per Object), but still remain performant
   - Currently, this method does not clear the `requestAnimationFrame` recursion when it is called. `cancelAnimationFrame` requires the `id` returned by the `requestAnimationFrame` method, but storing it in the Ember.Object causes severe memory issues (as it is being updated at 60FPS, or about every 16ms)
 - [ ] `_unbindListeners()` should clear the instance of the event listeners per element
-  - This method clears all event listeners on the `window` and `document` (in reality, there are only 3 listeners regardless of the number of `Components`, because of the way Ember registers event listeners globally), which means if you have >1 `Component` to watch, after one enters the viewport, it unbinds listeners for all other `Components`, whether or not they have entered the viewport.
+  - This method clears all event listeners on the `window` and `document` (in reality, this mixin has only 3 listeners regardless of the number of `Components`, because of the way Ember registers event listeners globally), which means if you have >1 `Component` to watch, after one enters the viewport, it unbinds listeners for all other `Components`, whether or not they have entered the viewport.
 
 ## Installation
 
