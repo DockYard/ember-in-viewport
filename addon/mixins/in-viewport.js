@@ -79,7 +79,6 @@ export default Ember.Mixin.create({
 
   _setViewportEntered(context=null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
-    if (!canUseDOM) { return; }
 
     const $viewportCachedEl = get(this, '$viewportCachedEl');
 
