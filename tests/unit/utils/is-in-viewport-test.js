@@ -1,7 +1,7 @@
 import isInViewport from '../../../utils/is-in-viewport';
 import { module, test } from 'qunit';
 
-let fakeRectNotInViewport, fakeRectInViewport, fakeWindow;
+let fakeRectNotInViewport, fakeRectInViewport, fakeWindow, fakeNoTolerance, fakeTolerance;
 
 module('isInViewport', {
   beforeEach() {
@@ -13,7 +13,7 @@ module('isInViewport', {
     };
 
     fakeRectInViewport = {
-      top    : 301,
+      top    : 300,
       left   : 150,
       bottom : 400,
       right  : 1130
@@ -23,24 +23,35 @@ module('isInViewport', {
       innerHeight : 400,
       innerWidth  : 1280
     };
+
+    fakeNoTolerance = {
+      top    : 0,
+      left   : 0,
+      bottom : 0,
+      right  : 0
+    };
+
+    fakeTolerance = {
+      top    : 200,
+      bottom : 200
+    };
   }
 });
 
-// Replace this with your real tests.
 test('returns true if dimensions are within viewport', function(assert) {
   const { innerHeight, innerWidth } = fakeWindow;
-  const result = isInViewport(fakeRectInViewport, innerHeight, innerWidth, 0);
+  const result = isInViewport(fakeRectInViewport, innerHeight, innerWidth, fakeNoTolerance);
   assert.ok(result);
 });
 
 test('returns false if dimensions not within viewport', function(assert) {
   const { innerHeight, innerWidth } = fakeWindow;
-  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, 0);
+  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, fakeNoTolerance);
   assert.ok(!result);
 });
 
 test('returns true if dimensions not within viewport but within tolerance', function(assert) {
   const { innerHeight, innerWidth } = fakeWindow;
-  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, 200);
+  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, fakeTolerance);
   assert.ok(result);
 });

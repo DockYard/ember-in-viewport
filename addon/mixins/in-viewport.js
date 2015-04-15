@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
+import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 
 const {
@@ -27,15 +28,13 @@ const listeners = [
   { context: document, event: 'touchmove.scrollable' }
 ];
 
-let rAFID    = 0;
-let $cachedEl;
-
 export default Ember.Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
   _setInitialState: on('init', function() {
     setProperties(this, {
-      viewportUseRAF      : true,
+      $viewportCachedEl   : undefined,
+      viewportUseRAF      : canUseRAF(),
       viewportEntered     : false,
       viewportSpy         : false,
       viewportRefreshRate : 100,
@@ -44,7 +43,7 @@ export default Ember.Mixin.create({
         left   : 0,
         bottom : 0,
         right  : 0
-      }
+      },
     });
   }),
 
@@ -54,10 +53,10 @@ export default Ember.Mixin.create({
     const viewportUseRAF = get(this, 'viewportUseRAF');
 
     this._setInitialViewport(window);
-    this._setupObserverIfNotSpying();
+    this._addObserverIfNotSpying();
 
     if (viewportUseRAF) {
-      this._setViewportEntered(window);
+      return this._setViewportEntered(window);
     } else {
       forEach(listeners, (listener) => {
         const { context, event } = listener;
@@ -70,7 +69,7 @@ export default Ember.Mixin.create({
     this._unbindListeners();
   }),
 
-  _setupObserverIfNotSpying() {
+  _addObserverIfNotSpying() {
     const viewportSpy = get(this, 'viewportSpy');
 
     if (!viewportSpy) {
@@ -82,25 +81,26 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
     if (!canUseDOM) { return; }
 
+    const $viewportCachedEl = get(this, '$viewportCachedEl');
+
     let boundingClientRect;
 
-    if ($cachedEl) {
-      boundingClientRect = $cachedEl[0].getBoundingClientRect();
+    if ($viewportCachedEl) {
+      boundingClientRect = $viewportCachedEl[0].getBoundingClientRect();
     } else {
-      $cachedEl           = this.$();
-      boundingClientRect = $cachedEl[0].getBoundingClientRect();
+      boundingClientRect = set(this, '$viewportCachedEl', this.$())[0].getBoundingClientRect();
     }
 
-    const viewportUseRAF  = get(this, 'viewportUseRAF');
-    const tolerance       = get(this, 'viewportTolerance');
-    const height          = $(context) ? $(context).height() : 0;
-    const width           = $(context) ? $(context).width()  : 0;
-    const viewportEntered = isInViewport(boundingClientRect, height, width, tolerance);
+    const viewportUseRAF    = get(this, 'viewportUseRAF');
+    const tolerance         = get(this, 'viewportTolerance');
+    const height            = $(context) ? $(context).height() : 0;
+    const width             = $(context) ? $(context).width()  : 0;
+    const viewportEntered   = isInViewport(boundingClientRect, height, width, tolerance);
 
     set(this, 'viewportEntered', viewportEntered);
 
-    if ($cachedEl && viewportUseRAF) {
-      rAFID = window.requestAnimationFrame(
+    if ($viewportCachedEl && viewportUseRAF) {
+      window.requestAnimationFrame(
         bind(this, this._setViewportEntered, context)
       );
     }
@@ -116,7 +116,9 @@ export default Ember.Mixin.create({
     }
   },
 
-  _setInitialViewport(context) {
+  _setInitialViewport(context=null) {
+    Ember.assert('You must pass a valid context to _setInitialViewport', context);
+
     return scheduleOnce('afterRender', this, function() {
       this._setViewportEntered(context);
     });
@@ -131,19 +133,16 @@ export default Ember.Mixin.create({
     }, viewportRefreshRate);
   },
 
-  _bindListeners(context, event) {
+  _bindListeners(context=null, event=null) {
     Ember.assert('You must pass a valid context to _bindListeners', context);
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
-    const self = this;
-    $(context).on(event, function() {
-      self._scrollHandler(context);
+    $(context).on(event, () => {
+      this._scrollHandler(context);
     });
   },
 
   _unbindListeners() {
-    window.cancelAnimationFrame(rAFID);
-
     forEach(listeners, (listener) => {
       const { context, event } = listener;
       $(context).off(event);
