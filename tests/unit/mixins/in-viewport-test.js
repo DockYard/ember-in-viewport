@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import InViewportMixin from '../../../mixins/in-viewport';
+import InViewportMixin from 'ember-in-viewport/mixins/in-viewport';
 import { module, test } from 'qunit';
 
 module('InViewportMixin');

@@ -1,4 +1,4 @@
-import isInViewport from '../../../utils/is-in-viewport';
+import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import { module, test } from 'qunit';
 
 let fakeRectNotInViewport, fakeRectInViewport, fakeWindow, fakeNoTolerance, fakeTolerance;
