@@ -137,6 +137,8 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
     const elementId = get(this, 'elementId');
+    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
+      'most likely not work as expected', elementId);
 
     $(context).on(event + elementId, () => {
       this._scrollHandler(context);
@@ -145,6 +147,8 @@ export default Ember.Mixin.create({
 
   _unbindListeners() {
     const elementId = get(this, 'elementId');
+    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
+      'most likely not work as expected', elementId);
 
     forEach(listeners, (listener) => {
       const { context, event } = listener;
