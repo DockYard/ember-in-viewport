@@ -57,10 +57,9 @@ export default Ember.Mixin.create({
 
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
+    this._setViewportEntered(window);
 
-    if (viewportUseRAF) {
-      return this._setViewportEntered(window);
-    } else {
+    if (!viewportUseRAF) {
       forEach(listeners, (listener) => {
         const { context, event } = listener;
         this._bindListeners(context, event);
@@ -84,6 +83,11 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
 
     const $viewportCachedEl = get(this, '$viewportCachedEl');
+    const viewportUseRAF    = get(this, 'viewportUseRAF');
+    const elementId         = get(this, 'elementId');
+    const tolerance         = get(this, 'viewportTolerance');
+    const height            = $(context) ? $(context).height() : 0;
+    const width             = $(context) ? $(context).width()  : 0;
 
     let boundingClientRect;
 
@@ -93,11 +97,6 @@ export default Ember.Mixin.create({
       boundingClientRect = set(this, '$viewportCachedEl', this.$())[0].getBoundingClientRect();
     }
 
-    const viewportUseRAF  = get(this, 'viewportUseRAF');
-    const elementId       = get(this, 'elementId');
-    const tolerance       = get(this, 'viewportTolerance');
-    const height          = $(context) ? $(context).height() : 0;
-    const width           = $(context) ? $(context).width()  : 0;
     const viewportEntered = isInViewport(boundingClientRect, height, width, tolerance);
 
     set(this, 'viewportEntered', viewportEntered);
@@ -122,7 +121,7 @@ export default Ember.Mixin.create({
   _setInitialViewport(context=null) {
     Ember.assert('You must pass a valid context to _setInitialViewport', context);
 
-    return scheduleOnce('afterRender', this, function() {
+    return scheduleOnce('afterRender', this, () => {
       this._setViewportEntered(context);
     });
   },
@@ -131,6 +130,7 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _scrollHandler', context);
 
     const viewportRefreshRate = get(this, 'viewportRefreshRate');
+
     debounce(this, function() {
       this._setViewportEntered(context);
     }, viewportRefreshRate);
@@ -145,7 +145,7 @@ export default Ember.Mixin.create({
     Ember.warn('No elementId was found on this Object, `viewportSpy` will' +
       'not work as expected', elementId);
 
-    $(context).on(event + elementId, () => {
+    $(context).on(`${event}#${elementId}`, () => {
       this._scrollHandler(context);
     });
   },
@@ -166,7 +166,7 @@ export default Ember.Mixin.create({
 
     forEach(listeners, (listener) => {
       const { context, event } = listener;
-      $(context).off(event + elementId);
+      $(context).off(`${event}#${elementId}`);
     });
   }
 });

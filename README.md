@@ -34,7 +34,25 @@ export default Ember.Component.extend(InViewportMixin, {
 This hook fires whenever the `Component` leaves the viewport.
 
 ### Advanced usage (options)
-The mixin comes with some options:
+The mixin comes with some options. Due to the way listeners and `requestAnimationFrame` is setup, you'll have to override the options this way:
+
+```js
+export default Ember.Component.extend(InViewportMixin, {
+  viewportOptionsOverride: Ember.on('didInsertElement', function() {
+    Ember.setProperties(this, {
+      viewportUseRAF      : true,
+      viewportSpy         : false,
+      viewportRefreshRate : 150,
+      viewportTolerance: {
+        top    : 50,
+        bottom : 50,
+        left   : 20,
+        right  : 20
+      }
+    });
+  })
+});
+```
 
 - `viewportSpy: boolean`
 
