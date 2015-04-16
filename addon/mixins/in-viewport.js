@@ -16,7 +16,8 @@ const {
 const {
   scheduleOnce,
   debounce,
-  bind
+  bind,
+  next
 } = run;
 
 const { not }     = computed;
@@ -27,6 +28,8 @@ const listeners = [
   { context: window,   event: 'resize.resizable' },
   { context: document, event: 'touchmove.scrollable' }
 ];
+
+let rAFIDS = {};
 
 export default Ember.Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
@@ -90,16 +93,17 @@ export default Ember.Mixin.create({
       boundingClientRect = set(this, '$viewportCachedEl', this.$())[0].getBoundingClientRect();
     }
 
-    const viewportUseRAF    = get(this, 'viewportUseRAF');
-    const tolerance         = get(this, 'viewportTolerance');
-    const height            = $(context) ? $(context).height() : 0;
-    const width             = $(context) ? $(context).width()  : 0;
-    const viewportEntered   = isInViewport(boundingClientRect, height, width, tolerance);
+    const viewportUseRAF  = get(this, 'viewportUseRAF');
+    const elementId       = get(this, 'elementId');
+    const tolerance       = get(this, 'viewportTolerance');
+    const height          = $(context) ? $(context).height() : 0;
+    const width           = $(context) ? $(context).width()  : 0;
+    const viewportEntered = isInViewport(boundingClientRect, height, width, tolerance);
 
     set(this, 'viewportEntered', viewportEntered);
 
     if ($viewportCachedEl && viewportUseRAF) {
-      window.requestAnimationFrame(
+      rAFIDS[elementId] = window.requestAnimationFrame(
         bind(this, this._setViewportEntered, context)
       );
     }
@@ -137,8 +141,9 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
     const elementId = get(this, 'elementId');
-    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
-      'most likely not work as expected', elementId);
+
+    Ember.warn('No elementId was found on this Object, `viewportSpy` will' +
+      'not work as expected', elementId);
 
     $(context).on(event + elementId, () => {
       this._scrollHandler(context);
@@ -146,9 +151,18 @@ export default Ember.Mixin.create({
   },
 
   _unbindListeners() {
-    const elementId = get(this, 'elementId');
-    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
-      'most likely not work as expected', elementId);
+    const elementId      = get(this, 'elementId');
+    const viewportUseRAF = get(this, 'viewportUseRAF');
+
+    Ember.warn('No elementId was found on this Object, `viewportSpy` will' +
+      'not work as expected', elementId);
+
+    if (viewportUseRAF) {
+      next(this, () => {
+        window.cancelAnimationFrame(rAFIDS[elementId]);
+        rAFIDS[elementId] = null;
+      });
+    }
 
     forEach(listeners, (listener) => {
       const { context, event } = listener;
