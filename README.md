@@ -36,7 +36,7 @@ This hook fires whenever the `Component` leaves the viewport.
 ### Advanced usage (options)
 The mixin comes with some options:
 
-- `viewportSpy: boolean` (Only works when not in `rAF` mode: See [issues](#issues))
+- `viewportSpy: boolean`
 
   Default: `false`
 
@@ -53,14 +53,6 @@ The mixin comes with some options:
   Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
 
   This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered. 
-
-## Issues
-The main issue at the moment is with unbinding listeners and clearing the `requestAnimationFrame` recursive cycle. This is preventing work on the `viewportSpy` option, which clears all listeners after a `Component` has entered the viewport at least once. 
-
-- [ ] `_unbindListeners()` should clear the instance of the `requestAnimationFrame` recursion (per Object), but still remain performant
-  - Currently, this method does not clear the `requestAnimationFrame` recursion when it is called. `cancelAnimationFrame` requires the `id` returned by the `requestAnimationFrame` method, but storing it in the Ember.Object causes severe memory issues (as it is being updated at 60FPS, or about every 16ms)
-- [x] `_unbindListeners()` should clear the instance of the event listeners per element
-  - This method clears all event listeners on the `window` and `document` (in reality, this mixin has only 3 listeners regardless of the number of `Components`, because of the way Ember registers event listeners globally), which means if you have >1 `Component` to watch, after one enters the viewport, it unbinds listeners for all other `Components`, whether or not they have entered the viewport.
 
 ## Installation
 
