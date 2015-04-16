@@ -1,7 +1,7 @@
 # ember-in-viewport
 *Detect if an Ember View or Component is in the viewport @ 60FPS*
 
-[![Build Status](https://travis-ci.org/dockyard/ember-in-viewport.svg)](https://travis-ci.org/dockyard/ember-in-viewport)
+[![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/dockyard/ember-in-viewport.svg)](https://travis-ci.org/dockyard/ember-in-viewport)
 
 This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the more resource heavy Ember run loop and event listeners. 
 
@@ -36,7 +36,7 @@ This hook fires whenever the `Component` leaves the viewport.
 ### Advanced usage (options)
 The mixin comes with some options:
 
-- `viewportSpy: boolean` (Does not work properly: See [issues](#issues))
+- `viewportSpy: boolean` (Only works when not in `rAF` mode: See [issues](#issues))
 
   Default: `false`
 
@@ -59,7 +59,7 @@ The main issue at the moment is with unbinding listeners and clearing the `reque
 
 - [ ] `_unbindListeners()` should clear the instance of the `requestAnimationFrame` recursion (per Object), but still remain performant
   - Currently, this method does not clear the `requestAnimationFrame` recursion when it is called. `cancelAnimationFrame` requires the `id` returned by the `requestAnimationFrame` method, but storing it in the Ember.Object causes severe memory issues (as it is being updated at 60FPS, or about every 16ms)
-- [ ] `_unbindListeners()` should clear the instance of the event listeners per element
+- [x] `_unbindListeners()` should clear the instance of the event listeners per element
   - This method clears all event listeners on the `window` and `document` (in reality, this mixin has only 3 listeners regardless of the number of `Components`, because of the way Ember registers event listeners globally), which means if you have >1 `Component` to watch, after one enters the viewport, it unbinds listeners for all other `Components`, whether or not they have entered the viewport.
 
 ## Installation

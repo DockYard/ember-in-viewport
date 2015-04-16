@@ -79,7 +79,6 @@ export default Ember.Mixin.create({
 
   _setViewportEntered(context=null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
-    if (!canUseDOM) { return; }
 
     const $viewportCachedEl = get(this, '$viewportCachedEl');
 
@@ -137,15 +136,23 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _bindListeners', context);
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
-    $(context).on(event, () => {
+    const elementId = get(this, 'elementId');
+    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
+      'most likely not work as expected', elementId);
+
+    $(context).on(event + elementId, () => {
       this._scrollHandler(context);
     });
   },
 
   _unbindListeners() {
+    const elementId = get(this, 'elementId');
+    Ember.warn('No elementId was registered on this Object, viewportSpy will' +
+      'most likely not work as expected', elementId);
+
     forEach(listeners, (listener) => {
       const { context, event } = listener;
-      $(context).off(event);
+      $(context).off(event + elementId);
     });
   }
 });
