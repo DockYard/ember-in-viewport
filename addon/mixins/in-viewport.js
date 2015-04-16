@@ -136,15 +136,19 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid context to _bindListeners', context);
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
-    $(context).on(event, () => {
+    const elementId = get(this, 'elementId');
+
+    $(context).on(event + elementId, () => {
       this._scrollHandler(context);
     });
   },
 
   _unbindListeners() {
+    const elementId = get(this, 'elementId');
+
     forEach(listeners, (listener) => {
       const { context, event } = listener;
-      $(context).off(event);
+      $(context).off(event + elementId);
     });
   }
 });
