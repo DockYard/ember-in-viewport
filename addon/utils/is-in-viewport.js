@@ -20,8 +20,8 @@ export default function isInViewport(boundingClientRect={}, height=0, width=0, t
   } = tolerances;
 
   return (
-    (top - topTolerance)       >= 0 &&
-    (left - leftTolerance)     >= 0 &&
+    (top + topTolerance)       >= 0 &&
+    (left + leftTolerance)     >= 0 &&
     (bottom - bottomTolerance) <= height &&
     (right - rightTolerance)   <= width
   );

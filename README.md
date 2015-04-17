@@ -7,6 +7,10 @@ This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app.
 
 This software will not be ready for production use until `1.0.0`. 
 
+## Demo
+- App: http://development.ember-in-viewport-demo.divshot.io/
+- Source: https://github.com/poteto/ember-in-viewport-demo
+
 ## Usage
 Usage is simple. First, add the mixin to your `Component`:
 
@@ -53,6 +57,12 @@ export default Ember.Component.extend(InViewportMixin, {
   })
 });
 ```
+
+- `viewportUseRAF: boolean`
+
+  Default: Depends on browser
+
+  As it's name suggests, if this is `true`, the mixin will use `requestAnimationFrame` instead of the Ember run loop. Unless you want to force enabling or disabling this, you won't need to override this option.
 
 - `viewportSpy: boolean`
 
