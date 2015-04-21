@@ -79,7 +79,7 @@ export default Ember.Mixin.create({
     }
   },
 
-  _setViewportEntered(context=null) {
+  _setViewportEntered(context = null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
 
     const $viewportCachedEl = get(this, '$viewportCachedEl');
@@ -118,7 +118,7 @@ export default Ember.Mixin.create({
     }
   },
 
-  _setInitialViewport(context=null) {
+  _setInitialViewport(context = null) {
     Ember.assert('You must pass a valid context to _setInitialViewport', context);
 
     return scheduleOnce('afterRender', this, () => {
@@ -126,7 +126,7 @@ export default Ember.Mixin.create({
     });
   },
 
-  _scrollHandler(context=null) {
+  _scrollHandler(context = null) {
     Ember.assert('You must pass a valid context to _scrollHandler', context);
 
     const viewportRefreshRate = get(this, 'viewportRefreshRate');
@@ -136,7 +136,7 @@ export default Ember.Mixin.create({
     }, viewportRefreshRate);
   },
 
-  _bindListeners(context=null, event=null) {
+  _bindListeners(context = null, event = null) {
     Ember.assert('You must pass a valid context to _bindListeners', context);
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
