@@ -12,7 +12,7 @@ const defaultTolerance = {
 export default function isInViewport(boundingClientRect={}, height=0, width=0, tolerance=defaultTolerance) {
   const { top, left, bottom, right } = boundingClientRect;
   const tolerances = merge(defaultTolerance, tolerance);
-  let {
+  const {
     top    : topTolerance,
     left   : leftTolerance,
     bottom : bottomTolerance,
