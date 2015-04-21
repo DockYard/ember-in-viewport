@@ -105,3 +105,11 @@ export default Ember.Component.extend(InViewportMixin, {
 * `ember build`
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+
+## Legal
+
+[DockYard](http://dockyard.com), Inc &copy; 2015
+
+[@dockyard](http://twitter.com/dockyard)
+
+[Licensed under the MIT license](http://www.opensource.org/licenses/mit-license.php)
