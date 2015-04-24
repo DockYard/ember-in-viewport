@@ -25,8 +25,34 @@ export default Ember.Component.extend(InViewportMixin, {
 
 ### Basic usage
 #### Available hooks
+##### `didEnterViewport`, `didExitViewport`
+These hooks fire once whenever the `Component` enters or exits the viewport. You can handle them the same way you would handle any other native Ember hook:
+
+```js
+export default Ember.Component.extend(InViewportMixin, {
+
+  // with prototype extensions disabled
+  handleDidEnterViewport: on('didEnterViewport', function() {
+    console.log('entered');
+  }),
+
+  handleDidExitViewport: on('didExitViewport', function() {
+    console.log('exited');
+  }),
+
+  // with prototype extensions enabled
+  didEnterViewport() {
+    console.log('entered');
+  },
+
+  didExitViewport() {
+    console.log('exited');
+  }
+});
+```
+
 ##### `viewportEntered`
-This hook fires whenever the `Component` enters the viewport. To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
+To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
