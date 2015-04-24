@@ -41,6 +41,15 @@ export default Ember.Component.extend(InViewportMixin, {
   }),
 
   // with prototype extensions enabled
+  handleDidEnterViewport: (function() {
+    console.log('entered');
+  }).on('didEnterViewport'),
+
+  handleDidExitViewport: (function() {
+    console.log('exited');
+  }).on('didExitViewport'),
+
+  // method override 
   didEnterViewport() {
     console.log('entered');
   },
