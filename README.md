@@ -32,11 +32,11 @@ These hooks fire once whenever the `Component` enters or exits the viewport. You
 export default Ember.Component.extend(InViewportMixin, {
 
   // with prototype extensions disabled
-  handleDidEnterViewport: on('didEnterViewport', function() {
+  handleDidEnterViewport: Ember.on('didEnterViewport', function() {
     console.log('entered');
   }),
 
-  handleDidExitViewport: on('didExitViewport', function() {
+  handleDidExitViewport: Ember.on('didExitViewport', function() {
     console.log('exited');
   }),
 
