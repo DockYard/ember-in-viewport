@@ -9,7 +9,7 @@ const defaultTolerance = {
   right  : 0
 };
 
-export default function isInViewport(boundingClientRect={}, height=0, width=0, tolerance=defaultTolerance) {
+export default function isInViewport(boundingClientRect = {}, height = 0, width = 0, tolerance = defaultTolerance) {
   const { top, left, bottom, right } = boundingClientRect;
   const tolerances = merge(defaultTolerance, tolerance);
   const {

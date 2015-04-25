@@ -41,12 +41,44 @@ export default Ember.Component.extend(InViewportMixin, {
   }),
 
   // with prototype extensions enabled
+  handleDidEnterViewport: (function() {
+    console.log('entered');
+  }).on('didEnterViewport'),
+
+  handleDidExitViewport: (function() {
+    console.log('exited');
+  }).on('didExitViewport'),
+
+  // method override 
   didEnterViewport() {
     console.log('entered');
   },
 
   didExitViewport() {
     console.log('exited');
+  }
+});
+```
+
+##### [BETA] `didScroll{Up,Down,Left,Right}`
+The appropriate scroll hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScrollDown` hook would fire. You can then handle it like another hook as in the above example.
+
+```js
+export default Ember.Component.extend(InViewportMixin, {
+  didScrollUp() {
+    console.log('up');
+  },
+
+  didScrollDown() {
+    console.log('down');
+  },
+
+  didScrollLeft() {
+    console.log('left');
+  },
+
+  didScrollRight() {
+    console.log('right');
   }
 });
 ```
