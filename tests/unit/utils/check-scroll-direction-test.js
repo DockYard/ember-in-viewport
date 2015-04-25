@@ -1,0 +1,51 @@
+import Ember from 'ember';
+import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
+import { module, test } from 'qunit';
+
+let lastPosition;
+
+const { forEach } = Ember.EnumerableUtils;
+
+module('checkScrollDirection', {
+  beforeEach() {
+    lastPosition = {
+      top  : 300,
+      left : 150
+    };
+  }
+});
+
+test('returns the right direction', function(assert) {
+  const movements = [
+    { direction: 'down',  position: { top: 400, left: 150 }},
+    { direction: 'up',    position: { top: 200, left: 150 }},
+    { direction: 'right', position: { top: 300, left: 250 }},
+    { direction: 'left',  position: { top: 300, left: 100 }}
+  ];
+
+  assert.expect(movements.length);
+
+  forEach(movements, (movement) => {
+    const { direction, position } = movement;
+    const scrollDirection = checkScrollDirection(lastPosition, position);
+
+    assert.equal(direction, scrollDirection);
+  });
+});
+
+test('adjusts for sensitivity', function(assert) {
+  const movements = [
+    { direction: undefined, position: { top: 399, left: 150 }},
+    { direction: 'down',    position: { top: 400, left: 150 }},
+    { direction: 'down',    position: { top: 500, left: 250 }}
+  ];
+
+  assert.expect(movements.length);
+
+  forEach(movements, (movement) => {
+    const { direction, position } = movement;
+    const scrollDirection = checkScrollDirection(lastPosition, position, 100);
+
+    assert.equal(direction, scrollDirection);
+  });
+});

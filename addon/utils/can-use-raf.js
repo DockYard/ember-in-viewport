@@ -26,7 +26,7 @@ function checkRAF(window, rAF, cAF) {
 }
 
 
-export default function canUseRaf() {
+export default function canUseRAF() {
   if (!canUseDOM) { return false; }
 
   return checkRAF(window, 'requestAnimationFrame', 'cancelAnimationFrame');

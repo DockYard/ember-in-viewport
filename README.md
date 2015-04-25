@@ -60,6 +60,29 @@ export default Ember.Component.extend(InViewportMixin, {
 });
 ```
 
+##### [BETA] `didScroll{Up,Down,Left,Right}`
+The appropriate scroll hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScrollDown` hook would fire. You can then handle it like another hook as in the above example.
+
+```js
+export default Ember.Component.extend(InViewportMixin, {
+  didScrollUp() {
+    console.log('up');
+  },
+
+  didScrollDown() {
+    console.log('down');
+  },
+
+  didScrollLeft() {
+    console.log('left');
+  },
+
+  didScrollRight() {
+    console.log('right');
+  }
+});
+```
+
 ##### `viewportEntered`
 To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
 
