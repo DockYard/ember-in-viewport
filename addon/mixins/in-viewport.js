@@ -82,15 +82,16 @@ export default Ember.Mixin.create({
   _setViewportEntered(context = null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
 
+    const element = get(this, 'element');
+
+    if (!element) { return; }
+
+    const elementId          = get(this, 'elementId');
     const viewportUseRAF     = get(this, 'viewportUseRAF');
     const viewportTolerance  = get(this, 'viewportTolerance');
-    const elementId          = get(this, 'elementId');
-    const element            = get(this, 'element');
     const $contextEl         = $(context);
     const height             = $contextEl.height();
     const width              = $contextEl.width();
-
-    if (!element) { return; }
     const boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidEnterViewport(
