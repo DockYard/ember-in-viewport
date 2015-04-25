@@ -85,10 +85,13 @@ export default Ember.Mixin.create({
     const viewportUseRAF     = get(this, 'viewportUseRAF');
     const viewportTolerance  = get(this, 'viewportTolerance');
     const elementId          = get(this, 'elementId');
-    const boundingClientRect = get(this, 'element').getBoundingClientRect();
+    const element            = get(this, 'element');
     const $contextEl         = $(context);
     const height             = $contextEl.height();
     const width              = $contextEl.width();
+
+    if (!element) { return; }
+    const boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidEnterViewport(
       isInViewport(boundingClientRect, height, width, viewportTolerance)
