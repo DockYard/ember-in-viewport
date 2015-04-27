@@ -40,7 +40,7 @@ export default Ember.Component.extend(InViewportMixin, {
 });
 ```
 
-##### [BETA] `didScroll{Up,Down,Left,Right}`
+##### `didScroll{Up,Down,Left,Right}`
 The appropriate scroll hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScrollDown` hook would fire. You can then handle it like another hook as in the above example. Optionally, you can also receive the direction as a string by passing a single argument to the hook.
 
 ```js
@@ -109,7 +109,7 @@ export default Ember.Component.extend(InViewportMixin, {
 
   When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application. 
 
-- [BETA] `viewportScrollSensitivity: number`
+- `viewportScrollSensitivity: number`
 
   Default: `1`
 
