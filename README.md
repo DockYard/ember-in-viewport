@@ -41,24 +41,24 @@ export default Ember.Component.extend(InViewportMixin, {
 ```
 
 ##### [BETA] `didScroll{Up,Down,Left,Right}`
-The appropriate scroll hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScrollDown` hook would fire. You can then handle it like another hook as in the above example.
+The appropriate scroll hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScrollDown` hook would fire. You can then handle it like another hook as in the above example. Optionally, you can also receive the direction as a string by passing a single argument to the hook.
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
-  didScrollUp() {
-    console.log('up');
+  didScrollUp(direction) {
+    console.log(direction); // 'up'
   },
 
-  didScrollDown() {
-    console.log('down');
+  didScrollDown(direction) {
+    console.log(direction); // 'down'
   },
 
-  didScrollLeft() {
-    console.log('left');
+  didScrollLeft(direction) {
+    console.log(direction); // 'left'
   },
 
-  didScrollRight() {
-    console.log('right');
+  didScrollRight(direction) {
+    console.log(direction); // 'right'
   }
 });
 ```
@@ -109,11 +109,11 @@ export default Ember.Component.extend(InViewportMixin, {
 
   When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application. 
 
-- [BETA] `viewportScrollSentivity: number`
+- [BETA] `viewportScrollSensitivity: number`
 
   Default: `1`
 
-  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSentivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`. 
+  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSensitivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`. 
 
 - `viewportRefreshRate: number`
 
@@ -121,11 +121,38 @@ export default Ember.Component.extend(InViewportMixin, {
 
   If `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
 
+  This value also affects how often the Mixin checks scroll direction. 
+
 - `viewportTolerance: object`
 
   Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
 
   This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered. 
+
+### Global options
+
+You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:
+
+```js
+module.exports = function(environment) {
+  var ENV = {
+    // ...
+    viewportConfig: {
+      viewportSpy               : false,
+      viewportUseRAF            : true,
+      viewportScrollSensitivity : 1,
+      viewportRefreshRate       : 100,
+      viewportListeners         : [],
+      viewportTolerance: {
+        top    : 0,
+        left   : 0,
+        bottom : 0,
+        right  : 0
+      }
+    }
+  };
+};
+```
 
 ## Installation
 
