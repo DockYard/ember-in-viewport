@@ -9,9 +9,11 @@ const {
   set: set,
   setProperties,
   computed,
+  merge,
+  typeOf,
   run,
   on,
-  $,
+  $
 } = Ember;
 
 const {
@@ -25,41 +27,43 @@ const { not }      = computed;
 const { forEach }  = Ember.EnumerableUtils;
 const { classify } = Ember.String;
 
-const listeners = [
+const defaultListeners = [
   { context: window,   event: 'scroll.scrollable' },
   { context: window,   event: 'resize.resizable' },
   { context: document, event: 'touchmove.scrollable' }
 ];
 
-let rAFIDS = {};
-let lastDirection = {};
-let lastPosition  = {};
+const rAFIDS        = {};
+const lastDirection = {};
+const lastPosition  = {};
 
 export default Ember.Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
   _setInitialState: on('init', function() {
-    setProperties(this, {
-      viewportUseRAF      : canUseRAF(),
-      viewportEntered     : false,
-      viewportSpy         : false,
-      viewportRefreshRate : 100,
-      viewportTolerance   : {
-        top    : 0,
-        left   : 0,
-        bottom : 0,
-        right  : 0
-      },
-      scrollSensitivity: 1
-    });
+    const options = merge({
+      viewportUseRAF    : canUseRAF(),
+      viewportEntered   : false,
+      viewportListeners : defaultListeners
+    }, this._buildOptions());
+
+    setProperties(this, options);
   }),
+
+  _buildOptions(defaultOptions = []) {
+    if (this.container) {
+      return merge(defaultOptions, this.container.lookup('config:in-viewport'));
+    }
+  },
 
   _setupElement: on('didInsertElement', function() {
     if (!canUseDOM) { return; }
 
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
-    this._bindScrollDirectionListener(window, get(this, 'scrollSensitivity'));
+    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
+
+    const listeners = get(this, 'viewportListeners');
 
     if (!get(this, 'viewportUseRAF')) {
       forEach(listeners, (listener) => {
@@ -82,15 +86,19 @@ export default Ember.Mixin.create({
   _setViewportEntered(context = null) {
     Ember.assert('You must pass a valid context to _setViewportEntered', context);
 
+    const element = get(this, 'element');
+
+    if (!element) { return; }
+
+    const elementId          = get(this, 'elementId');
     const viewportUseRAF     = get(this, 'viewportUseRAF');
     const viewportTolerance  = get(this, 'viewportTolerance');
-    const elementId          = get(this, 'elementId');
-    const boundingClientRect = get(this, 'element').getBoundingClientRect();
     const $contextEl         = $(context);
     const height             = $contextEl.height();
     const width              = $contextEl.width();
+    const boundingClientRect = element.getBoundingClientRect();
 
-    this._triggerDidEnterViewport(
+    this._triggerDidAccessViewport(
       isInViewport(boundingClientRect, height, width, viewportTolerance)
     );
 
@@ -114,21 +122,18 @@ export default Ember.Mixin.create({
       left : $contextEl.scrollLeft()
     };
 
-    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
-    const hasDirection    = scrollDirection !== lastDirectionForEl;
+    const scrollDirection  = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    const directionChanged = scrollDirection !== lastDirectionForEl;
 
-    if (hasDirection && viewportEntered) {
-      this.trigger(`didScroll${classify(scrollDirection)}`);
-    }
-
-    if (viewportEntered) {
+    if (scrollDirection && directionChanged && viewportEntered) {
+      this.trigger(`didScroll${classify(scrollDirection)}`, scrollDirection);
       lastDirection[elementId] = scrollDirection;
     }
 
-    lastPosition[elementId]  = newPosition;
+    lastPosition[elementId] = newPosition;
   },
 
-  _triggerDidEnterViewport(hasEnteredViewport = false) {
+  _triggerDidAccessViewport(hasEnteredViewport = false) {
     const viewportEntered  = get(this, 'viewportEntered');
     const didEnter         = !viewportEntered && hasEnteredViewport;
     const didLeave         = viewportEntered && !hasEnteredViewport;
@@ -158,11 +163,13 @@ export default Ember.Mixin.create({
     });
   },
 
-  _scrollHandler(context = null) {
-    Ember.assert('You must pass a valid context to _scrollHandler', context);
+  _debouncedEventHandler(methodName, ...args) {
+    Ember.assert('You must pass a methodName to _debouncedEventHandler', methodName);
+    const validMethodString = typeOf(methodName) === 'string';
+    Ember.assert('methodName must be a string', validMethodString);
 
     debounce(this, () => {
-      this._setViewportEntered(context);
+      this[methodName](...args);
     }, get(this, 'viewportRefreshRate'));
   },
 
@@ -173,7 +180,7 @@ export default Ember.Mixin.create({
     const $contextEl = $(context);
 
     $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
-      this._triggerDidScrollDirection($contextEl, sensitivity);
+      this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
     });
   },
 
@@ -183,8 +190,8 @@ export default Ember.Mixin.create({
     const elementId = get(this, 'elementId');
 
     $(context).off(`scroll.directional#${elementId}`);
-    lastPosition[elementId]  = null;
-    lastDirection[elementId] = null;
+    delete lastPosition[elementId];
+    delete lastDirection[elementId];
   },
 
   _bindListeners(context = null, event = null) {
@@ -192,17 +199,18 @@ export default Ember.Mixin.create({
     Ember.assert('You must pass a valid event to _bindListeners', event);
 
     $(context).on(`${event}#${get(this, 'elementId')}`, () => {
-      this._scrollHandler(context);
+      this._debouncedEventHandler('_setViewportEntered', context);
     });
   },
 
   _unbindListeners() {
     const elementId = get(this, 'elementId');
+    const listeners = get(this, 'viewportListeners');
 
     if (get(this, 'viewportUseRAF')) {
       next(this, () => {
         window.cancelAnimationFrame(rAFIDS[elementId]);
-        rAFIDS[elementId] = null;
+        delete rAFIDS[elementId];
       });
     }
 
