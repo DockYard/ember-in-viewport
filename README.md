@@ -5,14 +5,14 @@
 
 [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/dockyard/ember-in-viewport.svg)](https://travis-ci.org/dockyard/ember-in-viewport)
 
-This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the more resource heavy Ember run loop and event listeners. 
+This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the Ember run loop and event listeners. 
 
 ## Demo
 - App: http://development.ember-in-viewport-demo.divshot.io/
 - Source: https://github.com/poteto/ember-in-viewport-demo
 
 ## Usage
-Usage is simple. First, add the mixin to your `Component`:
+Usage is simple. First, add the Mixin to your `Component`:
 
 ```js
 import Ember from 'ember';
@@ -30,26 +30,6 @@ These hooks fire once whenever the `Component` enters or exits the viewport. You
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
-
-  // with prototype extensions disabled
-  handleDidEnterViewport: Ember.on('didEnterViewport', function() {
-    console.log('entered');
-  }),
-
-  handleDidExitViewport: Ember.on('didExitViewport', function() {
-    console.log('exited');
-  }),
-
-  // with prototype extensions enabled
-  handleDidEnterViewport: (function() {
-    console.log('entered');
-  }).on('didEnterViewport'),
-
-  handleDidExitViewport: (function() {
-    console.log('exited');
-  }).on('didExitViewport'),
-
-  // method override 
   didEnterViewport() {
     console.log('entered');
   },
@@ -102,9 +82,10 @@ The mixin comes with some options. Due to the way listeners and `requestAnimatio
 export default Ember.Component.extend(InViewportMixin, {
   viewportOptionsOverride: Ember.on('didInsertElement', function() {
     Ember.setProperties(this, {
-      viewportUseRAF      : true,
-      viewportSpy         : false,
-      viewportRefreshRate : 150,
+      viewportUseRAF            : true,
+      viewportSpy               : false,
+      viewportScrollSensitivity : 1,
+      viewportRefreshRate       : 150,
       viewportTolerance: {
         top    : 50,
         bottom : 50,
@@ -120,19 +101,25 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Default: Depends on browser
 
-  As it's name suggests, if this is `true`, the mixin will use `requestAnimationFrame` instead of the Ember run loop. Unless you want to force enabling or disabling this, you won't need to override this option.
+  As it's name suggests, if this is `true`, the Mixin will use `requestAnimationFrame` instead of the Ember run loop. Unless you want to force enabling or disabling this, you won't need to override this option.
 
 - `viewportSpy: boolean`
 
   Default: `false`
 
-  When `true`, the mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application. 
+  When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application. 
+
+- [BETA] `viewportScrollSentivity: number`
+
+  Default: `1`
+
+  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSentivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`. 
 
 - `viewportRefreshRate: number`
 
   Default: `100`
 
-  If `requestAnimationFrame` is not present, this value determines how often the mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
+  If `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
 
 - `viewportTolerance: object`
 

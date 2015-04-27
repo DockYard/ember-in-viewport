@@ -31,26 +31,26 @@ const listeners = [
   { context: document, event: 'touchmove.scrollable' }
 ];
 
-let rAFIDS = {};
-let lastDirection = {};
-let lastPosition  = {};
+const rAFIDS        = {};
+const lastDirection = {};
+const lastPosition  = {};
 
 export default Ember.Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
   _setInitialState: on('init', function() {
     setProperties(this, {
-      viewportUseRAF      : canUseRAF(),
-      viewportEntered     : false,
-      viewportSpy         : false,
-      viewportRefreshRate : 100,
-      viewportTolerance   : {
+      viewportUseRAF            : canUseRAF(),
+      viewportEntered           : false,
+      viewportSpy               : false,
+      viewportScrollSensitivity : 1,
+      viewportRefreshRate       : 100,
+      viewportTolerance: {
         top    : 0,
         left   : 0,
         bottom : 0,
         right  : 0
       },
-      scrollSensitivity: 1
     });
   }),
 
@@ -59,7 +59,7 @@ export default Ember.Mixin.create({
 
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
-    this._bindScrollDirectionListener(window, get(this, 'scrollSensitivity'));
+    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
 
     if (!get(this, 'viewportUseRAF')) {
       forEach(listeners, (listener) => {
@@ -118,10 +118,10 @@ export default Ember.Mixin.create({
       left : $contextEl.scrollLeft()
     };
 
-    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
-    const hasDirection    = scrollDirection !== lastDirectionForEl;
+    const scrollDirection  = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    const directionChanged = scrollDirection !== lastDirectionForEl;
 
-    if (hasDirection && viewportEntered) {
+    if (directionChanged && viewportEntered) {
       this.trigger(`didScroll${classify(scrollDirection)}`);
     }
 
@@ -129,7 +129,7 @@ export default Ember.Mixin.create({
       lastDirection[elementId] = scrollDirection;
     }
 
-    lastPosition[elementId]  = newPosition;
+    lastPosition[elementId] = newPosition;
   },
 
   _triggerDidEnterViewport(hasEnteredViewport = false) {
@@ -187,8 +187,8 @@ export default Ember.Mixin.create({
     const elementId = get(this, 'elementId');
 
     $(context).off(`scroll.directional#${elementId}`);
-    lastPosition[elementId]  = null;
-    lastDirection[elementId] = null;
+    delete lastPosition[elementId];
+    delete lastDirection[elementId];
   },
 
   _bindListeners(context = null, event = null) {
@@ -206,7 +206,7 @@ export default Ember.Mixin.create({
     if (get(this, 'viewportUseRAF')) {
       next(this, () => {
         window.cancelAnimationFrame(rAFIDS[elementId]);
-        rAFIDS[elementId] = null;
+        delete rAFIDS[elementId];
       });
     }
 
