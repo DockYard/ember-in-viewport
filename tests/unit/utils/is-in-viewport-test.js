@@ -6,34 +6,34 @@ let fakeRectNotInViewport, fakeRectInViewport, fakeWindow, fakeNoTolerance, fake
 module('isInViewport', {
   beforeEach() {
     fakeRectNotInViewport = {
-      top    : 450,
-      left   : 150,
-      bottom : 550,
-      right  : 1130
+      top: 450,
+      left: 150,
+      bottom: 550,
+      right: 1130
     };
 
     fakeRectInViewport = {
-      top    : 300,
-      left   : 150,
-      bottom : 400,
-      right  : 1130
+      top: 300,
+      left: 150,
+      bottom: 400,
+      right: 1130
     };
 
     fakeWindow = {
-      innerHeight : 400,
-      innerWidth  : 1280
+      innerHeight: 400,
+      innerWidth: 1280
     };
 
     fakeNoTolerance = {
-      top    : 0,
-      left   : 0,
-      bottom : 0,
-      right  : 0
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0
     };
 
     fakeTolerance = {
-      top    : 200,
-      bottom : 200
+      top: 200,
+      bottom: 200
     };
   }
 });

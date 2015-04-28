@@ -7,7 +7,7 @@ import {
 import startApp from '../helpers/start-app';
 import { lookupComponent } from '../helpers/utils/lookup';
 
-var application;
+let application;
 const { run } = Ember;
 
 module('Acceptance: Integration', {
