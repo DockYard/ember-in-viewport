@@ -50,7 +50,7 @@ export default Ember.Mixin.create({
     setProperties(this, options);
   }),
 
-  _buildOptions(defaultOptions = []) {
+  _buildOptions(defaultOptions = {}) {
     if (this.container) {
       return merge(defaultOptions, this.container.lookup('config:in-viewport'));
     }
