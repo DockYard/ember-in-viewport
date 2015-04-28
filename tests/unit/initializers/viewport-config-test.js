@@ -7,7 +7,7 @@ const { keys } = Ember;
 let container, application;
 
 module('ViewportConfigInitializer', {
-  beforeEach: function() {
+  beforeEach() {
     Ember.run(function() {
       application = Ember.Application.create();
       container = application.__container__;
