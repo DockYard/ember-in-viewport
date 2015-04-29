@@ -4,9 +4,10 @@ import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
+const get = Ember.get;
+const set = Ember.set;
+
 const {
-  get: get,
-  set: set,
   setProperties,
   computed,
   merge,
@@ -42,22 +43,24 @@ export default Ember.Mixin.create({
 
   _setInitialState: on('init', function() {
     const options = merge({
-      viewportUseRAF    : canUseRAF(),
-      viewportEntered   : false,
-      viewportListeners : defaultListeners
+      viewportUseRAF: canUseRAF(),
+      viewportEntered: false,
+      viewportListeners: defaultListeners
     }, this._buildOptions());
 
     setProperties(this, options);
   }),
 
-  _buildOptions(defaultOptions = []) {
+  _buildOptions(defaultOptions = {}) {
     if (this.container) {
       return merge(defaultOptions, this.container.lookup('config:in-viewport'));
     }
   },
 
   _setupElement: on('didInsertElement', function() {
-    if (!canUseDOM) { return; }
+    if (!canUseDOM) {
+      return;
+    }
 
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
@@ -88,7 +91,9 @@ export default Ember.Mixin.create({
 
     const element = get(this, 'element');
 
-    if (!element) { return; }
+    if (!element) {
+      return;
+    }
 
     const elementId          = get(this, 'elementId');
     const viewportUseRAF     = get(this, 'viewportUseRAF');
@@ -118,8 +123,8 @@ export default Ember.Mixin.create({
     const lastDirectionForEl = lastDirection[elementId];
     const lastPositionForEl  = lastPosition[elementId];
     const newPosition = {
-      top  : $contextEl.scrollTop(),
-      left : $contextEl.scrollLeft()
+      top: $contextEl.scrollTop(),
+      left: $contextEl.scrollLeft()
     };
 
     const scrollDirection  = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
@@ -139,12 +144,17 @@ export default Ember.Mixin.create({
     const didLeave         = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
 
-    if (didEnter) { triggeredEventName = 'didEnterViewport'; }
-    if (didLeave) { triggeredEventName = 'didExitViewport'; }
+    if (didEnter) {
+      triggeredEventName = 'didEnterViewport';
+    }
 
-    this.trigger(triggeredEventName);
+    if (didLeave) {
+      triggeredEventName = 'didExitViewport';
+    }
 
     set(this, 'viewportEntered', hasEnteredViewport);
+
+    this.trigger(triggeredEventName);
   },
 
   _unbindIfEntered() {

@@ -13,9 +13,9 @@ function checkRAF(window, rAF, cAF) {
   let vendors = [ 'ms', 'moz', 'webkit', 'o' ];
 
   for (x = 0; x < vendors.length && !window[rAF]; ++x) {
-    window[rAF] = window[vendors[x] + 'RequestAnimationFrame'];
-    window[cAF] = window[vendors[x] + 'CancelAnimationFrame'] ||
-    window[vendors[x] + 'CancelRequestAnimationFrame'];
+    window[rAF] = window[`${vendors[x]}RequestAnimationFrame`];
+    window[cAF] = window[`${vendors[x]}CancelAnimationFrame`] ||
+    window[`${vendors[x]}CancelRequestAnimationFrame`];
   }
 
   if (window[rAF] && window[cAF]) {
@@ -25,9 +25,10 @@ function checkRAF(window, rAF, cAF) {
   }
 }
 
-
 export default function canUseRAF() {
-  if (!canUseDOM) { return false; }
+  if (!canUseDOM) {
+    return false;
+  }
 
   return checkRAF(window, 'requestAnimationFrame', 'cancelAnimationFrame');
 }

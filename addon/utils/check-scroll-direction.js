@@ -3,7 +3,9 @@ import Ember from 'ember';
 const { floor } = Math;
 
 export default function checkScrollDirection(lastPosition = null, newPosition = {}, sensitivity = 1) {
-  if (!lastPosition) { return 'none'; }
+  if (!lastPosition) {
+    return 'none';
+  }
 
   Ember.assert('sensitivity cannot be 0', sensitivity);
 
@@ -11,12 +13,24 @@ export default function checkScrollDirection(lastPosition = null, newPosition = 
   const { top: lastTop, left: lastLeft } = lastPosition;
 
   const delta = {
-    top  : floor((top  - lastTop)  / sensitivity) * sensitivity,
-    left : floor((left - lastLeft) / sensitivity) * sensitivity
+    top: floor((top  - lastTop)  / sensitivity) * sensitivity,
+    left: floor((left - lastLeft) / sensitivity) * sensitivity
   };
 
-  if (delta.top  > 0) { return 'down'; }
-  if (delta.top  < 0) { return 'up'; }
-  if (delta.left > 0) { return 'right'; }
-  if (delta.left < 0) { return 'left'; }
+  if (delta.top  > 0) {
+    return 'down';
+  }
+
+  if (delta.top  < 0) {
+    return 'up';
+  }
+
+  if (delta.left > 0) {
+    return 'right';
+  }
+
+  if (delta.left < 0) {
+    return 'left';
+  }
+
 }

@@ -6,7 +6,7 @@ module('InViewportMixin');
 
 // Replace this with your real tests.
 test('it works', function(assert) {
-  var InViewportObject = Ember.Object.extend(InViewportMixin);
-  var subject = InViewportObject.create();
+  const InViewportObject = Ember.Object.extend(InViewportMixin);
+  const subject = InViewportObject.create();
   assert.ok(subject);
 });

@@ -9,18 +9,18 @@ const { forEach } = Ember.EnumerableUtils;
 module('checkScrollDirection', {
   beforeEach() {
     lastPosition = {
-      top  : 300,
-      left : 150
+      top: 300,
+      left: 150
     };
   }
 });
 
 test('returns the right direction', function(assert) {
   const movements = [
-    { direction: 'down',  position: { top: 400, left: 150 }},
-    { direction: 'up',    position: { top: 200, left: 150 }},
-    { direction: 'right', position: { top: 300, left: 250 }},
-    { direction: 'left',  position: { top: 300, left: 100 }}
+    { direction: 'down',  position: { top: 400, left: 150 } },
+    { direction: 'up',    position: { top: 200, left: 150 } },
+    { direction: 'right', position: { top: 300, left: 250 } },
+    { direction: 'left',  position: { top: 300, left: 100 } }
   ];
 
   assert.expect(movements.length);
@@ -35,9 +35,9 @@ test('returns the right direction', function(assert) {
 
 test('adjusts for sensitivity', function(assert) {
   const movements = [
-    { direction: undefined, position: { top: 399, left: 150 }},
-    { direction: 'down',    position: { top: 400, left: 150 }},
-    { direction: 'down',    position: { top: 500, left: 250 }}
+    { direction: undefined, position: { top: 399, left: 150 } },
+    { direction: 'down',    position: { top: 400, left: 150 } },
+    { direction: 'down',    position: { top: 500, left: 250 } }
   ];
 
   assert.expect(movements.length);
