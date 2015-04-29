@@ -152,9 +152,9 @@ export default Ember.Mixin.create({
       triggeredEventName = 'didExitViewport';
     }
 
-    this.trigger(triggeredEventName);
-
     set(this, 'viewportEntered', hasEnteredViewport);
+
+    this.trigger(triggeredEventName);
   },
 
   _unbindIfEntered() {
