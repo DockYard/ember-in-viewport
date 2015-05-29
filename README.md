@@ -178,7 +178,7 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 
 ## Legal
 
-[DockYard](http://dockyard.com), Inc &copy; 2015
+[DockYard](http://dockyard.com/ember-consulting), Inc &copy; 2015
 
 [@dockyard](http://twitter.com/dockyard)
 
