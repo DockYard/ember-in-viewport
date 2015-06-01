@@ -9,9 +9,11 @@ const set = Ember.set;
 
 const {
   setProperties,
+  deprecate,
   computed,
   merge,
   typeOf,
+  assert,
   run,
   on,
   $
@@ -24,17 +26,17 @@ const {
   next
 } = run;
 
-const { not }      = computed;
-const { forEach }  = Ember.EnumerableUtils;
+const { not } = computed;
+const { forEach } = Ember.EnumerableUtils;
 const { classify } = Ember.String;
 
 const defaultListeners = [
-  { context: window,   event: 'scroll.scrollable' },
-  { context: window,   event: 'resize.resizable' },
+  { context: window, event: 'scroll.scrollable' },
+  { context: window, event: 'resize.resizable' },
   { context: document, event: 'touchmove.scrollable' }
 ];
 
-const rAFIDS        = {};
+const rAFIDS = {};
 const lastDirection = {};
 const lastPosition  = {};
 
@@ -62,6 +64,7 @@ export default Ember.Mixin.create({
       return;
     }
 
+    this._deprecateOldTriggers();
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
     this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
@@ -87,7 +90,7 @@ export default Ember.Mixin.create({
   },
 
   _setViewportEntered(context = null) {
-    Ember.assert('You must pass a valid context to _setViewportEntered', context);
+    assert('You must pass a valid context to _setViewportEntered', context);
 
     const element = get(this, 'element');
 
@@ -95,12 +98,12 @@ export default Ember.Mixin.create({
       return;
     }
 
-    const elementId          = get(this, 'elementId');
-    const viewportUseRAF     = get(this, 'viewportUseRAF');
-    const viewportTolerance  = get(this, 'viewportTolerance');
-    const $contextEl         = $(context);
-    const height             = $contextEl.height();
-    const width              = $contextEl.width();
+    const elementId = get(this, 'elementId');
+    const viewportUseRAF = get(this, 'viewportUseRAF');
+    const viewportTolerance = get(this, 'viewportTolerance');
+    const $contextEl = $(context);
+    const height = $contextEl.height();
+    const width = $contextEl.width();
     const boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidAccessViewport(
@@ -115,8 +118,8 @@ export default Ember.Mixin.create({
   },
 
   _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
-    Ember.assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
-    Ember.assert('sensitivity cannot be 0', sensitivity);
+    assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
+    assert('sensitivity cannot be 0', sensitivity);
 
     const elementId          = get(this, 'elementId');
     const viewportEntered    = get(this, 'viewportEntered');
@@ -131,6 +134,7 @@ export default Ember.Mixin.create({
     const directionChanged = scrollDirection !== lastDirectionForEl;
 
     if (scrollDirection && directionChanged && viewportEntered) {
+      this.trigger('didScroll', scrollDirection);
       this.trigger(`didScroll${classify(scrollDirection)}`, scrollDirection);
       lastDirection[elementId] = scrollDirection;
     }
@@ -166,7 +170,7 @@ export default Ember.Mixin.create({
   },
 
   _setInitialViewport(context = null) {
-    Ember.assert('You must pass a valid context to _setInitialViewport', context);
+    assert('You must pass a valid context to _setInitialViewport', context);
 
     return scheduleOnce('afterRender', this, () => {
       this._setViewportEntered(context);
@@ -174,9 +178,9 @@ export default Ember.Mixin.create({
   },
 
   _debouncedEventHandler(methodName, ...args) {
-    Ember.assert('You must pass a methodName to _debouncedEventHandler', methodName);
+    assert('You must pass a methodName to _debouncedEventHandler', methodName);
     const validMethodString = typeOf(methodName) === 'string';
-    Ember.assert('methodName must be a string', validMethodString);
+    assert('methodName must be a string', validMethodString);
 
     debounce(this, () => {
       this[methodName](...args);
@@ -184,8 +188,8 @@ export default Ember.Mixin.create({
   },
 
   _bindScrollDirectionListener(context = null, sensitivity = 1) {
-    Ember.assert('You must pass a valid context to _bindScrollDirectionListener', context);
-    Ember.assert('sensitivity cannot be 0', sensitivity);
+    assert('You must pass a valid context to _bindScrollDirectionListener', context);
+    assert('sensitivity cannot be 0', sensitivity);
 
     const $contextEl = $(context);
 
@@ -195,7 +199,7 @@ export default Ember.Mixin.create({
   },
 
   _unbindScrollDirectionListener(context = null) {
-    Ember.assert('You must pass a valid context to _bindScrollDirectionListener', context);
+    assert('You must pass a valid context to _bindScrollDirectionListener', context);
 
     const elementId = get(this, 'elementId');
 
@@ -205,10 +209,10 @@ export default Ember.Mixin.create({
   },
 
   _bindListeners(context = null, event = null) {
-    Ember.assert('You must pass a valid context to _bindListeners', context);
-    Ember.assert('You must pass a valid event to _bindListeners', event);
+    assert('You must pass a valid context to _bindListeners', context);
+    assert('You must pass a valid event to _bindListeners', event);
 
-    $(context).on(`${event}#${get(this, 'elementId')}`, () => {
+    $(context).on(`${event}.${get(this, 'elementId')}`, () => {
       this._debouncedEventHandler('_setViewportEntered', context);
     });
   },
@@ -226,9 +230,22 @@ export default Ember.Mixin.create({
 
     forEach(listeners, (listener) => {
       const { context, event } = listener;
-      $(context).off(`${event}#${elementId}`);
+      $(context).off(`${event}.${elementId}`);
     });
 
     this._unbindScrollDirectionListener(window);
+  },
+
+  _deprecateOldTriggers() {
+    const directions = [ 'Up', 'Down', 'Left', 'Right' ];
+
+    forEach(directions, (direction) => {
+      const triggerName = `didScroll${direction}`;
+      const isListening = this.has(triggerName);
+      deprecate(
+        `[ember-in-viewport] ${triggerName} is deprecated, please use \`didScroll(direction)\` instead.`,
+        isListening
+      );
+    });
   }
 });
