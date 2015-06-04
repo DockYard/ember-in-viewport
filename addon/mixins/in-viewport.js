@@ -60,7 +60,9 @@ export default Ember.Mixin.create({
   },
 
   _setupElement: on('didInsertElement', function() {
-    if (!canUseDOM) {
+    const noSetup = !get(this, 'viewportSpy') && get(this, 'viewportEntered');
+
+    if (!canUseDOM || noSetup) {
       return;
     }
 
