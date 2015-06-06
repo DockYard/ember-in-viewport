@@ -244,7 +244,7 @@ export default Ember.Mixin.create({
       const isListening = this.has(triggerName);
       deprecate(
         `[ember-in-viewport] ${triggerName} is deprecated, please use \`didScroll(direction)\` instead.`,
-        isListening
+        !isListening
       );
     });
   }
