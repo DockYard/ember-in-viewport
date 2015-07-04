@@ -4,8 +4,6 @@ import { module, test } from 'qunit';
 
 let lastPosition;
 
-const { forEach } = Ember.EnumerableUtils;
-
 module('checkScrollDirection', {
   beforeEach() {
     lastPosition = {
@@ -25,7 +23,7 @@ test('returns the right direction', function(assert) {
 
   assert.expect(movements.length);
 
-  forEach(movements, (movement) => {
+  movements.forEach((movement) => {
     const { direction, position } = movement;
     const scrollDirection = checkScrollDirection(lastPosition, position);
 
@@ -42,7 +40,7 @@ test('adjusts for sensitivity', function(assert) {
 
   assert.expect(movements.length);
 
-  forEach(movements, (movement) => {
+  movements.forEach((movement) => {
     const { direction, position } = movement;
     const scrollDirection = checkScrollDirection(lastPosition, position, 100);
 
