@@ -27,7 +27,6 @@ const {
 } = run;
 
 const { not } = computed;
-const { forEach } = Ember.EnumerableUtils;
 const { classify } = Ember.String;
 
 const defaultListeners = [
@@ -74,7 +73,7 @@ export default Ember.Mixin.create({
     const listeners = get(this, 'viewportListeners');
 
     if (!get(this, 'viewportUseRAF')) {
-      forEach(listeners, (listener) => {
+      listeners.forEach((listener) => {
         const { context, event } = listener;
         this._bindListeners(context, event);
       });
@@ -230,7 +229,7 @@ export default Ember.Mixin.create({
       });
     }
 
-    forEach(listeners, (listener) => {
+    listeners.forEach((listener) => {
       const { context, event } = listener;
       $(context).off(`${event}.${elementId}`);
     });
@@ -241,12 +240,12 @@ export default Ember.Mixin.create({
   _deprecateOldTriggers() {
     const directions = [ 'Up', 'Down', 'Left', 'Right' ];
 
-    forEach(directions, (direction) => {
+    directions.forEach((direction) => {
       const triggerName = `didScroll${direction}`;
       const isListening = this.has(triggerName);
       deprecate(
         `[ember-in-viewport] ${triggerName} is deprecated, please use \`didScroll(direction)\` instead.`,
-        isListening
+        !isListening
       );
     });
   }
