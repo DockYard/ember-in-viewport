@@ -1,14 +1,11 @@
 import Ember from 'ember';
 import {
   module,
-  test,
-  skip
+  test
 } from 'qunit';
 import startApp from '../helpers/start-app';
-import { lookupComponent } from '../helpers/utils/lookup';
 
 let application;
-const { run } = Ember;
 
 module('Acceptance: Integration', {
   beforeEach() {
@@ -25,8 +22,6 @@ test('Component is active when in viewport', function(assert) {
   visit('/');
 
   andThen(() => {
-    const component = lookupComponent(application, 'foo-bar');
-
     assert.ok(find('.fooBar.active').length);
   });
 });
