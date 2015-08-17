@@ -4,43 +4,29 @@ import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
-const get = Ember.get;
-const set = Ember.set;
-
 const {
+  Mixin,
   setProperties,
-  deprecate,
-  computed,
   merge,
   typeOf,
   assert,
-  run,
   on,
-  $
+  $,
+  get,
+  set,
+  run: { scheduleOnce, debounce, bind, next },
+  computed: { not }
 } = Ember;
-
-const {
-  scheduleOnce,
-  debounce,
-  bind,
-  next
-} = run;
-
-const { not } = computed;
-const { forEach } = Ember.EnumerableUtils;
-const { classify } = Ember.String;
-
 const defaultListeners = [
   { context: window, event: 'scroll.scrollable' },
   { context: window, event: 'resize.resizable' },
   { context: document, event: 'touchmove.scrollable' }
 ];
-
 const rAFIDS = {};
 const lastDirection = {};
 const lastPosition  = {};
 
-export default Ember.Mixin.create({
+export default Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
   _setInitialState: on('init', function() {
@@ -64,7 +50,6 @@ export default Ember.Mixin.create({
       return;
     }
 
-    this._deprecateOldTriggers();
     this._setInitialViewport(window);
     this._addObserverIfNotSpying();
     this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
@@ -72,7 +57,7 @@ export default Ember.Mixin.create({
     const listeners = get(this, 'viewportListeners');
 
     if (!get(this, 'viewportUseRAF')) {
-      forEach(listeners, (listener) => {
+      listeners.forEach((listener) => {
         const { context, event } = listener;
         this._bindListeners(context, event);
       });
@@ -121,21 +106,20 @@ export default Ember.Mixin.create({
     assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
     assert('sensitivity cannot be 0', sensitivity);
 
-    const elementId          = get(this, 'elementId');
-    const viewportEntered    = get(this, 'viewportEntered');
+    const elementId = get(this, 'elementId');
+    const viewportEntered = get(this, 'viewportEntered');
     const lastDirectionForEl = lastDirection[elementId];
-    const lastPositionForEl  = lastPosition[elementId];
+    const lastPositionForEl = lastPosition[elementId];
     const newPosition = {
       top: $contextEl.scrollTop(),
       left: $contextEl.scrollLeft()
     };
 
-    const scrollDirection  = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
     const directionChanged = scrollDirection !== lastDirectionForEl;
 
     if (scrollDirection && directionChanged && viewportEntered) {
       this.trigger('didScroll', scrollDirection);
-      this.trigger(`didScroll${classify(scrollDirection)}`, scrollDirection);
       lastDirection[elementId] = scrollDirection;
     }
 
@@ -143,9 +127,9 @@ export default Ember.Mixin.create({
   },
 
   _triggerDidAccessViewport(hasEnteredViewport = false) {
-    const viewportEntered  = get(this, 'viewportEntered');
-    const didEnter         = !viewportEntered && hasEnteredViewport;
-    const didLeave         = viewportEntered && !hasEnteredViewport;
+    const viewportEntered = get(this, 'viewportEntered');
+    const didEnter = !viewportEntered && hasEnteredViewport;
+    const didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
 
     if (didEnter) {
@@ -179,8 +163,7 @@ export default Ember.Mixin.create({
 
   _debouncedEventHandler(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
-    const validMethodString = typeOf(methodName) === 'string';
-    assert('methodName must be a string', validMethodString);
+    assert('methodName must be a string', typeOf(methodName) === 'string');
 
     debounce(this, () => {
       this[methodName](...args);
@@ -228,24 +211,11 @@ export default Ember.Mixin.create({
       });
     }
 
-    forEach(listeners, (listener) => {
+    listeners.forEach((listener) => {
       const { context, event } = listener;
       $(context).off(`${event}.${elementId}`);
     });
 
     this._unbindScrollDirectionListener(window);
-  },
-
-  _deprecateOldTriggers() {
-    const directions = [ 'Up', 'Down', 'Left', 'Right' ];
-
-    forEach(directions, (direction) => {
-      const triggerName = `didScroll${direction}`;
-      const isListening = this.has(triggerName);
-      deprecate(
-        `[ember-in-viewport] ${triggerName} is deprecated, please use \`didScroll(direction)\` instead.`,
-        !isListening
-      );
-    });
   }
 });
