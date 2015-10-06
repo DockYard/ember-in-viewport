@@ -10,7 +10,6 @@ const {
   merge,
   typeOf,
   assert,
-  on,
   $,
   get,
   set,
@@ -29,7 +28,8 @@ const lastPosition  = {};
 export default Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
 
-  _setInitialState: on('init', function() {
+  init() {
+    this._super(...arguments);
     const options = merge({
       viewportUseRAF: canUseRAF(),
       viewportEntered: false,
@@ -37,15 +37,11 @@ export default Mixin.create({
     }, this._buildOptions());
 
     setProperties(this, options);
-  }),
-
-  _buildOptions(defaultOptions = {}) {
-    if (this.container) {
-      return merge(defaultOptions, this.container.lookup('config:in-viewport'));
-    }
   },
 
-  _setupElement: on('didInsertElement', function() {
+  didInsertElement() {
+    this._super(...arguments);
+
     if (!canUseDOM) {
       return;
     }
@@ -54,19 +50,24 @@ export default Mixin.create({
     this._addObserverIfNotSpying();
     this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
 
-    const listeners = get(this, 'viewportListeners');
-
     if (!get(this, 'viewportUseRAF')) {
-      listeners.forEach((listener) => {
+      get(this, 'viewportListeners').forEach((listener) => {
         const { context, event } = listener;
         this._bindListeners(context, event);
       });
     }
-  }),
+  },
 
-  _teardown: on('willDestroyElement', function() {
+  willDestroyElement() {
+    this._super(...arguments);
     this._unbindListeners();
-  }),
+  },
+
+  _buildOptions(defaultOptions = {}) {
+    if (this.container) {
+      return merge(defaultOptions, this.container.lookup('config:in-viewport'));
+    }
+  },
 
   _addObserverIfNotSpying() {
     if (!get(this, 'viewportSpy')) {
@@ -83,20 +84,20 @@ export default Mixin.create({
       return;
     }
 
-    const elementId = get(this, 'elementId');
-    const viewportUseRAF = get(this, 'viewportUseRAF');
-    const viewportTolerance = get(this, 'viewportTolerance');
     const $contextEl = $(context);
-    const height = $contextEl.height();
-    const width = $contextEl.width();
     const boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidAccessViewport(
-      isInViewport(boundingClientRect, height, width, viewportTolerance)
+      isInViewport(
+        boundingClientRect,
+        $contextEl.height(),
+        $contextEl.width(),
+        get(this, 'viewportTolerance')
+      )
     );
 
-    if (boundingClientRect && viewportUseRAF) {
-      rAFIDS[elementId] = window.requestAnimationFrame(
+    if (boundingClientRect && get(this, 'viewportUseRAF')) {
+      rAFIDS[get(this, 'elementId')] = window.requestAnimationFrame(
         bind(this, this._setViewportEntered, context)
       );
     }
@@ -107,7 +108,6 @@ export default Mixin.create({
     assert('sensitivity cannot be 0', sensitivity);
 
     const elementId = get(this, 'elementId');
-    const viewportEntered = get(this, 'viewportEntered');
     const lastDirectionForEl = lastDirection[elementId];
     const lastPositionForEl = lastPosition[elementId];
     const newPosition = {
@@ -118,7 +118,7 @@ export default Mixin.create({
     const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
     const directionChanged = scrollDirection !== lastDirectionForEl;
 
-    if (scrollDirection && directionChanged && viewportEntered) {
+    if (scrollDirection && directionChanged && get(this, 'viewportEntered')) {
       this.trigger('didScroll', scrollDirection);
       lastDirection[elementId] = scrollDirection;
     }
@@ -131,6 +131,10 @@ export default Mixin.create({
     const didEnter = !viewportEntered && hasEnteredViewport;
     const didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
+
+    if (!didEnter && !didLeave) {
+      return;
+    }
 
     if (didEnter) {
       triggeredEventName = 'didEnterViewport';
@@ -165,9 +169,7 @@ export default Mixin.create({
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
 
-    debounce(this, () => {
-      this[methodName](...args);
-    }, get(this, 'viewportRefreshRate'));
+    debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
   },
 
   _bindScrollDirectionListener(context = null, sensitivity = 1) {
@@ -202,7 +204,6 @@ export default Mixin.create({
 
   _unbindListeners() {
     const elementId = get(this, 'elementId');
-    const listeners = get(this, 'viewportListeners');
 
     if (get(this, 'viewportUseRAF')) {
       next(this, () => {
@@ -211,7 +212,7 @@ export default Mixin.create({
       });
     }
 
-    listeners.forEach((listener) => {
+    get(this, 'viewportListeners').forEach((listener) => {
       const { context, event } = listener;
       $(context).off(`${event}.${elementId}`);
     });
