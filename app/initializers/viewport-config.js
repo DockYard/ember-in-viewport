@@ -1,7 +1,10 @@
 import Ember from 'ember';
 import config from '../config/environment';
 
-const defaultConfig = {
+// Note: this file must be es5-only in order to be compatible with apps that do
+// not use an es6 transpiler
+// jscs:disable
+var defaultConfig = {
   viewportSpy               : false,
   viewportScrollSensitivity : 1,
   viewportRefreshRate       : 100,
@@ -14,12 +17,12 @@ const defaultConfig = {
   }
 };
 
-const { merge } = Ember;
+var merge = Ember.merge;
 
 export function initialize(_container, application) {
-  const { viewportConfig = {} } = config;
+  var viewportConfig = config.viewportConfig || {};
 
-  const mergedConfig = merge(defaultConfig, viewportConfig);
+  var mergedConfig = merge(defaultConfig, viewportConfig);
 
   application.register('config:in-viewport', mergedConfig, { instantiate: false });
 }
@@ -28,3 +31,4 @@ export default {
   name: 'viewport-config',
   initialize: initialize
 };
+// jscs:enable
