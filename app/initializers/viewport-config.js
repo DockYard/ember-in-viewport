@@ -2,23 +2,27 @@ import Ember from 'ember';
 import config from '../config/environment';
 
 const defaultConfig = {
-  viewportSpy               : false,
-  viewportScrollSensitivity : 1,
-  viewportRefreshRate       : 100,
-  viewportListeners         : [],
+  viewportSpy: false,
+  viewportScrollSensitivity: 1,
+  viewportRefreshRate: 100,
+  viewportListeners: [
+    { context: window, event: 'scroll.scrollable' },
+    { context: window, event: 'resize.resizable' },
+    { context: document, event: 'touchmove.scrollable' }
+  ],
   viewportTolerance: {
-    top    : 0,
-    left   : 0,
-    bottom : 0,
-    right  : 0
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
   }
 };
 
 const { merge } = Ember;
 
-export function initialize(_container, application) {
+export function initialize() {
+  const application = arguments[1] || arguments[0];
   const { viewportConfig = {} } = config;
-
   const mergedConfig = merge(defaultConfig, viewportConfig);
 
   application.register('config:in-viewport', mergedConfig, { instantiate: false });
