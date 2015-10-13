@@ -16,14 +16,9 @@ const {
   run: { scheduleOnce, debounce, bind, next },
   computed: { not }
 } = Ember;
-const defaultListeners = [
-  { context: window, event: 'scroll.scrollable' },
-  { context: window, event: 'resize.resizable' },
-  { context: document, event: 'touchmove.scrollable' }
-];
 const rAFIDS = {};
 const lastDirection = {};
-const lastPosition  = {};
+const lastPosition = {};
 
 export default Mixin.create({
   viewportExited: not('viewportEntered').readOnly(),
@@ -32,8 +27,7 @@ export default Mixin.create({
     this._super(...arguments);
     const options = merge({
       viewportUseRAF: canUseRAF(),
-      viewportEntered: false,
-      viewportListeners: defaultListeners
+      viewportEntered: false
     }, this._buildOptions());
 
     setProperties(this, options);
@@ -131,10 +125,6 @@ export default Mixin.create({
     const didEnter = !viewportEntered && hasEnteredViewport;
     const didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
-
-    if (!didEnter && !didLeave) {
-      return;
-    }
 
     if (didEnter) {
       triggeredEventName = 'didEnterViewport';
