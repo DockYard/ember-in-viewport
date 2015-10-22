@@ -134,7 +134,9 @@ export default Mixin.create({
       triggeredEventName = 'didExitViewport';
     }
 
-    set(this, 'viewportEntered', hasEnteredViewport);
+    if (get(this, 'viewportSpy') || !viewportEntered) {
+      set(this, 'viewportEntered', hasEnteredViewport);
+    }
 
     this.trigger(triggeredEventName);
   },
