@@ -1,9 +1,10 @@
 ---
 language: node_js
 node_js:
-  - "0.12"
+- "4.1.2"
 
-sudo: false
+sudo: required
+dist: trusty
 
 cache:
   directories:
@@ -23,7 +24,7 @@ matrix:
 before_install:
   - export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
   - "npm config set spin false"
-  - "npm install -g npm@^2"
+  - "npm install -g npm@^3"
 
 install:
   - npm install -g bower
