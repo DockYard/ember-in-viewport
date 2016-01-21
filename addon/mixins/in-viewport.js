@@ -10,6 +10,7 @@ const {
   merge,
   typeOf,
   assert,
+  getOwner,	
   $,
   get,
   set,
@@ -58,8 +59,8 @@ export default Mixin.create({
   },
 
   _buildOptions(defaultOptions = {}) {
-    if (this.container) {
-      return merge(defaultOptions, this.container.lookup('config:in-viewport'));
+    if (getOwner(this)) {
+      return merge(defaultOptions, getOwner(this).lookup('config:in-viewport'));
     }
   },
 
