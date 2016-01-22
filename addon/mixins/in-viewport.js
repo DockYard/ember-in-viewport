@@ -10,7 +10,7 @@ const {
   merge,
   typeOf,
   assert,
-  getOwner,	
+  getOwner,
   $,
   get,
   set,
