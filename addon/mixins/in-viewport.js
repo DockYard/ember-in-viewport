@@ -28,7 +28,8 @@ export default Mixin.create({
     this._super(...arguments);
     const options = merge({
       viewportUseRAF: canUseRAF(),
-      viewportEntered: false
+      viewportEntered: false,
+      viewportListeners: []
     }, this._buildOptions());
 
     setProperties(this, options);
