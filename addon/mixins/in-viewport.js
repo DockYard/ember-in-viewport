@@ -3,6 +3,8 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
+import getOwner from 'ember-getowner-polyfill';
+
 
 const {
   Mixin,
@@ -58,8 +60,10 @@ export default Mixin.create({
   },
 
   _buildOptions(defaultOptions = {}) {
-    if (this.container) {
-      return merge(defaultOptions, this.container.lookup('config:in-viewport'));
+    const owner = getOwner(this);
+
+    if (owner) {
+      return merge(defaultOptions, owner.lookup('config:in-viewport'));
     }
   },
 
