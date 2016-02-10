@@ -5,7 +5,6 @@ import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 import getOwner from 'ember-getowner-polyfill';
 
-
 const {
   Mixin,
   setProperties,
