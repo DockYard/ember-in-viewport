@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import config from '../config/environment';
+import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
 const defaultConfig = {
   viewportSpy: false,
@@ -7,8 +8,7 @@ const defaultConfig = {
   viewportRefreshRate: 100,
   viewportListeners: [
     { context: window, event: 'scroll.scrollable' },
-    { context: window, event: 'resize.resizable' },
-    { context: document, event: 'touchmove.scrollable' }
+    { context: window, event: 'resize.resizable' }
   ],
   viewportTolerance: {
     top: 0,
@@ -17,6 +17,13 @@ const defaultConfig = {
     right: 0
   }
 };
+
+if (canUseDOM) {
+  defaultConfig.viewportListeners.push({
+    context: document,
+    event: 'touchmove.scrollable'
+  })
+}
 
 const { merge } = Ember;
 
