@@ -88,8 +88,8 @@ export default Mixin.create({
     this._triggerDidAccessViewport(
       isInViewport(
         boundingClientRect,
-        $contextEl.height(),
-        $contextEl.width(),
+        $contextEl.innerHeight(),
+        $contextEl.innerWidth(),
         get(this, 'viewportTolerance')
       )
     );
