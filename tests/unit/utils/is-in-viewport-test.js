@@ -55,3 +55,17 @@ test('returns true if dimensions not within viewport but within tolerance', func
   const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, fakeTolerance);
   assert.ok(result);
 });
+
+test('returns true if dimensions not within viewport but within tolerance', function(assert) {
+  const { innerHeight, innerWidth } = fakeWindow;
+  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, fakeTolerance);
+  assert.ok(result);
+});
+
+test('returns true if dimension not within viewport but tolerance for dimension outside of viewport set as `null`', function(assert) {
+  const { innerHeight, innerWidth } = fakeWindow;
+  const result = isInViewport(fakeRectNotInViewport, innerHeight, innerWidth, fakeTolerance);
+  fakeTolerance.bottom = null;
+
+  assert.ok(result);
+});

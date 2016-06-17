@@ -19,10 +19,9 @@ export default function isInViewport(boundingClientRect = {}, height = 0, width 
     right: rightTolerance
   } = tolerances;
 
-  return (
-    (top + topTolerance)       >= 0 &&
-    (left + leftTolerance)     >= 0 &&
-    (bottom - bottomTolerance) <= height &&
-    (right - rightTolerance)   <= width
-  );
+  // Don't check for dimensions where tolerance set to `null`
+  return (topTolerance === null ? true : (top - topTolerance) <= height) &&
+    (topTolerance === null ? true : (left + leftTolerance) >= 0) &&
+    (bottomTolerance === null ? true : (bottom - bottomTolerance) <= height) &&
+    (rightTolerance === null ? true : (right - rightTolerance) <= width);
 }

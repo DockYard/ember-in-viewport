@@ -109,13 +109,19 @@ export default Ember.Component.extend(InViewportMixin, {
 
   If `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
 
-  This value also affects how often the Mixin checks scroll direction. 
+  This value also affects how often the Mixin checks scroll direction.
 
 - `viewportTolerance: object`
 
   Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
 
-  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered. 
+  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.
+
+  If you don't want to take a tolerance into account for your calculation, explicitly set it to `null`.
+
+  Example: `{ top: 0, left: 0, bottom: null, right: 0 }`
+
+  For the above example, `viewPortEntered` is fired when the top of the component comes into the viewport not the entire component.
 
 ### Global options
 
