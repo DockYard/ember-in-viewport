@@ -58,6 +58,6 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
-    "demoURL": "http://development.ember-in-viewport-demo.divshot.io"
+    "demoURL": "https://poteto.github.io/ember-in-viewport"
   }
 }
