@@ -42,3 +42,24 @@ html, body {
   z-index: 10000;
   text-align: center;
 }
+
+#ember-testing-container {
+  position: absolute !important;
+  top: 0;
+  min-height: 500px !important;
+
+  .fooBar {
+    display: inline-block;
+    width: 300px;
+    margin-bottom: 300px;
+    background-color: black;
+  }
+
+  .fooBar p {
+    color: white;
+  }
+
+  .fooBar.active {
+    background-color: red;
+  }
+}
