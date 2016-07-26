@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const { merge } = Ember;
+const assign = Ember.assign || Ember.merge;
 
 const defaultTolerance = {
   top: 0,
@@ -11,7 +11,7 @@ const defaultTolerance = {
 
 export default function isInViewport(boundingClientRect = {}, height = 0, width = 0, tolerance = defaultTolerance) {
   const { top, left, bottom, right } = boundingClientRect;
-  const tolerances = merge(defaultTolerance, tolerance);
+  const tolerances = assign(defaultTolerance, tolerance);
   const {
     top: topTolerance,
     left: leftTolerance,
