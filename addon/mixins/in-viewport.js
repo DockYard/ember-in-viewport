@@ -8,7 +8,6 @@ import getOwner from 'ember-getowner-polyfill';
 const {
   Mixin,
   setProperties,
-  merge,
   typeOf,
   assert,
   $,
@@ -17,6 +16,9 @@ const {
   run: { scheduleOnce, debounce, bind, next },
   computed: { not }
 } = Ember;
+
+const assign = Ember.assign || Ember.merge;
+
 const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
@@ -26,7 +28,7 @@ export default Mixin.create({
 
   init() {
     this._super(...arguments);
-    const options = merge({
+    const options = assign({
       viewportUseRAF: canUseRAF(),
       viewportEntered: false,
       viewportListeners: []
@@ -63,7 +65,7 @@ export default Mixin.create({
     const owner = getOwner(this);
 
     if (owner) {
-      return merge(defaultOptions, owner.lookup('config:in-viewport'));
+      return assign(defaultOptions, owner.lookup('config:in-viewport'));
     }
   },
 
