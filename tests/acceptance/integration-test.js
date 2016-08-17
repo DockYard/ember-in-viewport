@@ -19,9 +19,20 @@ module('Acceptance: Integration', {
 
 test('Component is active when in viewport', function(assert) {
   assert.expect(1);
+
   visit('/');
 
   andThen(() => {
     assert.ok(find('.fooBar.active').length);
+  });
+});
+
+test('Component is inactive when not in viewport', function(assert) {
+  assert.expect(1);
+
+  visit('/');
+
+  andThen(() => {
+    assert.ok(find('.my-component.inactive').length);
   });
 });
