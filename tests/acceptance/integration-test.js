@@ -1,21 +1,7 @@
-import Ember from 'ember';
-import {
-  module,
-  test
-} from 'qunit';
-import startApp from '../helpers/start-app';
+import { test } from 'qunit';
+import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
 
-let application;
-
-module('Acceptance: Integration', {
-  beforeEach() {
-    application = startApp();
-  },
-
-  afterEach() {
-    Ember.run(application, 'destroy');
-  }
-});
+moduleForAcceptance('Acceptance | integration');
 
 test('Component is active when in viewport', function(assert) {
   assert.expect(1);
