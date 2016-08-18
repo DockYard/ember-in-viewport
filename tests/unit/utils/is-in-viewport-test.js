@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 
 let fakeRectNotInViewport, fakeRectInViewport, fakeWindow, fakeNoTolerance, fakeTolerance;
 
-module('isInViewport', {
+module('Unit | Utility | is in viewport', {
   beforeEach() {
     fakeRectNotInViewport = {
       top: 450,
