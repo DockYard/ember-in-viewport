@@ -22,3 +22,19 @@ test('Component is inactive when not in viewport', function(assert) {
     assert.ok(find('.my-component.inactive').length);
   });
 });
+
+test('Component is active when scrolled into viewport', function(assert) {
+  assert.expect(1);
+
+  visit('/');
+
+  andThen(() => {
+    find(window).scrollTop(2000);
+  });
+
+  waitFor('.my-component.active');
+
+  andThen(() => {
+    assert.ok(find('.my-component.active').length);
+  });
+});
