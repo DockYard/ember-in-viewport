@@ -1,18 +1,18 @@
-.fooBar, .my-component {
+.my-component {
   display: inline-block;
   width: 300px;
   background-color: black;
 }
 
-.fooBar p, .my-component p {
+.my-component p {
   color: white;
 }
 
-.fooBar.active, .my-component.active {
+.my-component.active {
   background-color: red;
 }
 
-.fooBar.top {
+.my-component.top {
   margin-bottom: 300px;
 }
 

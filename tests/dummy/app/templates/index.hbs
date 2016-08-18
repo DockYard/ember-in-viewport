@@ -1,11 +1,13 @@
 <div>
-  {{#foo-bar class="top"}}
+  {{#my-component class="top"
+    viewportSpyOverride=true
+  }}
     <p>Hi!</p>
-  {{/foo-bar}}
+  {{/my-component}}
 </div>
 
 <div class="hide-me">
-  {{#my-component}}
+  {{#my-component class="bottom"}}
     <p>Hi!</p>
   {{/my-component}}
 </div>
