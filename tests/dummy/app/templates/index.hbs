@@ -1,3 +1,8 @@
-{{#foo-bar}}
-  <p>Hi!</p>
-{{/foo-bar}}
+<button class="button alert" {{action "moar" on="click"}}>Moar kittens!</button>
+<h4><pre class="kitten-counter">Kittens rendered: {{kittens.length}}</pre></h4>
+
+<ul class="small-block-grid-1 medium-block-grid-2 large-block-grid-3">
+  {{#each kittens as |kitten|}}
+    {{kitten-card kitten=kitten}}
+  {{/each}}
+</ul>

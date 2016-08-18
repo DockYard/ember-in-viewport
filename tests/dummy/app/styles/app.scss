@@ -1,0 +1,65 @@
+@import "settings";
+
+@import "foundation";
+
+html, body {
+  padding: 20px;
+}
+
+.kittenCard-container {
+  &.active {
+    .kittenCard {
+      background: #fdc61d;
+    }
+    .kittenCard-avatar {
+      opacity: 1;
+    }
+    .kittenCard-title {
+      // color: black
+    }
+  }
+}
+
+.kittenCard {
+  padding: 20px;
+  border: 2px solid #fdc61d;
+  min-height: 400px;
+
+  &-title {
+    margin-top: 20px;
+    text-align: center;
+    color: black;
+    transition: all 0.2s ease-out;
+  }
+  &-avatar{
+    opacity: 0.5;
+    transition: opacity 0.1s ease-in-out;
+  }
+}
+
+.kitten-counter {
+  padding: 10px 10px;
+  z-index: 10000;
+  text-align: center;
+}
+
+#ember-testing-container {
+  position: absolute !important;
+  top: 0;
+  min-height: 500px !important;
+
+  .fooBar {
+    display: inline-block;
+    width: 300px;
+    margin-bottom: 300px;
+    background-color: black;
+  }
+
+  .fooBar p {
+    color: white;
+  }
+
+  .fooBar.active {
+    background-color: red;
+  }
+}

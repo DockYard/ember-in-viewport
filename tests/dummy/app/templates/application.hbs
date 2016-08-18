@@ -1,3 +1,11 @@
-<h2 id="title">Welcome to Ember</h2>
+{{#if isTest}}
+  {{#foo-bar}}
+    <p>Hi!</p>
+  {{/foo-bar}}
+{{else}}
+  <h2 id="title">KittenYard Inc</h2>
 
-{{outlet}}
+  <p>The "Moar kittens!" button will exponentially add more kittens, so clicking it too much will probably crash your browser. The <code>ember-in-viewport</code> addon is not designed for tracking more than a few hundred elements, so there will likely be degraded performance if you implement something that requires tracking a significant amount of elements at once.</p>
+
+  {{outlet}}
+{{/if}}

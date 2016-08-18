@@ -21,8 +21,10 @@
     "broccoli-asset-rev": "^2.4.2",
     "ember-ajax": "^2.0.1",
     "ember-cli": "2.7.0",
+    "broccoli-clean-css": "1.1.0",
     "ember-cli-app-version": "^1.0.0",
     "ember-cli-dependency-checker": "^1.2.0",
+    "ember-cli-github-pages": "0.1.0",
     "ember-cli-htmlbars": "^1.0.3",
     "ember-cli-htmlbars-inline-precompile": "^0.3.1",
     "ember-cli-inject-live-reload": "^1.4.0",
@@ -31,11 +33,14 @@
     "ember-cli-release": "^0.2.9",
     "ember-cli-sri": "^2.1.0",
     "ember-cli-test-loader": "^1.1.0",
+    "ember-cli-foundation-sass": "2.0.0",
+    "ember-cli-sass": "5.3.1",
     "ember-cli-uglify": "^1.2.0",
     "ember-disable-prototype-extensions": "^1.1.0",
     "ember-export-application-global": "^1.0.5",
     "ember-load-initializers": "^0.5.1",
     "ember-resolver": "^2.0.3",
+    "ember-cli-foundation-sass": "2.0.0",
     "loader.js": "^4.0.1"
   },
   "keywords": [
@@ -53,6 +58,6 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
-    "demoURL": "http://development.ember-in-viewport-demo.divshot.io"
+    "demoURL": "https://poteto.github.io/ember-in-viewport"
   }
 }

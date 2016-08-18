@@ -8,8 +8,8 @@
 This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the Ember run loop and event listeners. 
 
 ## Demo
-- App: http://development.ember-in-viewport-demo.divshot.io/
-- Source: https://github.com/poteto/ember-in-viewport-demo
+- App: https://poteto.github.io/ember-in-viewport/
+- Source: in this repo's dummy app (tests/dummy)
 
 ## Usage
 Usage is simple. First, add the Mixin to your `Component`:
