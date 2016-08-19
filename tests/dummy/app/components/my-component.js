@@ -15,13 +15,18 @@ export default Component.extend(InViewportMixin, {
     let options = {};
 
     let {
-      viewportSpyOverride
+      viewportSpyOverride,
+      viewportEnabledOverride
     } = getProperties(this,
-      'viewportSpyOverride'
+      'viewportSpyOverride',
+      'viewportEnabledOverride'
     );
 
     if (viewportSpyOverride !== undefined) {
       options.viewportSpy = viewportSpyOverride;
+    }
+    if (viewportEnabledOverride !== undefined) {
+      options.viewportEnabled = viewportEnabledOverride;
     }
 
     setProperties(this, options);
