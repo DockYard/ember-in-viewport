@@ -9,7 +9,7 @@ test('Component is active when in viewport', function(assert) {
   visit('/');
 
   andThen(() => {
-    assert.ok(find('.fooBar.active').length);
+    assert.ok(find('.my-component.top.active').length);
   });
 });
 
@@ -19,11 +19,11 @@ test('Component is inactive when not in viewport', function(assert) {
   visit('/');
 
   andThen(() => {
-    assert.ok(find('.my-component.inactive').length);
+    assert.ok(find('.my-component.bottom.inactive').length);
   });
 });
 
-test('Component is active when scrolled into viewport', function(assert) {
+test('Component moves to active when scrolled into viewport', function(assert) {
   assert.expect(1);
 
   visit('/');
@@ -32,9 +32,25 @@ test('Component is active when scrolled into viewport', function(assert) {
     find(window).scrollTop(2000);
   });
 
-  waitFor('.my-component.active');
+  waitFor('.my-component.bottom.active');
 
   andThen(() => {
-    assert.ok(find('.my-component.active').length);
+    assert.ok(find('.my-component.bottom.active').length);
+  });
+});
+
+test('Component moves back to inactive when scrolled out of viewport', function(assert) {
+  assert.expect(1);
+
+  visit('/');
+
+  andThen(() => {
+    find(window).scrollTop(2000);
+  });
+
+  waitFor('.my-component.top.inactive');
+
+  andThen(() => {
+    assert.ok(find('.my-component.top.inactive').length);
   });
 });
