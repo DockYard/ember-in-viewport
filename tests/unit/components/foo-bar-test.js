@@ -35,12 +35,8 @@ test('it works normal', function(assert) {
   assert.equal(count, 1);
 });
 
-test('it bails if not spying and noSetup = true', function(assert) {
+test('it bails if noSetup = true', function(assert) {
   assert.expect(1);
-
-  const component = this.subject({
-    viewportSpy: false
-  });
 
   run(this, function() {
     component.set('noSetup', true);

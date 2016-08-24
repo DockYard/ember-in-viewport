@@ -37,9 +37,7 @@ export default Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
-    const noSetup = !get(this, 'viewportSpy') && get(this, 'noSetup');
-
-    if (!canUseDOM || noSetup) {
+    if (!canUseDOM || get(this, 'noSetup')) {
       return;
     }
 
