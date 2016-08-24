@@ -55,6 +55,11 @@ export default Mixin.create({
 
   willDestroyElement() {
     this._super(...arguments);
+
+    if (!canUseDOM || get(this, 'noSetup')) {
+      return;
+    }
+
     this._unbindListeners();
   },
 
