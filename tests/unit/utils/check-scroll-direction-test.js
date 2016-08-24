@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 import { module, test } from 'qunit';
 
