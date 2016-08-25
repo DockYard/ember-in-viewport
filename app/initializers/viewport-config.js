@@ -22,7 +22,7 @@ if (canUseDOM) {
   defaultConfig.viewportListeners.push({
     context: document,
     event: 'touchmove.scrollable'
-  })
+  });
 }
 
 const { merge } = Ember;
