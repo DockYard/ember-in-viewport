@@ -9,7 +9,7 @@ test('Component is active when in viewport', function(assert) {
   visit('/');
 
   andThen(() => {
-    assert.ok(find('.my-component.top.active').length);
+    assert.ok(find('.my-component.top.start-enabled.active').length);
   });
 });
 
@@ -48,9 +48,19 @@ test('Component moves back to inactive when scrolled out of viewport', function(
     find(window).scrollTop(2000);
   });
 
-  waitFor('.my-component.top.inactive');
+  waitFor('.my-component.top.start-enabled.inactive');
 
   andThen(() => {
-    assert.ok(find('.my-component.top.inactive').length);
+    assert.ok(find('.my-component.top.start-enabled.inactive').length);
+  });
+});
+
+test('Component can be disabled', function(assert) {
+  assert.expect(1);
+
+  visit('/');
+
+  andThen(() => {
+    assert.ok(find('.my-component.top.start-disabled.inactive').length);
   });
 });

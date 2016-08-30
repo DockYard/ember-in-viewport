@@ -44,15 +44,9 @@ export default Mixin.create({
       return;
     }
 
-    this._setInitialViewport(window);
-    this._addObserverIfNotSpying();
-    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
-
-    if (!get(this, 'viewportUseRAF')) {
-      get(this, 'viewportListeners').forEach((listener) => {
-        const { context, event } = listener;
-        this._bindListeners(context, event);
-      });
+    const viewportEnabled = get(this, 'viewportEnabled');
+    if (viewportEnabled) {
+      this._startListening();
     }
   },
 
@@ -66,6 +60,19 @@ export default Mixin.create({
 
     if (owner) {
       return assign(defaultOptions, owner.lookup('config:in-viewport'));
+    }
+  },
+
+  _startListening() {
+    this._setInitialViewport(window);
+    this._addObserverIfNotSpying();
+    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
+
+    if (!get(this, 'viewportUseRAF')) {
+      get(this, 'viewportListeners').forEach((listener) => {
+        const { context, event } = listener;
+        this._bindListeners(context, event);
+      });
     }
   },
 
