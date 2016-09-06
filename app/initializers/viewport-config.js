@@ -26,7 +26,7 @@ if (canUseDOM) {
   });
 }
 
-const assign = Ember.assign || Ember.merg
+const assign = Ember.assign || Ember.merge;
 
 export function initialize() {
   const application = arguments[1] || arguments[0];
