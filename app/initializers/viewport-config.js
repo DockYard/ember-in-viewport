@@ -26,12 +26,12 @@ if (canUseDOM) {
   });
 }
 
-const { merge } = Ember;
+const assign = Ember.assign || Ember.merge;
 
 export function initialize() {
   const application = arguments[1] || arguments[0];
   const { viewportConfig = {} } = config;
-  const mergedConfig = merge(defaultConfig, viewportConfig);
+  const mergedConfig = assign({}, defaultConfig, viewportConfig);
 
   application.register('config:in-viewport', mergedConfig, { instantiate: false });
 }
