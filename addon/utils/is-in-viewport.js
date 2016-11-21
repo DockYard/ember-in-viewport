@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-const { merge } = Ember;
+const { assert, merge } = Ember;
 
 const defaultTolerance = {
   top: 0,
@@ -8,16 +8,24 @@ const defaultTolerance = {
   bottom: 0,
   right: 0
 };
-
-const isAxisInViewport = function(start, startTolerance, end, endTolerance, limit) {
-  // Dimensions are fully LARGER than the viewport or fully WITHIN the viewport.
+const defaultWithinLimitCalc = function(start, startTolerance, end, endTolerance, limit) {
   const exceedingLimit = (end + endTolerance) - (start + startTolerance) > limit;
-  return exceedingLimit 
-    ? start <= startTolerance && (end - endTolerance) >= limit
-    : (start + startTolerance) >= 0 && (end - endTolerance) <= limit;
+  assert('Dimensions cannot exceed limit for within-limit calculation', !exceedingLimit);
+  return (start + startTolerance) >= 0 && (end - endTolerance) <= limit;
+};
+const defaultBeyondLimitCalc = function(start, startTolerance, end, endTolerance, limit) {
+  const exceedingLimit = (end + endTolerance) - (start + startTolerance) > limit;
+  assert('Dimensions must exceed limit for beyond-limit calculation', exceedingLimit);
+  return start <= startTolerance && (end - endTolerance) >= limit;
 };
 
-export default function isInViewport(boundingClientRect = {}, height = 0, width = 0, tolerance = defaultTolerance) {
+const isAxisInViewport = function(start, startTolerance, end, endTolerance, limit, withinLimitCalc = defaultWithinLimitCalc, beyondLimitCalc = defaultBeyondLimitCalc) {
+  // Dimensions are fully LARGER than the viewport or fully WITHIN the viewport.
+  let exceedingLimit = (end + endTolerance) - (start + startTolerance) > limit;
+  return exceedingLimit ? beyondLimitCalc(start, startTolerance, end, endTolerance, limit) : withinLimitCalc(start, startTolerance, end, endTolerance, limit);
+};
+
+export default function isInViewport(boundingClientRect = {}, height = 0, width = 0, tolerance = defaultTolerance, withinLimitCalc = defaultWithinLimitCalc, beyondLimitCalc = defaultBeyondLimitCalc) {
   const { top, left, bottom, right } = boundingClientRect;
   const tolerances = merge(defaultTolerance, tolerance);
   const {
@@ -27,6 +35,6 @@ export default function isInViewport(boundingClientRect = {}, height = 0, width 
     right: rightTolerance
   } = tolerances;
 
-  return isAxisInViewport(top, topTolerance, bottom, bottomTolerance, height) &&
-      isAxisInViewport(left, leftTolerance, right, rightTolerance, width);
+  return isAxisInViewport(top, topTolerance, bottom, bottomTolerance, height, withinLimitCalc, beyondLimitCalc) &&
+      isAxisInViewport(left, leftTolerance, right, rightTolerance, width, withinLimitCalc, beyondLimitCalc);
 }

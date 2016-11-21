@@ -86,7 +86,7 @@ export default Mixin.create({
     const boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidAccessViewport(
-      isInViewport(
+      this._determineIsInViewport(
         boundingClientRect,
         $contextEl.innerHeight(),
         $contextEl.innerWidth(),
@@ -99,6 +99,10 @@ export default Mixin.create({
         bind(this, this._setViewportEntered, context)
       );
     }
+  },
+
+  _determineIsInViewport(boundingClientRect, height, width, tolerance) {
+    return isInViewport(boundingClientRect, height, width, tolerance);
   },
 
   _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
