@@ -1,6 +1,7 @@
 import Ember from 'ember';
 
 const { assert, merge } = Ember;
+const assign = Ember.assign || Ember.merge;
 
 const defaultTolerance = {
   top: 0,
@@ -27,7 +28,7 @@ const isAxisInViewport = function(start, startTolerance, end, endTolerance, limi
 
 export default function isInViewport(boundingClientRect = {}, height = 0, width = 0, tolerance = defaultTolerance, withinLimitCalc = defaultWithinLimitCalc, beyondLimitCalc = defaultBeyondLimitCalc) {
   const { top, left, bottom, right } = boundingClientRect;
-  const tolerances = merge(defaultTolerance, tolerance);
+  const tolerances = assign(defaultTolerance, tolerance);
   const {
     top: topTolerance,
     left: leftTolerance,

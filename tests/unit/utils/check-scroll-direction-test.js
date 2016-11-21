@@ -3,7 +3,7 @@ import { module, test } from 'qunit';
 
 let lastPosition;
 
-module('checkScrollDirection', {
+module('Unit | Utility | check scroll direction', {
   beforeEach() {
     lastPosition = {
       top: 300,

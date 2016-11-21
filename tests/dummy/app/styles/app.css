@@ -1,16 +1,23 @@
-.fooBar {
+.my-component {
   display: inline-block;
   width: 300px;
-  margin-bottom: 300px;
   background-color: black;
 }
 
-.fooBar p {
+.my-component p {
   color: white;
 }
 
-.fooBar.active {
+.my-component.active {
   background-color: red;
+}
+
+.my-component.top {
+  margin-bottom: 300px;
+}
+
+.hide-me {
+  margin-top: 1500px;
 }
 
 #ember-testing-container {

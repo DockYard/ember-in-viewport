@@ -1,3 +1,20 @@
-{{#foo-bar}}
-  <p>Hi!</p>
-{{/foo-bar}}
+<div>
+  {{#my-component class="top start-enabled"
+    viewportSpyOverride=true
+  }}
+    <p>Starts enabled</p>
+  {{/my-component}}
+
+  {{#my-component class="top start-disabled"
+    viewportSpyOverride=true
+    viewportEnabledOverride=false
+  }}
+    <p>Starts disabled</p>
+  {{/my-component}}
+</div>
+
+<div class="hide-me">
+  {{#my-component class="bottom"}}
+    <p>Hi!</p>
+  {{/my-component}}
+</div>

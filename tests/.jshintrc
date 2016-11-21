@@ -17,6 +17,7 @@
     "find",
     "findWithAssert",
     "wait",
+    "waitFor",
     "DS",
     "andThen",
     "currentURL",
@@ -47,6 +48,6 @@
   "strict": false,
   "white": false,
   "eqnull": true,
-  "esnext": true,
+  "esversion": 6,
   "unused": true
 }

@@ -1,15 +1,14 @@
 import Ember from 'ember';
-import { initialize } from '../../../initializers/viewport-config';
+import ViewportConfigInitializer from 'dummy/initializers/viewport-config';
 import { module, test } from 'qunit';
 
-const { run } = Ember;
 const { keys } = Object;
 
 let container, application;
 
-module('ViewportConfigInitializer', {
+module('Unit | Initializer | viewport config', {
   beforeEach() {
-    run(function() {
+    Ember.run(function() {
       application = Ember.Application.create();
       container = application.__container__;
       application.deferReadiness();
@@ -18,7 +17,7 @@ module('ViewportConfigInitializer', {
 });
 
 test('it has a viewportConfig object', function(assert) {
-  initialize(container, application);
+  ViewportConfigInitializer.initialize(application);
 
   const viewportConfig = container.lookup('config:in-viewport');
   const viewportConfigKeys = keys(viewportConfig);
