@@ -10,6 +10,9 @@ cache:
   directories:
     - node_modules
 
+sudo: required
+dist: trusty
+
 addons:
   apt:
     sources:
