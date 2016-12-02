@@ -46,7 +46,7 @@ export default Mixin.create({
     this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
 
     if (!get(this, 'viewportUseRAF')) {
-      get(this, 'viewportListeners').forEach((listener) => {
+      this.get('viewportListeners').forEach((listener) => {
         const { context, event } = listener;
         this._bindListeners(context, event);
       });
@@ -207,7 +207,7 @@ export default Mixin.create({
       });
     }
 
-    get(this, 'viewportListeners').forEach((listener) => {
+    this.get('viewportListeners').forEach((listener) => {
       const { context, event } = listener;
       $(context).off(`${event}.${elementId}`);
     });
