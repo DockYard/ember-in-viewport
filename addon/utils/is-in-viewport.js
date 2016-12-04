@@ -22,7 +22,7 @@ export default function isInViewport(boundingClientRect = {}, height = 0, width 
   return (
     (top + topTolerance)       >= 0 &&
     (left + leftTolerance)     >= 0 &&
-    (bottom - bottomTolerance) <= height &&
-    (right - rightTolerance)   <= width
+    (Math.round(bottom) - bottomTolerance) <= Math.round(height) &&
+    (Math.round(right) - rightTolerance)   <= Math.round(width)
   );
 }
