@@ -3,7 +3,6 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
-import getOwner from 'ember-getowner-polyfill';
 
 const {
   Mixin,
@@ -14,7 +13,8 @@ const {
   get,
   set,
   run: { scheduleOnce, debounce, bind, next },
-  computed: { not }
+  computed: { not },
+  getOwner
 } = Ember;
 
 const assign = Ember.assign || Ember.merge;
