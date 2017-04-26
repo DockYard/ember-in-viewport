@@ -11,6 +11,12 @@ This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app.
 - App: http://development.ember-in-viewport-demo.divshot.io/
 - Source: https://github.com/poteto/ember-in-viewport-demo
 
+# Installation
+
+```
+ember install ember-in-viewport
+```
+
 ## Usage
 Usage is simple. First, add the Mixin to your `Component`:
 
