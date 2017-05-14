@@ -40,7 +40,7 @@ export default Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
-    if (!canUseDOM) {
+    if (!canUseDOM || get(this, 'noSetup')) {
       return;
     }
 
@@ -52,6 +52,11 @@ export default Mixin.create({
 
   willDestroyElement() {
     this._super(...arguments);
+
+    if (!canUseDOM || get(this, 'noSetup')) {
+      return;
+    }
+
     this._unbindListeners();
   },
 
@@ -215,12 +220,12 @@ export default Mixin.create({
         window.cancelAnimationFrame(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
+    } else {
+      get(this, 'viewportListeners').forEach((listener) => {
+        const { context, event } = listener;
+        $(context).off(`${event}.${elementId}`);
+      });
     }
-
-    get(this, 'viewportListeners').forEach((listener) => {
-      const { context, event } = listener;
-      $(context).off(`${event}.${elementId}`);
-    });
 
     this._unbindScrollDirectionListener(window);
   }
