@@ -14,21 +14,25 @@ const {
   set,
   run: { scheduleOnce, debounce, bind, next },
   computed: { not },
-  getOwner
+  getOwner,
+  inject: { service },
+  assign: EmberAssign,
+  merge
 } = Ember;
 
-const assign = Ember.assign || Ember.merge;
+const assign = EmberAssign || merge;
 
 const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
 export default Mixin.create({
+  viewport: service(),
   viewportExited: not('viewportEntered').readOnly(),
 
   init() {
     this._super(...arguments);
-    const options = assign({
+    let options = assign({
       viewportUseRAF: canUseRAF(),
       viewportEntered: false,
       viewportListeners: []
@@ -44,7 +48,7 @@ export default Mixin.create({
       return;
     }
 
-    const viewportEnabled = get(this, 'viewportEnabled');
+    let viewportEnabled = get(this, 'viewportEnabled');
     if (viewportEnabled) {
       this._startListening();
     }
@@ -56,7 +60,7 @@ export default Mixin.create({
   },
 
   _buildOptions(defaultOptions = {}) {
-    const owner = getOwner(this);
+    let owner = getOwner(this);
 
     if (owner) {
       return assign(defaultOptions, owner.lookup('config:in-viewport'));
@@ -70,7 +74,7 @@ export default Mixin.create({
 
     if (!get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
-        const { context, event } = listener;
+        let { context, event } = listener;
         this._bindListeners(context, event);
       });
     }
@@ -85,14 +89,14 @@ export default Mixin.create({
   _setViewportEntered(context = null) {
     assert('You must pass a valid context to _setViewportEntered', context);
 
-    const element = get(this, 'element');
+    let element = get(this, 'element');
 
     if (!element) {
       return;
     }
 
-    const $contextEl = $(context);
-    const boundingClientRect = element.getBoundingClientRect();
+    let $contextEl = $(context);
+    let boundingClientRect = element.getBoundingClientRect();
 
     this._triggerDidAccessViewport(
       isInViewport(
@@ -104,7 +108,7 @@ export default Mixin.create({
     );
 
     if (boundingClientRect && get(this, 'viewportUseRAF')) {
-      rAFIDS[get(this, 'elementId')] = window.requestAnimationFrame(
+      rAFIDS[get(this, 'elementId')] = this.get('viewport').add(
         bind(this, this._setViewportEntered, context)
       );
     }
@@ -114,16 +118,16 @@ export default Mixin.create({
     assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
     assert('sensitivity cannot be 0', sensitivity);
 
-    const elementId = get(this, 'elementId');
-    const lastDirectionForEl = lastDirection[elementId];
-    const lastPositionForEl = lastPosition[elementId];
-    const newPosition = {
+    let elementId = get(this, 'elementId');
+    let lastDirectionForEl = lastDirection[elementId];
+    let lastPositionForEl = lastPosition[elementId];
+    let newPosition = {
       top: $contextEl.scrollTop(),
       left: $contextEl.scrollLeft()
     };
 
-    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
-    const directionChanged = scrollDirection !== lastDirectionForEl;
+    let scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    let directionChanged = scrollDirection !== lastDirectionForEl;
 
     if (scrollDirection && directionChanged && get(this, 'viewportEntered')) {
       this.trigger('didScroll', scrollDirection);
@@ -134,9 +138,9 @@ export default Mixin.create({
   },
 
   _triggerDidAccessViewport(hasEnteredViewport = false) {
-    const viewportEntered = get(this, 'viewportEntered');
-    const didEnter = !viewportEntered && hasEnteredViewport;
-    const didLeave = viewportEntered && !hasEnteredViewport;
+    let viewportEntered = get(this, 'viewportEntered');
+    let didEnter = !viewportEntered && hasEnteredViewport;
+    let didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
 
     if (didEnter) {
@@ -181,7 +185,7 @@ export default Mixin.create({
     assert('You must pass a valid context to _bindScrollDirectionListener', context);
     assert('sensitivity cannot be 0', sensitivity);
 
-    const $contextEl = $(context);
+    let $contextEl = $(context);
 
     $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
       this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
@@ -191,7 +195,7 @@ export default Mixin.create({
   _unbindScrollDirectionListener(context = null) {
     assert('You must pass a valid context to _bindScrollDirectionListener', context);
 
-    const elementId = get(this, 'elementId');
+    let elementId = get(this, 'elementId');
 
     $(context).off(`scroll.directional#${elementId}`);
     delete lastPosition[elementId];
@@ -208,17 +212,17 @@ export default Mixin.create({
   },
 
   _unbindListeners() {
-    const elementId = get(this, 'elementId');
+    let elementId = get(this, 'elementId');
 
     if (get(this, 'viewportUseRAF')) {
       next(this, () => {
-        window.cancelAnimationFrame(rAFIDS[elementId]);
+        this.get('viewport').remove(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
     }
 
     get(this, 'viewportListeners').forEach((listener) => {
-      const { context, event } = listener;
+      let { context, event } = listener;
       $(context).off(`${event}.${elementId}`);
     });
 
