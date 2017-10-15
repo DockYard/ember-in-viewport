@@ -29,7 +29,7 @@ test('Component moves to active when scrolled into viewport', function(assert) {
   visit('/');
 
   andThen(() => {
-    find(window).scrollTop(2000);
+    find('.my-component.bottom').get(0).scrollIntoView();
   });
 
   waitFor('.my-component.bottom.active');
