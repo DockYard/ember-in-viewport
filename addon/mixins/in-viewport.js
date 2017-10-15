@@ -85,7 +85,12 @@ export default Mixin.create({
   _setViewportEntered(context = null) {
     assert('You must pass a valid context to _setViewportEntered', context);
 
-    const element = get(this, 'element');
+    let element;
+    if (this.get('viewportElement')) {
+      element = document.querySelector(this.get('viewportElement'));
+    } else {
+      element = get(this, 'element');
+    }
 
     if (!element) {
       return;

@@ -39,6 +39,23 @@ test('Component moves to active when scrolled into viewport', function(assert) {
   });
 });
 
+test('Tagless component moves to active when scrolled into viewport', function(assert) {
+  assert.expect(1);
+
+  visit('/');
+
+  andThen(() => {
+    find('.tagless-component').get(0).scrollIntoView();
+  });
+
+  waitFor('.tagless-component .active');
+
+  andThen(() => {
+    assert.ok(find('.tagless-component .active').length);
+  });
+});
+
+
 test('Component moves back to inactive when scrolled out of viewport', function(assert) {
   assert.expect(1);
 

@@ -132,6 +132,31 @@ export default Ember.Component.extend(InViewportMixin, {
 
   This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.
 
+### Tagless Components
+
+`ember-in-viewport` needs a DOM element to work with. To use it with tagless components, specify another element via the `viewportElement` property. Please note that the `viewportElement` must be uniqe across the entire document.
+
+```js
+export default Ember.Component.extend(InViewportMixin, {
+  tagName: '',
+  viewportElement: '#my-uniqe-element',
+
+  didEnterViewport() {
+    console.log('entered');
+  },
+
+  didExitViewport() {
+    console.log('exited');
+  }
+});
+```
+
+Template:
+
+```hbs
+  <div id="my-uniqe-element"></div>
+```
+
 ### Global options
 
 You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:
