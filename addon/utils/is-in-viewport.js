@@ -13,7 +13,7 @@ const isAxisInViewport = function(start, startTolerance, end, endTolerance, limi
   const exceedingLimit = (end + endTolerance) - (start + startTolerance) > limit;
 
   if (exceedingLimit) {
-    return start <= startTolerance && (end - endTolerance) >= limit;
+    return start <= startTolerance && end - limit >= start;
   }
 
   return (start + startTolerance) >= 0 && (end - endTolerance) <= limit;
