@@ -47,7 +47,6 @@
     "scrollspy"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.1.6",
     "ember-cli-babel": "^6.6.0",
     "ember-getowner-polyfill": "^2.0.0"
   },
