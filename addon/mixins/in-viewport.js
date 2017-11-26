@@ -2,14 +2,14 @@ import Ember from 'ember';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 // import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 // import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
-// import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
+import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
 const {
   Mixin,
   setProperties,
-  // typeOf,
+  typeOf,
   assert,
-  // $,
+  $,
   get,
   set,
   run: { scheduleOnce, debounce, bind, next },
@@ -20,8 +20,8 @@ const {
 const assign = Ember.assign || Ember.merge;
 
 // const rAFIDS = {};
-// const lastDirection = {};
-// const lastPosition = {};
+const lastDirection = {};
+const lastPosition = {};
 
 export default Mixin.create({
   observer: null,
@@ -67,7 +67,7 @@ export default Mixin.create({
   _startListening() {
     this._setInitialViewport();
     // this._addObserverIfNotSpying();
-    // this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
+    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
 
     // if (!get(this, 'viewportUseRAF')) {
     //   get(this, 'viewportListeners').forEach((listener) => {
@@ -95,9 +95,9 @@ export default Mixin.create({
       root: null, 
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
       threshold: this.viewportScrollSensitivity
-    }
+    };
 
-    this.observer = new IntersectionObserver(bind(this, this._onIntersection), options)
+    this.observer = new IntersectionObserver(bind(this, this._onIntersection), options);
     this.observer.observe(this.element);
   },
 
@@ -113,28 +113,28 @@ export default Mixin.create({
     this._triggerDidAccessViewport();
   },
 
-  // _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
-  //   assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
-  //   assert('sensitivity cannot be 0', sensitivity);
+  _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
+    assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
+    assert('sensitivity cannot be 0', sensitivity);
 
-  //   const elementId = get(this, 'elementId');
-  //   const lastDirectionForEl = lastDirection[elementId];
-  //   const lastPositionForEl = lastPosition[elementId];
-  //   const newPosition = {
-  //     top: $contextEl.scrollTop(),
-  //     left: $contextEl.scrollLeft()
-  //   };
+    const elementId = get(this, 'elementId');
+    const lastDirectionForEl = lastDirection[elementId];
+    const lastPositionForEl = lastPosition[elementId];
+    const newPosition = {
+      top: $contextEl.scrollTop(),
+      left: $contextEl.scrollLeft()
+    };
 
-  //   const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
-  //   const directionChanged = scrollDirection !== lastDirectionForEl;
+    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    const directionChanged = scrollDirection !== lastDirectionForEl;
 
-  //   if (scrollDirection && directionChanged && get(this, 'viewportEntered')) {
-  //     this.trigger('didScroll', scrollDirection);
-  //     lastDirection[elementId] = scrollDirection;
-  //   }
+    if (scrollDirection && directionChanged && get(this, 'viewportEntered')) {
+      this.trigger('didScroll', scrollDirection);
+      lastDirection[elementId] = scrollDirection;
+    }
 
-  //   lastPosition[elementId] = newPosition;
-  // },
+    lastPosition[elementId] = newPosition;
+  },
 
   _triggerDidAccessViewport(/* hasEnteredViewport = false */) {
     // const didEnter = !viewportEntered && hasEnteredViewport;
@@ -170,33 +170,33 @@ export default Mixin.create({
     });
   },
 
-  // _debouncedEventHandler(methodName, ...args) {
-  //   assert('You must pass a methodName to _debouncedEventHandler', methodName);
-  //   assert('methodName must be a string', typeOf(methodName) === 'string');
+  _debouncedEventHandler(methodName, ...args) {
+    assert('You must pass a methodName to _debouncedEventHandler', methodName);
+    assert('methodName must be a string', typeOf(methodName) === 'string');
 
-  //   debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
-  // },
+    debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
+  },
 
-  // _bindScrollDirectionListener(context = null, sensitivity = 1) {
-  //   assert('You must pass a valid context to _bindScrollDirectionListener', context);
-  //   assert('sensitivity cannot be 0', sensitivity);
+  _bindScrollDirectionListener(context = null, sensitivity = 1) {
+    assert('You must pass a valid context to _bindScrollDirectionListener', context);
+    assert('sensitivity cannot be 0', sensitivity);
 
-  //   const $contextEl = $(context);
+    const $contextEl = $(context);
 
-  //   $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
-  //     this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
-  //   });
-  // },
+    $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
+      this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
+    });
+  },
 
-  // _unbindScrollDirectionListener(context = null) {
-  //   assert('You must pass a valid context to _bindScrollDirectionListener', context);
+  _unbindScrollDirectionListener(context = null) {
+    assert('You must pass a valid context to _unbindScrollDirectionListener', context);
 
-  //   const elementId = get(this, 'elementId');
+    const elementId = get(this, 'elementId');
 
-  //   $(context).off(`scroll.directional#${elementId}`);
-  //   delete lastPosition[elementId];
-  //   delete lastDirection[elementId];
-  // },
+    $(context).off(`scroll.directional#${elementId}`);
+    delete lastPosition[elementId];
+    delete lastDirection[elementId];
+  },
 
   // _bindListeners(context = null, event = null) {
   //   assert('You must pass a valid context to _bindListeners', context);
@@ -223,6 +223,6 @@ export default Mixin.create({
     //   $(context).off(`${event}.${elementId}`);
     // });
 
-    // this._unbindScrollDirectionListener(window);
+    this._unbindScrollDirectionListener(window);
   }
 });
