@@ -94,7 +94,7 @@ export default Mixin.create({
     const options = {
       root: null, 
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-      threshold: this.viewportScrollSensitivity
+      threshold: this.intersectionThreshold
     };
 
     this.observer = new IntersectionObserver(bind(this, this._onIntersection), options);
