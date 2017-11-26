@@ -4,7 +4,6 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
 const defaultConfig = {
   viewportEnabled: true,
-  viewportSpy: false,
   viewportScrollSensitivity: 1,
   viewportRefreshRate: 100,
   viewportListeners: [

@@ -3,6 +3,7 @@ import InViewportMixin from 'ember-in-viewport';
 
 const {
   Component,
+  get,
   on,
   getProperties, setProperties
 } = Ember;
@@ -15,20 +16,19 @@ export default Component.extend(InViewportMixin, {
     let options = {};
 
     let {
-      viewportSpyOverride,
       viewportEnabledOverride
     } = getProperties(this,
-      'viewportSpyOverride',
       'viewportEnabledOverride'
     );
 
-    if (viewportSpyOverride !== undefined) {
-      options.viewportSpy = viewportSpyOverride;
-    }
     if (viewportEnabledOverride !== undefined) {
       options.viewportEnabled = viewportEnabledOverride;
     }
 
     setProperties(this, options);
-  })
+  }),
+
+  didEnterViewport() {
+    get(this, 'infinityLoad')();
+  }
 });
