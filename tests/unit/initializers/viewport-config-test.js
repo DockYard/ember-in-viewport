@@ -24,4 +24,6 @@ test('it has a viewportConfig object', function(assert) {
 
   assert.ok(viewportConfig);
   assert.ok(viewportConfigKeys.length);
+  assert.ok(viewportConfigKeys.includes('intersectionThreshold'), 'intersectionThreshold is in viewportConfig');
+  assert.ok(viewportConfigKeys.includes('scrollableArea'), 'scrollableArea is in viewportConfig');
 });

@@ -1,0 +1,17 @@
+<div class="list-rAF" style="height: 500px; overflow: scroll;">
+  <ul>
+    {{#each model as |val|}}
+    <div class="infinity-svg-rAF">
+      <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        {{{val}}}
+      </svg>
+    </div>
+    {{/each}}
+  </ul>
+  {{my-component 
+    class="infinity-scrollable-rAF" 
+    viewportSpyOverride=true
+    viewportIntersectionObserverOverride=false
+    scrollableAreaOverride=".list-rAF"
+    infinityLoad=(action "infinityLoad")}}
+</div>

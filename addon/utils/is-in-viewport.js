@@ -1,6 +1,4 @@
-import Ember from 'ember';
-
-const assign = Ember.assign || Ember.merge;
+import { assign } from '@ember/polyfills';
 
 const defaultTolerance = {
   top: 0,

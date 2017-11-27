@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { assign } from '@ember/polyfills';
 import config from '../config/environment';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
@@ -16,7 +16,9 @@ const defaultConfig = {
     left: 0,
     bottom: 0,
     right: 0
-  }
+  },
+  intersectionThreshold: 1.0,
+  scrollableArea: null // defaults to layout view (document.documentElement)
 };
 
 if (canUseDOM) {
@@ -25,8 +27,6 @@ if (canUseDOM) {
     event: 'touchmove.scrollable'
   });
 }
-
-const assign = Ember.assign || Ember.merge;
 
 export function initialize() {
   const application = arguments[1] || arguments[0];
