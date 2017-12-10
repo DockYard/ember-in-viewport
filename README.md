@@ -49,7 +49,7 @@ export default Ember.Component.extend(InViewportMixin, {
 ```
 
 ##### `didScroll(up,down,left,right)`
-The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receieve the direction as a string. You can then handle it like another hook as in the above example.
+The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receive the direction as a string. You can then handle it like another hook as in the above example.
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
