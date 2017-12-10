@@ -162,11 +162,10 @@ module.exports = function(environment) {
 
 * `git clone` this repository
 * `npm install`
-* `bower install`
 
 ## Running
 
-* `ember server`
+* `ember serve`
 * Visit your app at http://localhost:4200.
 
 ## Running Tests
