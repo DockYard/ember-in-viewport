@@ -50,7 +50,7 @@
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.6",
-    "ember-getowner-polyfill": "^1.1.1"
+    "ember-getowner-polyfill": "^2.0.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
