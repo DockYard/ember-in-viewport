@@ -107,7 +107,7 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Default: Depends on browser
 
-  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF. 
+  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.
 
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
@@ -129,7 +129,7 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Default: Depends on browser
 
-  As it's name suggests, if this is `true` and the IntersectionObserver API is not available in the target browser, the Mixin will use `requestAnimationFrame`. Unless you want to force enabling or disabling this, you won't need to override this option.
+  As its name suggests, if this is `true` and the IntersectionObserver API is not available in the target browser, the Mixin will use `requestAnimationFrame`. Unless you want to force enabling or disabling this, you won't need to override this option.
 
 - `viewportSpy: boolean`
 

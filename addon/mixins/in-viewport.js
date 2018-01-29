@@ -20,7 +20,7 @@ const lastPosition = {};
 export default Mixin.create({
   /**
    * IntersectionObserverEntry
-   * 
+   *
    * @property intersectionObserver
    * @default null
    */
@@ -100,7 +100,7 @@ export default Mixin.create({
     if (get(this, 'viewportUseIntersectionObserver')) {
       const { top, left, bottom, right } = this.viewportTolerance;
       const options = {
-        root: scrollableArea, 
+        root: scrollableArea,
         rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
         threshold: get(this, 'intersectionThreshold')
       };
@@ -126,12 +126,12 @@ export default Mixin.create({
           );
         }
       }
-    } 
+    }
   },
 
   /**
    * callback provided to IntersectionObserver
-   * 
+   *
    * @method _onIntersection
    * @param {Array} - entries
    */
@@ -225,7 +225,7 @@ export default Mixin.create({
   _unbindScrollDirectionListener() {
     const elementId = get(this, 'elementId');
 
-    const context = get(this, 'scrollableArea') ? get(this, 'scrollableArea') : window;
+    const context = get(this, 'scrollableArea') || window;
 
     $(context).off(`scroll.directional#${elementId}`);
     delete lastPosition[elementId];
