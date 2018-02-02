@@ -1,0 +1,18 @@
+<div class="list-scrollEvent" style="height: 500px; overflow: scroll;">
+  <ul>
+    {{#each model as |val|}}
+    <div class="infinity-svg-scrollEvent">
+      <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        {{{val}}}
+      </svg>
+    </div>
+    {{/each}}
+  </ul>
+  {{my-component
+    class="infinity-scrollable-scrollEvent"
+    viewportSpyOverride=true
+    viewportIntersectionObserverOverride=false
+    viewportRAFOverride=false
+    scrollableAreaOverride=".list-scrollEvent"
+    infinityLoad=(action "infinityLoad")}}
+</div>

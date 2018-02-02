@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { on } from '@ember/object/evented';
+import { setProperties, getProperties, get } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
-
-const {
-  Component,
-  on,
-  getProperties, setProperties
-} = Ember;
 
 export default Component.extend(InViewportMixin, {
   classNames: ['my-component'],
@@ -16,10 +12,16 @@ export default Component.extend(InViewportMixin, {
 
     let {
       viewportSpyOverride,
-      viewportEnabledOverride
+      viewportEnabledOverride,
+      viewportIntersectionObserverOverride,
+      viewportRAFOverride,
+      scrollableAreaOverride
     } = getProperties(this,
       'viewportSpyOverride',
-      'viewportEnabledOverride'
+      'viewportEnabledOverride',
+      'viewportIntersectionObserverOverride',
+      'viewportRAFOverride',
+      'scrollableAreaOverride'
     );
 
     if (viewportSpyOverride !== undefined) {
@@ -28,7 +30,22 @@ export default Component.extend(InViewportMixin, {
     if (viewportEnabledOverride !== undefined) {
       options.viewportEnabled = viewportEnabledOverride;
     }
+    if (viewportIntersectionObserverOverride !== undefined) {
+      options.viewportUseIntersectionObserver = viewportIntersectionObserverOverride;
+    }
+    if (viewportRAFOverride !== undefined) {
+      options.viewportUseRAF = viewportRAFOverride;
+    }
+    if (scrollableAreaOverride !== undefined) {
+      options.scrollableArea = scrollableAreaOverride;
+    }
 
     setProperties(this, options);
-  })
+  }),
+
+  didEnterViewport() {
+    if (get(this, 'infinityLoad')) {
+      get(this, 'infinityLoad')();
+    }
+  }
 });

@@ -1,6 +1,4 @@
-import Ember from 'ember';
-
-const { assert } = Ember;
+import { assert } from '@ember/debug';
 const { floor } = Math;
 
 export default function checkScrollDirection(lastPosition = null, newPosition = {}, sensitivity = 1) {

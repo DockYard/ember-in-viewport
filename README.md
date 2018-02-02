@@ -7,7 +7,7 @@
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg) [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/DockYard/ember-in-viewport.svg)](https://travis-ci.org/DockYard/ember-in-viewport) [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
-This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `requestAnimationFrame` API if it detects it in your user's browser – failing which, it fallsback to using the Ember run loop and event listeners.
+This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it fallsback to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
 ## Demo
 - App: http://development.ember-in-viewport-demo.divshot.io/
@@ -72,17 +72,20 @@ export default Ember.Component.extend(InViewportMixin, {
 This hook fires whenever the `Component` leaves the viewport.
 
 ### Advanced usage (options)
-The mixin comes with some options. Due to the way listeners and `requestAnimationFrame` is setup, you'll have to override the options this way:
+The mixin comes with some options. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
   viewportOptionsOverride: Ember.on('didInsertElement', function() {
     Ember.setProperties(this, {
-      viewportEnabled           : true,
-      viewportUseRAF            : true,
-      viewportSpy               : false,
-      viewportScrollSensitivity : 1,
-      viewportRefreshRate       : 150,
+      viewportEnabled                 : true,
+      viewportUseRAF                  : true,
+      viewportSpy                     : false,
+      viewportUseIntersectionObserver : true,
+      viewportScrollSensitivity       : 1,
+      viewportRefreshRate             : 150,
+      intersectionThreshold           : 1.0,
+      scrollableArea                  : null,
       viewportTolerance: {
         top    : 50,
         bottom : 50,
@@ -100,11 +103,33 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Set to false to have no listeners registered. Useful if you have components that function with either viewport listening on or off.
 
+- `viewportUseIntersectionObserver: boolean`
+
+  Default: Depends on browser
+
+  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.
+
+  (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
+  (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
+
+- `intersectionThreshold: decimal`
+
+  Default: 1.0
+
+  A single number or array of numbers between 0.0 and 1.0.  A value of 0.0 means the target will be visible when the first pixel enters the viewport.  A value of 1.0 means the entire target must be visible to fire the didEnterViewport hook.
+  (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Thresholds)
+
+- `scrollableArea`
+
+  Default: null
+
+  A CSS selector for the scrollable area.  e.g. `".my-list"`
+
 - `viewportUseRAF: boolean`
 
   Default: Depends on browser
 
-  As it's name suggests, if this is `true`, the Mixin will use `requestAnimationFrame` instead of the Ember run loop. Unless you want to force enabling or disabling this, you won't need to override this option.
+  As its name suggests, if this is `true` and the IntersectionObserver API is not available in the target browser, the Mixin will use `requestAnimationFrame`. Unless you want to force enabling or disabling this, you won't need to override this option.
 
 - `viewportSpy: boolean`
 
@@ -122,7 +147,7 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Default: `100`
 
-  If `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
+  If `IntersectionObserver` and `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
 
   This value also affects how often the Mixin checks scroll direction.
 
@@ -141,12 +166,15 @@ module.exports = function(environment) {
   var ENV = {
     // ...
     viewportConfig: {
-      viewportEnabled           : false,
-      viewportUseRAF            : true,
-      viewportSpy               : false,
-      viewportScrollSensitivity : 1,
-      viewportRefreshRate       : 100,
-      viewportListeners         : [],
+      viewportEnabled                 : false,
+      viewportUseRAF                  : true,
+      viewportSpy                     : false,
+      viewportUseIntersectionObserver : true,
+      viewportScrollSensitivity       : 1,
+      viewportRefreshRate             : 100,
+      viewportListeners               : [],
+      intersectionThreshold           : 1.0,
+      scrollableArea                  : null,
       viewportTolerance: {
         top    : 0,
         left   : 0,
