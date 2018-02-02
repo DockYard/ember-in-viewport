@@ -76,7 +76,7 @@ export default Mixin.create({
     if (!get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
         let { context, event } = listener;
-        context = get(this, 'scrollableArea') ? get(this, 'scrollableArea') : context;
+        context = get(this, 'scrollableArea') || context;
         this._bindListeners(context, event);
       });
     }
