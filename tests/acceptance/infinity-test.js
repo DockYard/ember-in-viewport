@@ -61,8 +61,13 @@ test('scrollEvent Component fetches more data when scrolled into viewport', func
     assert.equal(find('.infinity-scrollable-scrollEvent.active').length, 1, 'component is still active after fetching more data');
     // scroll 1px to trigger inactive state
     let elem = document.getElementsByClassName('list-scrollEvent')[0];
-    elem.scrollTop = elem.scrollTop + 1;
+    elem.scrollTop = elem.scrollTop + 5;
   });
+
+  waitFor(() => {
+    return find('.infinity-scrollable-scrollEvent.inactive').length, 1;
+  });
+
   andThen(() => {
     assert.equal(find('.infinity-scrollable-scrollEvent.inactive').length, 1, 'component is inactive after scrolling');
   });
