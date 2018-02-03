@@ -1,6 +1,6 @@
 {
   "name": "ember-in-viewport",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Detect if an Ember View or Component is in the viewport @ 60FPS",
   "directories": {
     "doc": "doc",
