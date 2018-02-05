@@ -76,7 +76,9 @@ The mixin comes with some options. Due to the way listeners and `IntersectionObs
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
-  viewportOptionsOverride: Ember.on('didInsertElement', function() {
+  init() {
+    this._super(...arguments);
+
     Ember.setProperties(this, {
       viewportEnabled                 : true,
       viewportUseRAF                  : true,
@@ -93,7 +95,7 @@ export default Ember.Component.extend(InViewportMixin, {
         right  : 20
       }
     });
-  })
+  }
 });
 ```
 
