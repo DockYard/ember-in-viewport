@@ -5,7 +5,7 @@ node_js:
   # so that your addon works for all apps
   - "4"
 
-sudo: required
+sudo: false
 dist: trusty
 
 addons:
@@ -41,6 +41,7 @@ before_install:
   - npm --version
 
 script:
+  - npm run lint:js
   # Usually, it's ok to finish the test scenario without reverting
   #  to the addon's original dependency state, skipping "cleanup".
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO --skip-cleanup
