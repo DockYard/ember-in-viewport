@@ -8,8 +8,8 @@ const defaultConfig = {
   viewportScrollSensitivity: 1,
   viewportRefreshRate: 100,
   viewportListeners: [
-    { context: window, event: 'scroll.scrollable' },
-    { context: window, event: 'resize.resizable' }
+    { context: window, event: 'scroll' },
+    { context: window, event: 'resize' }
   ],
   viewportTolerance: {
     top: 0,

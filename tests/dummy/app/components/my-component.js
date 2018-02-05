@@ -1,5 +1,4 @@
 import Component from '@ember/component';
-import { on } from '@ember/object/evented';
 import { setProperties, getProperties, get } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
@@ -7,7 +6,8 @@ export default Component.extend(InViewportMixin, {
   classNames: ['my-component'],
   classNameBindings: ['viewportEntered:active:inactive'],
 
-  viewportOptionsOverride: on('didInsertElement', function() {
+  init() {
+    this._super(...arguments);
     let options = {};
 
     let {
@@ -41,7 +41,7 @@ export default Component.extend(InViewportMixin, {
     }
 
     setProperties(this, options);
-  }),
+  },
 
   didEnterViewport() {
     if (get(this, 'infinityLoad')) {

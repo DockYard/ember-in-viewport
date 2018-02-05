@@ -2,7 +2,6 @@ import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
-import $ from 'jquery';
 import { set, get, setProperties } from '@ember/object';
 import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
@@ -98,6 +97,8 @@ export default Mixin.create({
     }
 
     if (get(this, 'viewportUseIntersectionObserver')) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+      // IntersectionObserver takes either a Document Element or null for `root`
       const { top, left, bottom, right } = this.viewportTolerance;
       const options = {
         root: scrollableArea,
@@ -108,15 +109,16 @@ export default Mixin.create({
       this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
       this.intersectionObserver.observe(element);
     } else {
-      const $contextEl = scrollableArea ? $(scrollableArea) : $(window);
+      const height = scrollableArea ? scrollableArea.offsetHeight : window.innerHeight;
+      const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
       const boundingClientRect = element.getBoundingClientRect();
 
       if (boundingClientRect) {
         this._triggerDidAccessViewport(
           isInViewport(
             boundingClientRect,
-            $contextEl.innerHeight(),
-            $contextEl.innerWidth(),
+            height,
+            width,
             get(this, 'viewportTolerance')
           )
         );
@@ -147,16 +149,16 @@ export default Mixin.create({
     }
   },
 
-  _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
-    assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
+  _triggerDidScrollDirection(contextEl = null, sensitivity = 1) {
+    assert('You must pass a valid context element to _triggerDidScrollDirection', contextEl);
     assert('sensitivity cannot be 0', sensitivity);
 
     const elementId = get(this, 'elementId');
     const lastDirectionForEl = lastDirection[elementId];
     const lastPositionForEl = lastPosition[elementId];
     const newPosition = {
-      top: $contextEl.scrollTop(),
-      left: $contextEl.scrollLeft()
+      top: contextEl.scrollTop,
+      left: contextEl.scrollLeft
     };
 
     const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
@@ -215,10 +217,11 @@ export default Mixin.create({
   _bindScrollDirectionListener(sensitivity = 1) {
     assert('sensitivity cannot be 0', sensitivity);
 
-    const $contextEl = get(this, 'scrollableArea') ? $(get(this, 'scrollableArea')) : $(window);
+    const contextEl = get(this, 'scrollableArea') || window;
+    let elem = this._findElem(contextEl);
 
-    $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
+    elem.addEventListener('scroll', () => {
+      this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
     });
   },
 
@@ -226,8 +229,11 @@ export default Mixin.create({
     const elementId = get(this, 'elementId');
 
     const context = get(this, 'scrollableArea') || window;
+    let elem = this._findElem(context);
 
-    $(context).off(`scroll.directional#${elementId}`);
+    elem.removeEventListener('scroll', () => {
+      this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
+    });
     delete lastPosition[elementId];
     delete lastDirection[elementId];
   },
@@ -236,8 +242,10 @@ export default Mixin.create({
     assert('You must pass a valid context to _bindListeners', context);
     assert('You must pass a valid event to _bindListeners', event);
 
-    $(context).on(`${event}.${get(this, 'elementId')}`, () => {
-      this._debouncedEventHandler('_setViewportEntered', context);
+    let elem = this._findElem(context);
+
+    elem.addEventListener(event, () => {
+      this._debouncedEventHandler('_setViewportEntered');
     });
   },
 
@@ -253,10 +261,29 @@ export default Mixin.create({
 
     get(this, 'viewportListeners').forEach((listener) => {
       let { context, event } = listener;
-      context = get(this, 'scrollableArea') ? get(this, 'scrollableArea') : context;
-      $(context).off(`${event}.${elementId}`);
+      context = get(this, 'scrollableArea') || context;
+
+      let elem = this._findElem(context);
+      elem.removeEventListener(event, () => {
+        this._debouncedEventHandler('_setViewportEntered');
+      });
     });
 
     this._unbindScrollDirectionListener();
+  },
+
+  _findElem(context) {
+    let elem;
+    if (
+      context.nodeType === Node.ELEMENT_NODE ||
+      context.nodeType === Node.DOCUMENT_NODE ||
+      context instanceof Window
+    ) {
+      elem = context
+    } else {
+      elem = document.querySelector(context);
+    }
+
+    return elem;
   }
 });
