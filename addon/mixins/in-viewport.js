@@ -8,6 +8,7 @@ import { not } from '@ember/object/computed';
 import { getOwner } from '@ember/application';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
+import findElem from 'ember-in-viewport/utils/find-elem';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
@@ -218,7 +219,7 @@ export default Mixin.create({
     assert('sensitivity cannot be 0', sensitivity);
 
     const contextEl = get(this, 'scrollableArea') || window;
-    let elem = this._findElem(contextEl);
+    let elem = findElem(contextEl);
 
     elem.addEventListener('scroll', () => {
       this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
@@ -229,7 +230,7 @@ export default Mixin.create({
     const elementId = get(this, 'elementId');
 
     const context = get(this, 'scrollableArea') || window;
-    let elem = this._findElem(context);
+    let elem = findElem(context);
 
     elem.removeEventListener('scroll', () => {
       this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
@@ -242,7 +243,7 @@ export default Mixin.create({
     assert('You must pass a valid context to _bindListeners', context);
     assert('You must pass a valid event to _bindListeners', event);
 
-    let elem = this._findElem(context);
+    let elem = findElem(context);
 
     elem.addEventListener(event, () => {
       this._debouncedEventHandler('_setViewportEntered');
@@ -263,7 +264,7 @@ export default Mixin.create({
       let { context, event } = listener;
       context = get(this, 'scrollableArea') || context;
 
-      let elem = this._findElem(context);
+      let elem = findElem(context);
       elem.removeEventListener(event, () => {
         this._debouncedEventHandler('_setViewportEntered');
       });
@@ -271,19 +272,4 @@ export default Mixin.create({
 
     this._unbindScrollDirectionListener();
   },
-
-  _findElem(context) {
-    let elem;
-    if (
-      context.nodeType === Node.ELEMENT_NODE ||
-      context.nodeType === Node.DOCUMENT_NODE ||
-      context instanceof Window
-    ) {
-      elem = context
-    } else {
-      elem = document.querySelector(context);
-    }
-
-    return elem;
-  }
 });
