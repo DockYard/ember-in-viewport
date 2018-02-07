@@ -3,7 +3,7 @@ import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
 import { set, get, setProperties } from '@ember/object';
-import { next, bind, debounce, scheduleOnce, cancel } from '@ember/runloop';
+import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
 import { getOwner } from '@ember/application';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
@@ -142,14 +142,16 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
-    const entry = entries[0];
+    if (!this.isDestroyed) {
+      const entry = entries[0];
 
-    if (entry.isIntersecting) {
-      set(this, 'viewportEntered', true);
-      this.trigger('didEnterViewport');
-    } else if (entry.intersectionRatio <= 0) { // exiting viewport
-      set(this, 'viewportEntered', false);
-      this.trigger('didExitViewport');
+      if (entry.isIntersecting) {
+        set(this, 'viewportEntered', true);
+        this.trigger('didEnterViewport');
+      } else if (entry.intersectionRatio <= 0) { // exiting viewport
+        set(this, 'viewportEntered', false);
+        this.trigger('didExitViewport');
+      }
     }
   },
 
@@ -223,8 +225,7 @@ export default Mixin.create({
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
 
-    // debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
-    this[methodName](...args);
+    debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
   },
 
   _bindScrollDirectionListener(sensitivity = 1) {
