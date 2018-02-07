@@ -37,6 +37,7 @@ export default Mixin.create({
     }, this._buildOptions());
 
     setProperties(this, options);
+    this._triggerDidScrollDirectionHandler = this._triggerDidScrollDirectionHandler.bind(this);
   },
 
   didInsertElement() {
@@ -71,6 +72,7 @@ export default Mixin.create({
   _startListening() {
     this._setInitialViewport();
     this._addObserverIfNotSpying();
+    set(this, 'viewportScrollSensitivity', 1);
     this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
 
     if (!get(this, 'viewportUseRAF')) {
@@ -208,6 +210,10 @@ export default Mixin.create({
     });
   },
 
+  _triggerDidScrollDirectionHandler(event) {
+    this._debouncedEventHandler('_triggerDidScrollDirection', event.currentTarget, get(this, 'viewportScrollSensitivity'));
+  },
+
   _debouncedEventHandler(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
@@ -221,9 +227,7 @@ export default Mixin.create({
     const contextEl = get(this, 'scrollableArea') || window;
     let elem = findElem(contextEl);
 
-    elem.addEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
-    });
+    elem.addEventListener('scroll', this._triggerDidScrollDirectionHandler);
   },
 
   _unbindScrollDirectionListener() {
@@ -232,9 +236,7 @@ export default Mixin.create({
     const context = get(this, 'scrollableArea') || window;
     let elem = findElem(context);
 
-    elem.removeEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
-    });
+    elem.removeEventListener('scroll', this._triggerDidScrollDirectionHandler);
     delete lastPosition[elementId];
     delete lastDirection[elementId];
   },
