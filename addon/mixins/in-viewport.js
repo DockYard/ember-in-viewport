@@ -3,7 +3,7 @@ import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
 import { set, get, setProperties } from '@ember/object';
-import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
+import { next, bind, debounce, scheduleOnce, cancel } from '@ember/runloop';
 import { not } from '@ember/object/computed';
 import { getOwner } from '@ember/application';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
@@ -223,7 +223,8 @@ export default Mixin.create({
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
 
-    debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
+    // debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
+    this[methodName](...args);
   },
 
   _bindScrollDirectionListener(sensitivity = 1) {
