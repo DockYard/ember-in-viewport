@@ -38,6 +38,7 @@ export default Mixin.create({
 
     setProperties(this, options);
     this._triggerDidScrollDirectionHandler = this._triggerDidScrollDirectionHandler.bind(this);
+    this._setViewportEnteredHandler = this._setViewportEnteredHandler.bind(this);
   },
 
   didInsertElement() {
@@ -214,6 +215,10 @@ export default Mixin.create({
     this._debouncedEventHandler('_triggerDidScrollDirection', event.currentTarget, get(this, 'viewportScrollSensitivity'));
   },
 
+  _setViewportEnteredHandler() {
+    this._debouncedEventHandler('_setViewportEntered');
+  },
+
   _debouncedEventHandler(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
@@ -247,9 +252,7 @@ export default Mixin.create({
 
     let elem = findElem(context);
 
-    elem.addEventListener(event, () => {
-      this._debouncedEventHandler('_setViewportEntered');
-    });
+    elem.addEventListener(event, this._setViewportEnteredHandler);
   },
 
   _unbindListeners() {
@@ -267,9 +270,7 @@ export default Mixin.create({
       context = get(this, 'scrollableArea') || context;
 
       let elem = findElem(context);
-      elem.removeEventListener(event, () => {
-        this._debouncedEventHandler('_setViewportEntered');
-      });
+      elem.removeEventListener(event, this._setViewportEnteredHandler);
     });
 
     this._unbindScrollDirectionListener();
