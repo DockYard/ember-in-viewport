@@ -8,6 +8,10 @@ let line = '<line x1="10" x2="50" y1="110" y2="150" stroke="orange" stroke-width
 const images = [rect, circle, line];
 
 export default Controller.extend({
+  viewportToleranceOverride: {
+    top: 1
+  },
+
   actions: {
     infinityLoad() {
       const newModels = [...Array(10).fill().map(() => `${images[(Math.random() * images.length) | 0]}`)];

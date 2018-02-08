@@ -98,7 +98,7 @@ export default Mixin.create({
     }
 
     if (get(this, 'viewportUseIntersectionObserver')) {
-      const { top, left, bottom, right } = this.viewportTolerance;
+      const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
       const options = {
         root: scrollableArea,
         rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
