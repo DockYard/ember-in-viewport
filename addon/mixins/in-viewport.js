@@ -73,8 +73,7 @@ export default Mixin.create({
   _startListening() {
     this._setInitialViewport();
     this._addObserverIfNotSpying();
-    set(this, 'viewportScrollSensitivity', 1);
-    this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
+    this._bindScrollDirectionListener();
 
     if (!get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
@@ -214,7 +213,9 @@ export default Mixin.create({
   },
 
   _triggerDidScrollDirectionHandler(event) {
-    this._debouncedEventHandler('_triggerDidScrollDirection', event.currentTarget, get(this, 'viewportScrollSensitivity'));
+    const sensitivity = get(this, 'viewportScrollSensitivity') || 1;
+
+    this._debouncedEventHandler('_triggerDidScrollDirection', event.currentTarget, sensitivity);
   },
 
   _setViewportEnteredHandler() {
@@ -228,9 +229,7 @@ export default Mixin.create({
     debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
   },
 
-  _bindScrollDirectionListener(sensitivity = 1) {
-    assert('sensitivity cannot be 0', sensitivity);
-
+  _bindScrollDirectionListener() {
     const contextEl = get(this, 'scrollableArea') || window;
     let elem = findElem(contextEl);
 
