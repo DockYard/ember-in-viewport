@@ -37,6 +37,8 @@ export default Mixin.create({
     }, this._buildOptions());
 
     setProperties(this, options);
+    this._triggerDidScrollDirectionHandler = this._triggerDidScrollDirectionHandler.bind(this);
+    this._setViewportEnteredHandler = this._setViewportEnteredHandler.bind(this);
   },
 
   didInsertElement() {
@@ -71,7 +73,7 @@ export default Mixin.create({
   _startListening() {
     this._setInitialViewport();
     this._addObserverIfNotSpying();
-    this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
+    this._bindScrollDirectionListener();
 
     if (!get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
@@ -139,14 +141,16 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
-    const entry = entries[0];
+    if (!this.isDestroyed && !this.isDestroying) {
+      const entry = entries[0];
 
-    if (entry.isIntersecting) {
-      set(this, 'viewportEntered', true);
-      this.trigger('didEnterViewport');
-    } else if (entry.intersectionRatio <= 0) { // exiting viewport
-      set(this, 'viewportEntered', false);
-      this.trigger('didExitViewport');
+      if (entry.isIntersecting) {
+        set(this, 'viewportEntered', true);
+        this.trigger('didEnterViewport');
+      } else if (entry.intersectionRatio <= 0) { // exiting viewport
+        set(this, 'viewportEntered', false);
+        this.trigger('didExitViewport');
+      }
     }
   },
 
@@ -208,6 +212,16 @@ export default Mixin.create({
     });
   },
 
+  _triggerDidScrollDirectionHandler(event) {
+    const sensitivity = get(this, 'viewportScrollSensitivity') || 1;
+
+    this._debouncedEventHandler('_triggerDidScrollDirection', event.currentTarget, sensitivity);
+  },
+
+  _setViewportEnteredHandler() {
+    this._debouncedEventHandler('_setViewportEntered');
+  },
+
   _debouncedEventHandler(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEventHandler', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
@@ -215,15 +229,11 @@ export default Mixin.create({
     debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
   },
 
-  _bindScrollDirectionListener(sensitivity = 1) {
-    assert('sensitivity cannot be 0', sensitivity);
-
+  _bindScrollDirectionListener() {
     const contextEl = get(this, 'scrollableArea') || window;
     let elem = findElem(contextEl);
 
-    elem.addEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
-    });
+    elem.addEventListener('scroll', this._triggerDidScrollDirectionHandler);
   },
 
   _unbindScrollDirectionListener() {
@@ -232,9 +242,7 @@ export default Mixin.create({
     const context = get(this, 'scrollableArea') || window;
     let elem = findElem(context);
 
-    elem.removeEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
-    });
+    elem.removeEventListener('scroll', this._triggerDidScrollDirectionHandler);
     delete lastPosition[elementId];
     delete lastDirection[elementId];
   },
@@ -245,9 +253,7 @@ export default Mixin.create({
 
     let elem = findElem(context);
 
-    elem.addEventListener(event, () => {
-      this._debouncedEventHandler('_setViewportEntered');
-    });
+    elem.addEventListener(event, this._setViewportEnteredHandler);
   },
 
   _unbindListeners() {
@@ -265,9 +271,7 @@ export default Mixin.create({
       context = get(this, 'scrollableArea') || context;
 
       let elem = findElem(context);
-      elem.removeEventListener(event, () => {
-        this._debouncedEventHandler('_setViewportEntered');
-      });
+      elem.removeEventListener(event, this._setViewportEnteredHandler);
     });
 
     this._unbindScrollDirectionListener();
