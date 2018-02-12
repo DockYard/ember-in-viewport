@@ -57,9 +57,6 @@ export default Mixin.create({
   willDestroyElement() {
     this._super(...arguments);
     this._unbindListeners();
-    if (this.intersectionObserver) {
-      this.intersectionObserver.unobserve(this.element);
-    }
   },
 
   _buildOptions(defaultOptions = {}) {
@@ -274,6 +271,13 @@ export default Mixin.create({
       elem.removeEventListener(event, this._setViewportEnteredHandler);
     });
 
+    this._unobserveIntersectionObserver();
     this._unbindScrollDirectionListener();
   },
+
+  _unobserveIntersectionObserver() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.unobserve(this.element);
+    }
+  }
 });
