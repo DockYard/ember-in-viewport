@@ -1,4 +1,4 @@
-import { assign } from '@ember/polyfills';
+import Ember from 'ember';
 import config from '../config/environment';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
@@ -31,7 +31,7 @@ if (canUseDOM) {
 export function initialize() {
   const application = arguments[1] || arguments[0];
   const { viewportConfig = {} } = config;
-  const mergedConfig = assign({}, defaultConfig, viewportConfig);
+  const mergedConfig = Ember.assign({}, defaultConfig, viewportConfig);
 
   application.register('config:in-viewport', mergedConfig, { instantiate: false });
 }
