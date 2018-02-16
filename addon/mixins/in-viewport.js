@@ -139,6 +139,10 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
+    if (this.isDestroyed || this.isDestroying) {
+      return;
+    }
+
     const entry = entries[0];
 
     if (entry.isIntersecting) {
