@@ -1,9 +1,12 @@
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
 let lastPosition;
 
 module('Unit | Utility | check scroll direction', function(hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function() {
     lastPosition = {
       top: 300,

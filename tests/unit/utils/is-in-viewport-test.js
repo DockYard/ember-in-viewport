@@ -1,9 +1,12 @@
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
 let fakeRectNotInViewport, fakeRectInViewport, fakeWindow, fakeNoTolerance, fakeTolerance;
 
 module('Unit | Utility | is in viewport', function(hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function() {
     fakeRectNotInViewport = {
       top: 450,

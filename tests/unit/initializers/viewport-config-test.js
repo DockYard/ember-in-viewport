@@ -2,12 +2,15 @@ import Application from '@ember/application';
 import { run } from '@ember/runloop';
 import ViewportConfigInitializer from 'dummy/initializers/viewport-config';
 import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
 const { keys } = Object;
 
 let container, application;
 
 module('Unit | Initializer | viewport config', function(hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function() {
     run(function() {
       application = Application.create();
