@@ -120,6 +120,11 @@ export default Ember.Component.extend(InViewportMixin, {
   Similarily, [0, .25, .5, .75, 1] will fire didEnterViewport every 25% of the target that is visible.
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Thresholds)
 
+  Some notes:
+    - If the target is offscreen, you will get a notification via didExitViewport that the target is initially offscreen.  Similarily, this is possible to notify if onscreen when your site loads.
+    - If intersectionThreshold is set to anything greater than 0, you will not see didExitViewport hook fired due to our use of the isIntersecting property.
+    - If your intersectionThreshold is set to [0,1] you will get notified if the target didEnterViewport and didExitViewport at the appropriate time.
+
 - `scrollableArea`
 
   Default: null
