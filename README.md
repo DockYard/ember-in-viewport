@@ -84,7 +84,7 @@ export default Ember.Component.extend(InViewportMixin, {
       viewportUseIntersectionObserver : true,
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 150,
-      intersectionThreshold           : 1.0,
+      intersectionThreshold           : 0,
       scrollableArea                  : null,
       viewportTolerance: {
         top    : 50,
@@ -112,11 +112,12 @@ export default Ember.Component.extend(InViewportMixin, {
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
 
-- `intersectionThreshold: decimal`
+- `intersectionThreshold: decimal or array`
 
-  Default: 1.0
+  Default: 0
 
   A single number or array of numbers between 0.0 and 1.0.  A value of 0.0 means the target will be visible when the first pixel enters the viewport.  A value of 1.0 means the entire target must be visible to fire the didEnterViewport hook.
+  Similarily, [0, .25, .5, .75, 1] will fire didEnterViewport every 25% of the target that is visible.
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Thresholds)
 
 - `scrollableArea`
@@ -173,7 +174,7 @@ module.exports = function(environment) {
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 100,
       viewportListeners               : [],
-      intersectionThreshold           : 1.0,
+      intersectionThreshold           : 0,
       scrollableArea                  : null,
       viewportTolerance: {
         top    : 0,

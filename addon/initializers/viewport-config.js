@@ -16,7 +16,7 @@ const defaultConfig = {
     bottom: 0,
     right: 0
   },
-  intersectionThreshold: 1.0,
+  intersectionThreshold: 0,
   scrollableArea: null // defaults to layout view (document.documentElement)
 };
 
