@@ -210,6 +210,8 @@ module.exports = function(environment) {
     }
   };
 };
+
+Note if you want to disable right and left in-viewport triggers, set these values to `Infinity`.
 ```
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
