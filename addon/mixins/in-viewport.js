@@ -223,7 +223,7 @@ export default Mixin.create({
     assert('sensitivity cannot be 0', sensitivity);
 
     const contextEl = get(this, 'scrollableArea') || window;
-    let elem = findElem(contextEl);
+    const elem = findElem(contextEl);
 
     elem.addEventListener('scroll', () => {
       this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
@@ -232,9 +232,8 @@ export default Mixin.create({
 
   _unbindScrollDirectionListener() {
     const elementId = get(this, 'elementId');
-
     const context = get(this, 'scrollableArea') || window;
-    let elem = findElem(context);
+    const elem = findElem(context);
 
     elem.removeEventListener('scroll', () => {
       this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
@@ -267,8 +266,8 @@ export default Mixin.create({
     get(this, 'viewportListeners').forEach((listener) => {
       let { context, event } = listener;
       context = get(this, 'scrollableArea') || context;
-
       let elem = findElem(context);
+
       elem.removeEventListener(event, () => {
         this._debouncedEventHandler('_setViewportEntered');
       });
