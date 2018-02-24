@@ -163,7 +163,7 @@ export default Ember.Component.extend(InViewportMixin, {
 
   Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
 
-  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.
+  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.  Add bottom margin to preemptively trigger didEnterViewport.
 
 ### Global options
 
@@ -193,11 +193,51 @@ module.exports = function(environment) {
   };
 };
 ```
+## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
-## Installation
+### Out of the box
 
-* `git clone` this repository
-* `npm install`
+<table>
+    <tr>
+        <td>Chrome</td>
+        <td>51 <sup>[1]</sup></td>
+    </tr>
+    <tr>
+        <td>Firefox (Gecko)</td>
+        <td>55 <sup>[2]</sup></td>
+    </tr>
+    <tr>
+        <td>MS Edge</td>
+        <td>15</td>
+    </tr>
+    <tr>
+        <td>Internet Explorer</td>
+        <td>Not supported</td>
+    </tr>
+    <tr>
+        <td>Opera <sup>[1]</sup></td>
+        <td>38</td>
+    </tr>
+    <tr>
+        <td>Safari</td>
+        <td>Safari Technology Preview</td>
+    </tr>
+    <tr>
+        <td>Chrome for Android</td>
+        <td>59</td>
+    </tr>
+    <tr>
+        <td>Android Browser</td>
+        <td>56</td>
+    </tr>
+    <tr>
+        <td>Opera Mobile</td>
+        <td>37</td>
+    </tr>
+</table>
+
+* [1] [Reportedly available](https://www.chromestatus.com/features/5695342691483648), it didn't trigger the events on initial load and lacks `isIntersecting` until later versions.
+* [2] This feature was implemented in Gecko 53.0 (Firefox 53.0 / Thunderbird 53.0 / SeaMonkey 2.50) behind the preference `dom.IntersectionObserver.enabled`.
 
 ## Running
 

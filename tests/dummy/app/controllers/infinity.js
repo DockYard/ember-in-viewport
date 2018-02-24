@@ -7,6 +7,12 @@ const models = [...Array(10).fill().map(() => `https://s3.amazonaws.com/uifaces/
 
 export default Controller.extend({
   models,
+  init() {
+    this._super(...arguments);
+    this.viewportToleranceOverride = {
+      bottom: 300
+    }
+  },
 
   actions: {
     infinityLoad() {
