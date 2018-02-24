@@ -9,9 +9,10 @@
     {{/each}}
   </ul>
   {{my-component
-    class="infinity-scrollable-rAF"
+    class="infinity-scrollable-rAF infinity-scrollable"
     viewportSpyOverride=true
     viewportIntersectionObserverOverride=false
+    viewportToleranceOverride=viewportToleranceOverride
     scrollableAreaOverride=".list-rAF"
     infinityLoad=(action "infinityLoad")}}
 </div>

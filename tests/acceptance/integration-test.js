@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { find, visit, waitFor } from '@ember/test-helpers';
 
-module('Acceptance | integration', function(hooks) {
+module('Acceptance | Intersection Observer', function(hooks) {
   setupApplicationTest(hooks);
 
   hooks.beforeEach(function() {

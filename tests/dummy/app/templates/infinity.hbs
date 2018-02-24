@@ -3,6 +3,8 @@
     <li><img src={{val}} /></li>
   {{/each}}
 </ul>
-{{my-component 
-  class="infinity-component" 
+{{my-component
+  class="infinity-component"
+  viewportSpyOverride=true
+  viewportToleranceOverride=viewportToleranceOverride
   infinityLoad=(action "infinityLoad")}}

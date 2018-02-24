@@ -1,3 +1,8 @@
+// BASE
+a.active {
+  color: magenta;
+}
+
 .my-component {
   display: inline-block;
   width: 300px;
@@ -28,4 +33,7 @@
   border: 1px solid black;
   height: 500px;
   overflow: scroll;
+}
+.infinity-component, .infinity-scrollable {
+  height: 10px;
 }
