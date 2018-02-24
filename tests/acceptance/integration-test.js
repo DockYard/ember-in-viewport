@@ -1,73 +1,62 @@
-import { test } from 'qunit';
-import { find } from 'ember-native-dom-helpers';
-import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { find, visit, waitFor } from '@ember/test-helpers';
 
-moduleForAcceptance('Acceptance | integration', {
-  beforeEach() {
+module('Acceptance | integration', function(hooks) {
+  setupApplicationTest(hooks);
+
+  hooks.beforeEach(function() {
     // bring testem window up to the top.
     document.getElementById('ember-testing-container').scrollTop = 0;
-  }
-});
+  });
 
-test('Component is active when in viewport', function(assert) {
-  assert.expect(1);
+  test('Component is active when in viewport', async function(assert) {
+    assert.expect(1);
 
-  visit('/');
+    await visit('/');
 
-  andThen(() => {
     assert.ok(find('.my-component.top.start-enabled.active'), 'component is active');
   });
-});
 
-test('Component is inactive when not in viewport', function(assert) {
-  assert.expect(1);
+  test('Component is inactive when not in viewport', async function(assert) {
+    assert.expect(1);
 
-  visit('/');
+    await visit('/');
 
-  andThen(() => {
     assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
   });
-});
 
-test('Component moves to active when scrolled into viewport', function(assert) {
-  assert.expect(2);
+  test('Component moves to active when scrolled into viewport', async function(assert) {
+    assert.expect(2);
 
-  visit('/');
+    await visit('/');
 
-  andThen(() => {
     assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
     document.querySelector('.my-component.bottom').scrollIntoView();
-  });
 
-  waitFor('.my-component.bottom.active');
+    await waitFor('.my-component.bottom.active');
 
-  andThen(() => {
     assert.ok(find('.my-component.bottom.active'), 'component is active');
   });
-});
 
-test('Component moves back to inactive when scrolled out of viewport', function(assert) {
-  assert.expect(1);
+  test('Component moves back to inactive when scrolled out of viewport', async function(assert) {
+    assert.expect(1);
 
-  visit('/');
+    await visit('/');
 
-  andThen(() => {
     document.querySelector('.my-component.bottom').scrollIntoView();
-  });
 
-  waitFor('.my-component.top.start-enabled.inactive');
+    await waitFor('.my-component.top.start-enabled.inactive');
 
-  andThen(() => {
     assert.ok(find('.my-component.top.start-enabled.inactive'), 'component is inactive');
   });
-});
 
-test('Component can be disabled', function(assert) {
-  assert.expect(1);
+  test('Component can be disabled', async function(assert) {
+    assert.expect(1);
 
-  visit('/');
+    await visit('/');
 
-  andThen(() => {
     assert.ok(find('.my-component.top.start-disabled.inactive'), 'component is inactive');
   });
 });
+

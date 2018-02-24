@@ -1,4 +1,4 @@
-<div class="list-rAF" style="height: 500px; overflow: scroll;">
+<div class="list-rAF infinity-container">
   <ul>
     {{#each model as |val|}}
     <div class="infinity-svg-rAF">
@@ -8,8 +8,8 @@
     </div>
     {{/each}}
   </ul>
-  {{my-component 
-    class="infinity-scrollable-rAF" 
+  {{my-component
+    class="infinity-scrollable-rAF"
     viewportSpyOverride=true
     viewportIntersectionObserverOverride=false
     scrollableAreaOverride=".list-rAF"

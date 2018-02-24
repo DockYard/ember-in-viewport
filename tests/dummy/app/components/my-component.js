@@ -1,5 +1,4 @@
 import Component from '@ember/component';
-import { on } from '@ember/object/evented';
 import { setProperties, getProperties, get } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
@@ -7,7 +6,8 @@ export default Component.extend(InViewportMixin, {
   classNames: ['my-component'],
   classNameBindings: ['viewportEntered:active:inactive'],
 
-  viewportOptionsOverride: on('didInsertElement', function() {
+  init() {
+    this._super(...arguments);
     let options = {};
 
     let {
@@ -16,14 +16,16 @@ export default Component.extend(InViewportMixin, {
       viewportIntersectionObserverOverride,
       viewportToleranceOverride,
       viewportRAFOverride,
-      scrollableAreaOverride
+      scrollableAreaOverride,
+      intersectionThresholdOverride,
     } = getProperties(this,
       'viewportSpyOverride',
       'viewportEnabledOverride',
       'viewportIntersectionObserverOverride',
       'viewportToleranceOverride',
       'viewportRAFOverride',
-      'scrollableAreaOverride'
+      'scrollableAreaOverride',
+      'intersectionThresholdOverride'
     );
 
     if (viewportSpyOverride !== undefined) {
@@ -44,9 +46,12 @@ export default Component.extend(InViewportMixin, {
     if (scrollableAreaOverride !== undefined) {
       options.scrollableArea = scrollableAreaOverride;
     }
+    if (intersectionThresholdOverride !== undefined) {
+      options.intersectionThreshold = intersectionThresholdOverride;
+    }
 
     setProperties(this, options);
-  }),
+  },
 
   didEnterViewport() {
     if (get(this, 'infinityLoad')) {

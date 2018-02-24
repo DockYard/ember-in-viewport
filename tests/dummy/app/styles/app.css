@@ -23,3 +23,9 @@
 #ember-testing-container {
   margin-bottom: 500px !important;
 }
+
+.infinity-container {
+  border: 1px solid black;
+  height: 500px;
+  overflow: scroll;
+}
