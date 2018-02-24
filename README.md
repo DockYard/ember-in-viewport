@@ -165,6 +165,11 @@ export default Ember.Component.extend(InViewportMixin, {
 
   This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.  Add bottom margin to preemptively trigger didEnterViewport.
 
+  For IntersectionObserver, this property interpolates to [rootMargin](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin).
+  For rAF, this property will use `bottom` tolerance and measure against the height of the container to determine when to trigger didEnterViewport.
+
+  Also, if your sentinel (component that uses this mixin) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
+
 ### Global options
 
 You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:

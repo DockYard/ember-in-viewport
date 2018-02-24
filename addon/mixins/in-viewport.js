@@ -235,11 +235,13 @@ export default Mixin.create({
     const context = get(this, 'scrollableArea') || window;
     const elem = findElem(context);
 
-    elem.removeEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
-    });
-    delete lastPosition[elementId];
-    delete lastDirection[elementId];
+    if (elem) {
+      elem.removeEventListener('scroll', () => {
+        this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
+      });
+      delete lastPosition[elementId];
+      delete lastDirection[elementId];
+    }
   },
 
   _bindListeners(context = null, event = null) {
@@ -254,13 +256,14 @@ export default Mixin.create({
   },
 
   _unbindListeners() {
-    const elementId = get(this, 'elementId');
-
     if (get(this, 'viewportUseRAF')) {
+      const elementId = get(this, 'elementId');
+
       next(this, () => {
         window.cancelAnimationFrame(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
+      return;
     }
 
     get(this, 'viewportListeners').forEach((listener) => {
