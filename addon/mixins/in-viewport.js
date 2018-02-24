@@ -55,9 +55,6 @@ export default Mixin.create({
   willDestroyElement() {
     this._super(...arguments);
     this._unbindListeners();
-    if (this.intersectionObserver) {
-      this.intersectionObserver.unobserve(this.element);
-    }
   },
 
   _buildOptions(defaultOptions = {}) {
@@ -256,6 +253,11 @@ export default Mixin.create({
   },
 
   _unbindListeners() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.unobserve(this.element);
+      return;
+    }
+
     if (get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
