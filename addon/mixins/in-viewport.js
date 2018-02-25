@@ -107,7 +107,7 @@ export default Mixin.create({
       this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
       this.intersectionObserver.observe(element);
     } else {
-      const height = scrollableArea ? scrollableArea.offsetHeight : window.innerHeight;
+      const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top: window.innerHeight;
       const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
       const boundingClientRect = element.getBoundingClientRect();
 
