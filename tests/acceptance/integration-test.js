@@ -39,11 +39,12 @@ module('Acceptance | Intersection Observer', function(hooks) {
     assert.ok(find('.my-component.bottom.active'), 'component is active');
   });
 
-  test('Tagless component moves to active when scrolled into viewport', function(assert) {
+  test('Tagless component moves to active when scrolled into viewport', async function(assert) {
     assert.expect(1);
 
     await visit('/');
-
+  
+    assert.ok(find('.tagless-component.inactive'), 'component is inactive');
     document.querySelector('.tagless-component').scrollIntoView();
     
     await waitFor('.tagless-component .active');
