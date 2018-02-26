@@ -32,8 +32,10 @@ a.active {
 .infinity-container {
   border: 1px solid black;
   height: 500px;
+  width: 70%;
   overflow: scroll;
 }
 .infinity-component, .infinity-scrollable {
   height: 10px;
 }
+

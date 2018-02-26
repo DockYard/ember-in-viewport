@@ -39,6 +39,22 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     assert.equal(findAll('.infinity-scrollable-rAF.inactive').length, 1, 'component is inactive after fetching more data');
   });
 
+  test('rAF (second) component fetches more data when scrolled into viewport', async function(assert) {
+    await visit('/infinity-scrollable-raf');
+
+    assert.equal(findAll('.infinity-svg-rAF-bottom').length, 10);
+    assert.equal(findAll('.infinity-scrollable-rAF-bottom.inactive').length, 1, 'component is inactive before fetching more data');
+    document.querySelector('.infinity-scrollable-rAF-bottom').scrollIntoView();
+
+    await waitUntil(() => {
+      return findAll('.infinity-svg-rAF-bottom').length === 20;
+    });
+    await waitFor('.infinity-scrollable-rAF-bottom.inactive');
+
+    assert.equal(findAll('.infinity-svg-rAF-bottom').length, 20);
+    assert.equal(findAll('.infinity-scrollable-rAF-bottom.inactive').length, 1, 'component is inactive after fetching more data');
+  });
+
   test('scrollEvent Component fetches more data when scrolled into viewport', async function(assert) {
     await visit('/infinity-scrollable-scrollevent');
 
