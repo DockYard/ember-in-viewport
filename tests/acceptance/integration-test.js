@@ -1,83 +1,74 @@
-import { test } from 'qunit';
-import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
+import { module, test } from 'qunit';
+import { setupApplicationTest } from 'ember-qunit';
+import { find, visit, waitFor } from '@ember/test-helpers';
 
-moduleForAcceptance('Acceptance | integration');
+module('Acceptance | Intersection Observer', function(hooks) {
+  setupApplicationTest(hooks);
 
-test('Component is active when in viewport', function(assert) {
-  assert.expect(1);
-
-  visit('/');
-
-  andThen(() => {
-    assert.ok(find('.my-component.top.start-enabled.active').length);
-  });
-});
-
-test('Component is inactive when not in viewport', function(assert) {
-  assert.expect(1);
-
-  visit('/');
-
-  andThen(() => {
-    assert.ok(find('.my-component.bottom.inactive').length);
-  });
-});
-
-test('Component moves to active when scrolled into viewport', function(assert) {
-  assert.expect(1);
-
-  visit('/');
-
-  andThen(() => {
-    find('.my-component.bottom').get(0).scrollIntoView();
+  hooks.beforeEach(function() {
+    // bring testem window up to the top.
+    document.getElementById('ember-testing-container').scrollTop = 0;
   });
 
-  waitFor('.my-component.bottom.active');
+  test('Component is active when in viewport', async function(assert) {
+    assert.expect(1);
 
-  andThen(() => {
-    assert.ok(find('.my-component.bottom.active').length);
-  });
-});
+    await visit('/');
 
-test('Tagless component moves to active when scrolled into viewport', function(assert) {
-  assert.expect(1);
-
-  visit('/');
-
-  andThen(() => {
-    find('.tagless-component').get(0).scrollIntoView();
+    assert.ok(find('.my-component.top.start-enabled.active'), 'component is active');
   });
 
-  waitFor('.tagless-component .active');
+  test('Component is inactive when not in viewport', async function(assert) {
+    assert.expect(1);
 
-  andThen(() => {
+    await visit('/');
+
+    assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
+  });
+
+  test('Component moves to active when scrolled into viewport', async function(assert) {
+    assert.expect(2);
+
+    await visit('/');
+
+    assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
+    document.querySelector('.my-component.bottom').scrollIntoView();
+
+    await waitFor('.my-component.bottom.active');
+
+    assert.ok(find('.my-component.bottom.active'), 'component is active');
+  });
+
+  test('Tagless component moves to active when scrolled into viewport', function(assert) {
+    assert.expect(1);
+
+    await visit('/');
+
+    document.querySelector('.tagless-component').scrollIntoView();
+    
+    await waitFor('.tagless-component .active');
+
     assert.ok(find('.tagless-component .active').length);
   });
-});
 
+  test('Component moves back to inactive when scrolled out of viewport', async function(assert) {
+    assert.expect(1);
 
-test('Component moves back to inactive when scrolled out of viewport', function(assert) {
-  assert.expect(1);
+    await visit('/');
 
-  visit('/');
+    document.querySelector('.my-component.bottom').scrollIntoView();
 
-  andThen(() => {
-    find(window).scrollTop(2000);
+    await waitFor('.my-component.top.start-enabled.inactive');
+
+    assert.ok(find('.my-component.top.start-enabled.inactive'), 'component is inactive');
   });
 
-  waitFor('.my-component.top.start-enabled.inactive');
+  test('Component can be disabled', async function(assert) {
+    assert.expect(1);
 
-  andThen(() => {
-    assert.ok(find('.my-component.top.start-enabled.inactive').length);
+    await visit('/');
+
+    assert.ok(find('.my-component.top.start-disabled.inactive'), 'component is inactive');
   });
 });
 
-test('Component can be disabled', function(assert) {
-  assert.expect(1);
-
-  visit('/');
-
-  andThen(() => {
-    assert.ok(find('.my-component.top.start-disabled.inactive').length);
-  });
-});

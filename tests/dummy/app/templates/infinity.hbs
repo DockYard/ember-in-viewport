@@ -1,0 +1,10 @@
+<ul>
+  {{#each models as |val|}}
+    <li><img src={{val}} /></li>
+  {{/each}}
+</ul>
+{{my-component
+  class="infinity-component"
+  viewportSpyOverride=true
+  viewportToleranceOverride=viewportToleranceOverride
+  infinityLoad=(action "infinityLoad")}}

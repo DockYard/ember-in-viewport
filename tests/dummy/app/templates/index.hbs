@@ -1,12 +1,12 @@
 <div>
-  {{#my-component class="top start-enabled"
+  {{#my-component
     viewportSpyOverride=true
-  }}
+    class="top start-enabled"}}
     <p>Starts enabled</p>
   {{/my-component}}
 
-  {{#my-component class="top start-disabled"
-    viewportSpyOverride=true
+  {{#my-component
+    class="top start-disabled"
     viewportEnabledOverride=false
   }}
     <p>Starts disabled</p>
@@ -14,7 +14,11 @@
 </div>
 
 <div class="hide-me">
-  {{#my-component class="bottom"}}
+  {{#my-component
+    viewportSpyOverride=true
+    viewportIntersectionObserverOverride=false
+    class="bottom"
+  }}
     <p>Hi!</p>
   {{/my-component}}
 

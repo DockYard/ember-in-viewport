@@ -1,3 +1,8 @@
+// BASE
+a.active {
+  color: magenta;
+}
+
 .my-component {
   display: inline-block;
   width: 300px;
@@ -22,4 +27,13 @@
 
 #ember-testing-container {
   margin-bottom: 500px !important;
+}
+
+.infinity-container {
+  border: 1px solid black;
+  height: 500px;
+  overflow: scroll;
+}
+.infinity-component, .infinity-scrollable {
+  height: 10px;
 }

@@ -1,35 +1,37 @@
-import Ember from 'ember';
+import { assign } from '@ember/polyfills';
+import Mixin from '@ember/object/mixin';
+import { typeOf } from '@ember/utils';
+import { assert } from '@ember/debug';
+import { set, get, setProperties } from '@ember/object';
+import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
+import { not } from '@ember/object/computed';
+import { getOwner } from '@ember/application';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
+import findElem from 'ember-in-viewport/utils/find-elem';
+import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
-
-const {
-  Mixin,
-  setProperties,
-  typeOf,
-  assert,
-  $,
-  get,
-  set,
-  run: { scheduleOnce, debounce, bind, next },
-  computed: { not },
-  getOwner
-} = Ember;
-
-const assign = Ember.assign || Ember.merge;
 
 const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
 export default Mixin.create({
+  /**
+   * IntersectionObserverEntry
+   *
+   * @property intersectionObserver
+   * @default null
+   */
+  intersectionObserver: null,
   viewportExited: not('viewportEntered').readOnly(),
 
   init() {
     this._super(...arguments);
     const options = assign({
       viewportUseRAF: canUseRAF(),
+      viewportUseIntersectionObserver: canUseIntersectionObserver(),
       viewportEntered: false,
       viewportListeners: []
     }, this._buildOptions());
@@ -64,13 +66,14 @@ export default Mixin.create({
   },
 
   _startListening() {
-    this._setInitialViewport(window);
+    this._setInitialViewport();
     this._addObserverIfNotSpying();
-    this._bindScrollDirectionListener(window, get(this, 'viewportScrollSensitivity'));
+    this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
 
     if (!get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
-        const { context, event } = listener;
+        let { context, event } = listener;
+        context = get(this, 'scrollableArea') || context;
         this._bindListeners(context, event);
       });
     }
@@ -82,8 +85,8 @@ export default Mixin.create({
     }
   },
 
-  _setViewportEntered(context = null) {
-    assert('You must pass a valid context to _setViewportEntered', context);
+  _setViewportEntered() {
+    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
     let element;
     if (get(this, 'viewportElement')) {
@@ -96,35 +99,73 @@ export default Mixin.create({
       return;
     }
 
-    const $contextEl = $(context);
-    const boundingClientRect = element.getBoundingClientRect();
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+      // IntersectionObserver takes either a Document Element or null for `root`
+      const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
+      const options = {
+        root: scrollableArea,
+        rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
+        threshold: get(this, 'intersectionThreshold')
+      };
 
-    this._triggerDidAccessViewport(
-      isInViewport(
-        boundingClientRect,
-        $contextEl.innerHeight(),
-        $contextEl.innerWidth(),
-        get(this, 'viewportTolerance')
-      )
-    );
+      this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
+      this.intersectionObserver.observe(element);
+    } else {
+      const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top: window.innerHeight;
+      const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
+      const boundingClientRect = element.getBoundingClientRect();
 
-    if (boundingClientRect && get(this, 'viewportUseRAF')) {
-      rAFIDS[get(this, 'elementId')] = window.requestAnimationFrame(
-        bind(this, this._setViewportEntered, context)
-      );
+      if (boundingClientRect) {
+        this._triggerDidAccessViewport(
+          isInViewport(
+            boundingClientRect,
+            height,
+            width,
+            get(this, 'viewportTolerance')
+          )
+        );
+        if (get(this, 'viewportUseRAF')) {
+          rAFIDS[get(this, 'elementId')] = window.requestAnimationFrame(
+            bind(this, this._setViewportEntered)
+          );
+        }
+      }
     }
   },
 
-  _triggerDidScrollDirection($contextEl = null, sensitivity = 1) {
-    assert('You must pass a valid context element to _triggerDidScrollDirection', $contextEl);
+  /**
+   * callback provided to IntersectionObserver
+   *
+   * @method _onIntersection
+   * @param {Array} - entries
+   */
+  _onIntersection(entries) {
+    if (this.isDestroyed || this.isDestroying) {
+      return;
+    }
+
+    const entry = entries[0];
+
+    if (entry.isIntersecting) {
+      set(this, 'viewportEntered', true);
+      this.trigger('didEnterViewport');
+    } else if (entry.intersectionRatio <= 0) { // exiting viewport
+      set(this, 'viewportEntered', false);
+      this.trigger('didExitViewport');
+    }
+  },
+
+  _triggerDidScrollDirection(contextEl = null, sensitivity = 1) {
+    assert('You must pass a valid context element to _triggerDidScrollDirection', contextEl);
     assert('sensitivity cannot be 0', sensitivity);
 
     const elementId = get(this, 'elementId');
     const lastDirectionForEl = lastDirection[elementId];
     const lastPositionForEl = lastPosition[elementId];
     const newPosition = {
-      top: $contextEl.scrollTop(),
-      left: $contextEl.scrollLeft()
+      top: contextEl.scrollTop,
+      left: contextEl.scrollLeft
     };
 
     const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
@@ -167,11 +208,9 @@ export default Mixin.create({
     }
   },
 
-  _setInitialViewport(context = null) {
-    assert('You must pass a valid context to _setInitialViewport', context);
-
+  _setInitialViewport() {
     return scheduleOnce('afterRender', this, () => {
-      this._setViewportEntered(context);
+      this._setViewportEntered();
     });
   },
 
@@ -182,51 +221,68 @@ export default Mixin.create({
     debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
   },
 
-  _bindScrollDirectionListener(context = null, sensitivity = 1) {
-    assert('You must pass a valid context to _bindScrollDirectionListener', context);
+  _bindScrollDirectionListener(sensitivity = 1) {
     assert('sensitivity cannot be 0', sensitivity);
 
-    const $contextEl = $(context);
+    const contextEl = get(this, 'scrollableArea') || window;
+    const elem = findElem(contextEl);
 
-    $contextEl.on(`scroll.directional#${get(this, 'elementId')}`, () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', $contextEl, sensitivity);
+    elem.addEventListener('scroll', () => {
+      this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
     });
   },
 
-  _unbindScrollDirectionListener(context = null) {
-    assert('You must pass a valid context to _bindScrollDirectionListener', context);
-
+  _unbindScrollDirectionListener() {
     const elementId = get(this, 'elementId');
+    const context = get(this, 'scrollableArea') || window;
+    const elem = findElem(context);
 
-    $(context).off(`scroll.directional#${elementId}`);
-    delete lastPosition[elementId];
-    delete lastDirection[elementId];
+    if (elem) {
+      elem.removeEventListener('scroll', () => {
+        this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
+      });
+      delete lastPosition[elementId];
+      delete lastDirection[elementId];
+    }
   },
 
   _bindListeners(context = null, event = null) {
     assert('You must pass a valid context to _bindListeners', context);
     assert('You must pass a valid event to _bindListeners', event);
 
-    $(context).on(`${event}.${get(this, 'elementId')}`, () => {
-      this._debouncedEventHandler('_setViewportEntered', context);
+    let elem = findElem(context);
+
+    elem.addEventListener(event, () => {
+      this._debouncedEventHandler('_setViewportEntered');
     });
   },
 
   _unbindListeners() {
-    const elementId = get(this, 'elementId');
+    if (this.intersectionObserver) {
+      this.intersectionObserver.unobserve(this.element);
+      return;
+    }
 
     if (get(this, 'viewportUseRAF')) {
+      const elementId = get(this, 'elementId');
+
       next(this, () => {
         window.cancelAnimationFrame(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
+      return;
     }
 
     get(this, 'viewportListeners').forEach((listener) => {
-      const { context, event } = listener;
-      $(context).off(`${event}.${elementId}`);
+      let { context, event } = listener;
+      context = get(this, 'scrollableArea') || context;
+      let elem = findElem(context);
+
+      elem.removeEventListener(event, () => {
+        this._debouncedEventHandler('_setViewportEntered');
+      });
     });
 
-    this._unbindScrollDirectionListener(window);
-  }
+    this._unbindScrollDirectionListener();
+  },
 });
