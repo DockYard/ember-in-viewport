@@ -44,7 +44,7 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     assert.equal(findAll('.infinity-svg-rAF-bottom').length, 10);
     assert.equal(findAll('.infinity-scrollable-rAF-bottom.inactive').length, 1, 'component is inactive before fetching more data');
-    document.querySelector('.infinity-scrollable-rAF-bottom').scrollIntoView();
+    document.querySelector('.infinity-scrollable-rAF-bottom').scrollIntoView(false);
 
     await waitUntil(() => {
       return findAll('.infinity-svg-rAF-bottom').length === 20;
