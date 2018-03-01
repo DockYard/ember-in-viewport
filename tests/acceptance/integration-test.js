@@ -32,7 +32,7 @@ module('Acceptance | Intersection Observer', function(hooks) {
     await visit('/');
 
     assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
-    document.querySelector('.my-component.bottom').scrollIntoView();
+    document.querySelector('.my-component.bottom').scrollIntoView(false);
 
     await waitFor('.my-component.bottom.active');
 
@@ -44,7 +44,7 @@ module('Acceptance | Intersection Observer', function(hooks) {
 
     await visit('/');
 
-    document.querySelector('.my-component.bottom').scrollIntoView();
+    document.querySelector('.my-component.bottom').scrollIntoView(false);
 
     await waitFor('.my-component.top.start-enabled.inactive');
 
