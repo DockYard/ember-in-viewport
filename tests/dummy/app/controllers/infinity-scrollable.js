@@ -18,8 +18,13 @@ export default Controller.extend({
   actions: {
     infinityLoad() {
       const newModels = [...Array(10).fill().map(() => `${images[(Math.random() * images.length) | 0]}`)];
-      get(this, 'model').push(...newModels);
-      set(this, 'model', Array.from(get(this, 'model')));
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          get(this, 'model').push(...newModels);
+          set(this, 'model', Array.from(get(this, 'model')));
+          resolve();
+        }, 0);
+      });
     }
   }
 });
