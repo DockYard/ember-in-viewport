@@ -140,12 +140,13 @@ export default Mixin.create({
       return;
     }
 
-    const entry = entries[0];
+    const [entry] = entries;
+    let { isIntersecting, intersectionRatio } = entry;
 
-    if (entry.isIntersecting) {
+    if (isIntersecting) {
       set(this, 'viewportEntered', true);
       this.trigger('didEnterViewport');
-    } else if (entry.intersectionRatio <= 0) { // exiting viewport
+    } else if (intersectionRatio <= 0) { // exiting viewport
       set(this, 'viewportEntered', false);
       this.trigger('didExitViewport');
     }
