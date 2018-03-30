@@ -136,18 +136,19 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
-    if (this.isDestroyed || this.isDestroying) {
-      return;
-    }
-
+    const isTearingDown = this.isDestroyed || this.isDestroying;
     const [entry] = entries;
     let { isIntersecting, intersectionRatio } = entry;
 
     if (isIntersecting) {
-      set(this, 'viewportEntered', true);
+      if (!isTearingDown) {
+        set(this, 'viewportEntered', true);
+      }
       this.trigger('didEnterViewport');
     } else if (intersectionRatio <= 0) { // exiting viewport
-      set(this, 'viewportEntered', false);
+      if (!isTearingDown) {
+        set(this, 'viewportEntered', false);
+      }
       this.trigger('didExitViewport');
     }
   },
