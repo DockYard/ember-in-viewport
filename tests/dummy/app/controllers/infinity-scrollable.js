@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 import { set, get } from '@ember/object';
+import { later } from '@ember/runloop';
 
 let rect = '<rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"/>';
 let circle = '<circle cx="25" cy="75" r="20" stroke="red" fill="transparent" stroke-width="5"/>';
@@ -19,7 +20,7 @@ export default Controller.extend({
     infinityLoad() {
       const newModels = [...Array(10).fill().map(() => `${images[(Math.random() * images.length) | 0]}`)];
       return new Promise((resolve) => {
-        setTimeout(() => {
+        later(() => {
           get(this, 'model').push(...newModels);
           set(this, 'model', Array.from(get(this, 'model')));
           resolve();
