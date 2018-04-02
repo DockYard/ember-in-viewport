@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 import { set, get } from '@ember/object';
+import { later } from '@ember/runloop';
 
 const images = ["jarjan", "aio___", "kushsolitary", "kolage", "idiot", "gt"];
 
@@ -17,8 +18,13 @@ export default Controller.extend({
   actions: {
     infinityLoad() {
       const newModels = [...Array(10).fill().map(() => `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`)];
-      get(this, 'models').push(...newModels);
-      set(this, 'models', Array.from(get(this, 'models')));
+      return new Promise((resolve) => {
+        later(() => {
+          get(this, 'models').push(...newModels);
+          set(this, 'models', Array.from(get(this, 'models')));
+          resolve();
+        }, 0);
+      });
     }
   }
 });
