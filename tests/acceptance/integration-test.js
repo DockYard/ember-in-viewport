@@ -32,7 +32,7 @@ module('Acceptance | Intersection Observer', function(hooks) {
     await visit('/');
 
     assert.ok(find('.my-component.bottom.inactive'), 'component is inactive');
-    document.querySelector('.my-component.bottom').scrollIntoView(false);
+    document.querySelector('.my-component.bottom').scrollIntoView();
 
     await waitFor('.my-component.bottom.active');
 
