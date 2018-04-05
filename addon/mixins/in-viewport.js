@@ -21,10 +21,18 @@ export default Mixin.create({
   /**
    * IntersectionObserverEntry
    *
+   * https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry
+   *
    * @property intersectionObserver
    * @default null
    */
   intersectionObserver: null,
+  /**
+   * @property _debouncedEventHandler
+   * @default null
+   */
+  _debouncedEventHandler: null,
+
   viewportExited: not('viewportEntered').readOnly(),
 
   init() {
@@ -211,8 +219,8 @@ export default Mixin.create({
     });
   },
 
-  _debouncedEventHandler(methodName, ...args) {
-    assert('You must pass a methodName to _debouncedEventHandler', methodName);
+  _debouncedEvent(methodName, ...args) {
+    assert('You must pass a methodName to _debouncedEvent', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
 
     debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
@@ -224,9 +232,8 @@ export default Mixin.create({
     const contextEl = get(this, 'scrollableArea') || window;
     const elem = findElem(contextEl);
 
-    elem.addEventListener('scroll', () => {
-      this._debouncedEventHandler('_triggerDidScrollDirection', elem, sensitivity);
-    });
+    this._debouncedEventHandler = this._debouncedEvent.bind(this, '_triggerDidScrollDirection', elem, sensitivity);
+    elem.addEventListener('scroll', this.debouncedEventHandler, false);
   },
 
   _unbindScrollDirectionListener() {
@@ -235,9 +242,7 @@ export default Mixin.create({
     const elem = findElem(context);
 
     if (elem) {
-      elem.removeEventListener('scroll', () => {
-        this._debouncedEventHandler('_triggerDidScrollDirection', elem, get(this, 'viewportScrollSensitivity'));
-      });
+      elem.removeEventListener('scroll', this._debouncedEventHandler, false);
       delete lastPosition[elementId];
       delete lastDirection[elementId];
     }
@@ -250,7 +255,7 @@ export default Mixin.create({
     let elem = findElem(context);
 
     elem.addEventListener(event, () => {
-      this._debouncedEventHandler('_setViewportEntered');
+      this._debouncedEvent('_setViewportEntered');
     });
   },
 
@@ -268,7 +273,6 @@ export default Mixin.create({
         window.cancelAnimationFrame(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
-      return;
     }
 
     // 3.
@@ -278,7 +282,7 @@ export default Mixin.create({
       let elem = findElem(context);
 
       elem.removeEventListener(event, () => {
-        this._debouncedEventHandler('_setViewportEntered');
+        this._debouncedEvent('_setViewportEntered');
       });
     });
 
