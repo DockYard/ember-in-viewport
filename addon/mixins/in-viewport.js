@@ -255,11 +255,12 @@ export default Mixin.create({
   },
 
   _unbindListeners() {
+    // 1.
     if (this.intersectionObserver) {
       this.intersectionObserver.unobserve(this.element);
-      return;
     }
 
+    // 2.
     if (get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
@@ -270,6 +271,7 @@ export default Mixin.create({
       return;
     }
 
+    // 3.
     get(this, 'viewportListeners').forEach((listener) => {
       let { context, event } = listener;
       context = get(this, 'scrollableArea') || context;
@@ -280,6 +282,7 @@ export default Mixin.create({
       });
     });
 
+    // 4.
     this._unbindScrollDirectionListener();
   },
 });
