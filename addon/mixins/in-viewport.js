@@ -284,9 +284,7 @@ export default Mixin.create({
         let elem = findElem(context);
         let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event) || {};
 
-        if (evtListener) {
-          elem.removeEventListener(event, evtListener);
-        }
+        elem.removeEventListener(event, evtListener);
       });
     }
 
