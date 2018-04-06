@@ -233,7 +233,7 @@ export default Mixin.create({
     const elem = findElem(contextEl);
 
     this._debouncedEventHandler = this._debouncedEvent.bind(this, '_triggerDidScrollDirection', elem, sensitivity);
-    elem.addEventListener('scroll', this.debouncedEventHandler, false);
+    elem.addEventListener('scroll', this._debouncedEventHandler, false);
   },
 
   _unbindScrollDirectionListener() {
