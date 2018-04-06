@@ -20,7 +20,6 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     await waitFor('.infinity-scrollable.inactive');
 
     assert.equal(findAll('.infinity-svg').length, 20);
-    assert.equal(findAll('.infinity-scrollable.inactive').length, 1, 'component is inactive after fetching more data');
   });
 
   test('rAF Component fetches more data when scrolled into viewport', async function(assert) {
