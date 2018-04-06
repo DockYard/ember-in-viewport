@@ -38,11 +38,11 @@ These hooks fire once whenever the `Component` enters or exits the viewport. You
 
 ```js
 export default Ember.Component.extend(InViewportMixin, {
-  didEnterViewport() {
+  didEnterViewport(IntersectionObserverEntry) {
     console.log('entered');
   },
 
-  didExitViewport() {
+  didExitViewport(IntersectionObserverEntry) {
     console.log('exited');
   }
 });

@@ -153,12 +153,12 @@ export default Mixin.create({
       if (!isTearingDown) {
         set(this, 'viewportEntered', true);
       }
-      this.trigger('didEnterViewport');
+      this.trigger('didEnterViewport', entry);
     } else if (intersectionRatio <= 0) { // exiting viewport
       if (!isTearingDown) {
         set(this, 'viewportEntered', false);
       }
-      this.trigger('didExitViewport');
+      this.trigger('didExitViewport', entry);
     }
   },
 

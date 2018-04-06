@@ -53,7 +53,7 @@ export default Component.extend(InViewportMixin, {
     setProperties(this, options);
   },
 
-  didEnterViewport() {
+  didEnterViewport(/*IntersectionObserverEntry*/) {
     if (get(this, 'infinityLoad')) {
       get(this, 'infinityLoad')();
     }
