@@ -79,7 +79,7 @@ export default Mixin.create({
     this._addObserverIfNotSpying();
     this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
 
-    if (!get(this, 'viewportUseRAF')) {
+    if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
         let { context, event } = listener;
         context = get(this, 'scrollableArea') || context;
@@ -277,14 +277,18 @@ export default Mixin.create({
     }
 
     // 3.
-    get(this, 'viewportListeners').forEach((listener) => {
-      let { context, event } = listener;
-      context = get(this, 'scrollableArea') || context;
-      let elem = findElem(context);
-      let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event);
+    if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
+      get(this, 'viewportListeners').forEach((listener) => {
+        let { context, event } = listener;
+        context = get(this, 'scrollableArea') || context;
+        let elem = findElem(context);
+        let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event) || {};
 
-      elem.removeEventListener(event, evtListener);
-    });
+        if (evtListener) {
+          elem.removeEventListener(event, evtListener);
+        }
+      });
+    }
 
     // 4.
     this._unbindScrollDirectionListener();
