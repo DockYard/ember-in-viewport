@@ -45,6 +45,7 @@ export default Mixin.create({
     }, this._buildOptions());
 
     setProperties(this, options);
+    set(this, '_evtListenerClosures', []);
   },
 
   didInsertElement() {
@@ -254,9 +255,9 @@ export default Mixin.create({
 
     let elem = findElem(context);
 
-    elem.addEventListener(event, () => {
-      this._debouncedEvent('_setViewportEntered');
-    });
+    let evtListener = (() => this._debouncedEvent('_setViewportEntered'));
+    this._evtListenerClosures.push({ event: event, evtListener });
+    elem.addEventListener(event, evtListener);
   },
 
   _unbindListeners() {
@@ -280,10 +281,9 @@ export default Mixin.create({
       let { context, event } = listener;
       context = get(this, 'scrollableArea') || context;
       let elem = findElem(context);
+      let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event);
 
-      elem.removeEventListener(event, () => {
-        this._debouncedEvent('_setViewportEntered');
-      });
+      elem.removeEventListener(event, evtListener);
     });
 
     // 4.
