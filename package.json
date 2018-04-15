@@ -8,8 +8,10 @@
   },
   "scripts": {
     "build": "ember build",
+    "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests",
     "start": "ember serve",
-    "test": "ember try:each"
+    "test": "ember test",
+    "test:all": "ember try:each"
   },
   "repository": "https://github.com/dockyard/ember-in-viewport",
   "engines": {
@@ -22,7 +24,7 @@
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
-    "ember-cli": "~3.0.2",
+    "ember-cli": "~3.1.2",
     "ember-cli-dependency-checker": "^2.0.0",
     "ember-cli-eslint": "^4.2.1",
     "ember-cli-htmlbars": "^2.0.1",
@@ -38,11 +40,11 @@
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-event-dispatcher": "^0.6.4",
     "ember-resolver": "^4.0.0",
-    "ember-source": "~3.1.0-beta.5",
+    "ember-source": "~3.1.0",
     "ember-source-channel-url": "^1.0.1",
     "ember-try": "^0.2.23",
-    "eslint-plugin-ember": "^5.0.3",
-    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-ember": "^5.1.0",
+    "eslint-plugin-node": "^6.0.1",
     "loader.js": "^4.2.3"
   },
   "keywords": [
