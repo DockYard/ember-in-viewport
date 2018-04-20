@@ -125,6 +125,7 @@ export default Ember.Component.extend(InViewportMixin, {
   Some notes:
     - If the target is offscreen, you will get a notification via `didExitViewport` that the target is initially offscreen.  Similarily, this is possible to notify if onscreen when your site loads.
     - If intersectionThreshold is set to anything greater than 0, you will not see `didExitViewport` hook fired due to our use of the `isIntersecting` property.  See last comment here: https://bugs.chromium.org/p/chromium/issues/detail?id=713819 for purpose of `isIntersecting`
+    - To get around the above issue and have `didExitViewport` fire, set your `intersectionThreshold` to `[0, 1.0]`.  This is because when the element is 99% visible and still has isIntersecting as true, when the element leaves the viewport, the element isn't applicable to the observer anymore, so the callback isn't called again.
     - If your intersectionThreshold is set to 0 you will get notified if the target `didEnterViewport` and `didExitViewport` at the appropriate time.
 
 - `scrollableArea`
