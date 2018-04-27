@@ -25,14 +25,21 @@ class rAFPoolManager {
 
   flush() {
     window.requestAnimationFrame(()=> {
-      this.pool.forEach(fn => fn());
+      let pool= this.pool;
       this.reset();
+      pool.forEach(fn => fn());
       this.flush();
     });
   }
 
   add(fn) {
-    return this.pool.push(fn);
+    this.pool.push(fn);
+    return fn;
+  }
+
+  remove(fn) {
+    this.pool.push(fn);
+    return fn;
   }
 
   reset() {
@@ -175,7 +182,7 @@ export default Mixin.create({
       );
 
       let elementId = get(this, 'elementId');
-      rAFIDS[elementId] = window.requestAnimationFrame(
+      rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
         bind(this, this._setRAFViewportEntered)
       );
     }
@@ -308,7 +315,7 @@ export default Mixin.create({
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        window.cancelAnimationFrame(rAFIDS[elementId]);
+        // get(this, 'rAFPoolManager').remove(rAFIDS[elementId]);
         delete rAFIDS[elementId];
       });
     }
