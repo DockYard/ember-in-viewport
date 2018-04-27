@@ -129,8 +129,14 @@ export default Mixin.create({
             get(this, 'viewportTolerance')
           )
         );
+
         if (get(this, 'viewportUseRAF')) {
-          rAFIDS[get(this, 'elementId')] = window.requestAnimationFrame(
+          let elementId = get(this, 'elementId');
+
+          if (rAFIDS[elementId]) {
+            window.cancelAnimationFrame(rAFIDS[elementId]);
+          }
+          rAFIDS[elementId] = window.requestAnimationFrame(
             bind(this, this._setViewportEntered)
           );
         }
