@@ -16,6 +16,12 @@ module('Unit | Mixin | in viewport', function(hooks) {
     this.rAFPoolManager.flush = () => {};
   });
 
+  test('mixin works', function(assert) {
+    let InViewportObject = EmberObject.extend(InViewportMixin);
+    let subject = InViewportObject.create();
+    assert.ok(subject);
+  });
+
   test('can add to pool manager', function(assert) {
     let obj = this.rAFPoolManager.add(123, 'wat');
     assert.equal(obj, 'wat');
