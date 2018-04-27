@@ -25,21 +25,24 @@ class rAFPoolManager {
 
   flush() {
     window.requestAnimationFrame(()=> {
+      // assign to a variable to avoid ensure no race conditions happen
+      // b/w flushing the pool and interating through the pool
       let pool= this.pool;
       this.reset();
-      pool.forEach(fn => fn());
+      pool.forEach(item => {
+        item[Object.keys(item)[0]]();
+      });
       this.flush();
     });
   }
 
-  add(fn) {
-    this.pool.push(fn);
+  add(elementId, fn) {
+    this.pool.push({ [elementId]: fn });
     return fn;
   }
 
-  remove(fn) {
-    this.pool.push(fn);
-    return fn;
+  remove(elementId) {
+    this.pool = this.pool.filter(obj => obj.id !== elementId);
   }
 
   reset() {
@@ -183,6 +186,7 @@ export default Mixin.create({
 
       let elementId = get(this, 'elementId');
       rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
+        elementId,
         bind(this, this._setRAFViewportEntered)
       );
     }
@@ -311,11 +315,11 @@ export default Mixin.create({
     }
 
     // 2.
-    if (get(this, 'viewportUseRAF')) {
+    if (!get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        // get(this, 'rAFPoolManager').remove(rAFIDS[elementId]);
+        get(this, 'rAFPoolManager').remove(elementId);
         delete rAFIDS[elementId];
       });
     }
