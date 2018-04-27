@@ -17,6 +17,12 @@ const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
+/**
+ * ensure use on requestAnimationFrame, no matter how many components
+ * on the page are using this mixin
+ *
+ * @class rAFPoolManager
+ */
 class rAFPoolManager {
   constructor() {
     this.pool = [];
@@ -66,9 +72,14 @@ export default Mixin.create({
    */
   _debouncedEventHandler: null,
 
+  /**
+   * @property viewportExited
+   * @type Boolean
+   */
   viewportExited: not('viewportEntered').readOnly(),
 
   init() {
+    // ensure this mixin runs first, then your component can override the options
     this._super(...arguments);
 
     const options = assign({
@@ -131,17 +142,20 @@ export default Mixin.create({
   _setInitialViewport() {
     if (get(this, 'viewportUseIntersectionObserver')) {
       return scheduleOnce('afterRender', this, () => {
-        this._setViewportEntered();
+        this._setupIntersectionObserver();
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
         set(this, 'rAFPoolManager', new rAFPoolManager);
-        this._setRAFViewportEntered();
+        this._setViewportEntered();
       });
     }
   },
 
-  _setViewportEntered() {
+  /**
+   * @method _setupIntersectionObserver
+   */
+  _setupIntersectionObserver() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
     const element = get(this, 'element');
@@ -162,7 +176,13 @@ export default Mixin.create({
     this.intersectionObserver.observe(element);
   },
 
-  _setRAFViewportEntered() {
+  /**
+   * used by rAF and scroll event listeners to determine if mixin is in viewport
+   * Remember to set `viewportSpy` to true if you want to continuously observe your element
+   *
+   * @method _setViewportEntered
+   */
+  _setViewportEntered() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
     const element = get(this, 'element');
@@ -184,11 +204,13 @@ export default Mixin.create({
         )
       );
 
-      let elementId = get(this, 'elementId');
-      rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
-        elementId,
-        bind(this, this._setRAFViewportEntered)
-      );
+      if (get(this, 'viewportUseRAF')) {
+        let elementId = get(this, 'elementId');
+        rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
+          elementId,
+          bind(this, this._setViewportEntered)
+        );
+      }
     }
   },
 
@@ -216,6 +238,11 @@ export default Mixin.create({
     }
   },
 
+  /**
+   * @method _triggerDidScrollDirection
+   * @param contextEl
+   * @param sensitivity
+   */
   _triggerDidScrollDirection(contextEl = null, sensitivity = 1) {
     assert('You must pass a valid context element to _triggerDidScrollDirection', contextEl);
     assert('sensitivity cannot be 0', sensitivity);
@@ -239,6 +266,10 @@ export default Mixin.create({
     lastPosition[elementId] = newPosition;
   },
 
+  /**
+   * @method _triggerDidAccessViewport
+   * @param hasEnteredViewport
+   */
   _triggerDidAccessViewport(hasEnteredViewport = false) {
     const viewportEntered = get(this, 'viewportEntered');
     const didEnter = !viewportEntered && hasEnteredViewport;
@@ -268,6 +299,11 @@ export default Mixin.create({
     }
   },
 
+  /**
+   * General utility function
+   *
+   * @method _debouncedEvent
+   */
   _debouncedEvent(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEvent', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
@@ -297,6 +333,11 @@ export default Mixin.create({
     }
   },
 
+  /**
+   * Only if not using IntersectionObserver and rAF
+   *
+   * @method _bindListeners
+   */
   _bindListeners(context = null, event = null) {
     assert('You must pass a valid context to _bindListeners', context);
     assert('You must pass a valid event to _bindListeners', event);
@@ -308,6 +349,9 @@ export default Mixin.create({
     elem.addEventListener(event, evtListener);
   },
 
+  /**
+   * @method _unbindListeners
+   */
   _unbindListeners() {
     // 1.
     if (this.intersectionObserver) {
