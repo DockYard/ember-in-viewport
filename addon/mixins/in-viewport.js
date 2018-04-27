@@ -2,6 +2,7 @@ import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
+import { inject as service } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
 import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
@@ -16,45 +17,6 @@ import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction
 const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
-
-/**
- * ensure use on requestAnimationFrame, no matter how many components
- * on the page are using this mixin
- *
- * @class rAFPoolManager
- */
-export class rAFPoolManager {
-  constructor() {
-    this.pool = [];
-    this.flush();
-  }
-
-  flush() {
-    window.requestAnimationFrame(() => {
-      // assign to a variable to avoid ensure no race conditions happen
-      // b/w flushing the pool and interating through the pool
-      let pool = this.pool;
-      this.reset();
-      pool.forEach((item) => {
-        item[Object.keys(item)[0]]();
-      });
-      this.flush();
-    });
-  }
-
-  add(elementId, fn) {
-    this.pool.push({ [elementId]: fn });
-    return fn;
-  }
-
-  remove(elementId) {
-    this.pool = this.pool.filter(obj => !obj[elementId]);
-  }
-
-  reset() {
-    this.pool = [];
-  }
-}
 
 export default Mixin.create({
   /**
@@ -79,6 +41,8 @@ export default Mixin.create({
    * @default false
    */
   _stopListening: false,
+
+  rAFPoolManager: service('-in-viewport'),
 
   /**
    * @property viewportExited
@@ -154,7 +118,6 @@ export default Mixin.create({
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
-        set(this, 'rAFPoolManager', new rAFPoolManager());
         this._setViewportEntered();
       });
     }

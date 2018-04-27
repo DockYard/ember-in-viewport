@@ -2,7 +2,7 @@ import EmberObject from '@ember/object';
 import InViewportMixin from 'ember-in-viewport/mixins/in-viewport';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import { rAFPoolManager } from 'ember-in-viewport/mixins/in-viewport';
+import rAFPoolManager from 'ember-in-viewport/services/-in-viewport';
 
 class rAFMock extends rAFPoolManager {
   flush() {}
