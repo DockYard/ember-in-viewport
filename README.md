@@ -23,10 +23,10 @@ ember install ember-in-viewport
 Usage is simple. First, add the Mixin to your `Component`:
 
 ```js
-import Ember from 'ember';
+import Component from '@ember/component';
 import InViewportMixin from 'ember-in-viewport';
 
-export default Ember.Component.extend(InViewportMixin, {
+export default Component.extend(InViewportMixin, {
   // ...
 });
 ```
@@ -37,7 +37,9 @@ export default Ember.Component.extend(InViewportMixin, {
 These hooks fire once whenever the `Component` enters or exits the viewport. You can handle them the same way you would handle any other native Ember hook:
 
 ```js
-export default Ember.Component.extend(InViewportMixin, {
+import Component from '@ember/component';
+
+export default Component.extend(InViewportMixin, {
   didEnterViewport() {
     console.log('entered');
   },
@@ -52,7 +54,9 @@ export default Ember.Component.extend(InViewportMixin, {
 The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receive the direction as a string. You can then handle it like another hook as in the above example.
 
 ```js
-export default Ember.Component.extend(InViewportMixin, {
+import Component from '@ember/component';
+
+export default Component.extend(InViewportMixin, {
   didScroll(direction) {
     console.log(direction); // 'up' || 'down' || 'left' || 'right'
   }
@@ -75,6 +79,8 @@ This hook fires whenever the `Component` leaves the viewport.
 The mixin comes with some options. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
 
 ```js
+import Component from '@ember/component';
+
 export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
