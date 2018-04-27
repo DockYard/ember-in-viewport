@@ -30,7 +30,7 @@ export class rAFPoolManager {
   }
 
   flush() {
-    window.requestAnimationFrame(()=> {
+    window.requestAnimationFrame(() => {
       // assign to a variable to avoid ensure no race conditions happen
       // b/w flushing the pool and interating through the pool
       let pool = this.pool;
