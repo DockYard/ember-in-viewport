@@ -13,7 +13,6 @@ module('Unit | Mixin | in viewport', function(hooks) {
 
   hooks.beforeEach(function() {
     this.rAFPoolManager = new rAFMock();
-    this.rAFPoolManager.flush = () => {};
   });
 
   test('mixin works', function(assert) {
