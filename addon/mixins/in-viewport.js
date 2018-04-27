@@ -33,9 +33,9 @@ export class rAFPoolManager {
     window.requestAnimationFrame(()=> {
       // assign to a variable to avoid ensure no race conditions happen
       // b/w flushing the pool and interating through the pool
-      let pool= this.pool;
+      let pool = this.pool;
       this.reset();
-      pool.forEach(item => {
+      pool.forEach((item) => {
         item[Object.keys(item)[0]]();
       });
       this.flush();
