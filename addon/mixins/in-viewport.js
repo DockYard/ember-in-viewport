@@ -17,6 +17,29 @@ const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
+class rAFPoolManager {
+  constructor() {
+    this.pool = [];
+    this.flush();
+  }
+
+  flush() {
+    window.requestAnimationFrame(()=> {
+      this.pool.forEach(fn => fn());
+      this.reset();
+      this.flush();
+    });
+  }
+
+  add(fn) {
+    return this.pool.push(fn);
+  }
+
+  reset() {
+    this.pool = [];
+  }
+}
+
 export default Mixin.create({
   /**
    * IntersectionObserverEntry
@@ -37,6 +60,7 @@ export default Mixin.create({
 
   init() {
     this._super(...arguments);
+
     const options = assign({
       viewportUseRAF: canUseRAF(),
       viewportUseIntersectionObserver: canUseIntersectionObserver(),
@@ -94,53 +118,66 @@ export default Mixin.create({
     }
   },
 
+  _setInitialViewport() {
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      return scheduleOnce('afterRender', this, () => {
+        this._setViewportEntered();
+      });
+    } else {
+      return scheduleOnce('afterRender', this, () => {
+        set(this, 'rAFPoolManager', new rAFPoolManager);
+        this._setRAFViewportEntered();
+      });
+    }
+  },
+
   _setViewportEntered() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
     const element = get(this, 'element');
-
     if (!element) {
       return;
     }
 
-    if (get(this, 'viewportUseIntersectionObserver')) {
-      // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      // IntersectionObserver takes either a Document Element or null for `root`
-      const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
-      const options = {
-        root: scrollableArea,
-        rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-        threshold: get(this, 'intersectionThreshold')
-      };
+    // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+    // IntersectionObserver takes either a Document Element or null for `root`
+    const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
+    const options = {
+      root: scrollableArea,
+      rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
+      threshold: get(this, 'intersectionThreshold')
+    };
 
-      this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
-      this.intersectionObserver.observe(element);
-    } else {
-      const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
-      const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
-      const boundingClientRect = element.getBoundingClientRect();
+    this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
+    this.intersectionObserver.observe(element);
+  },
 
-      if (boundingClientRect) {
-        this._triggerDidAccessViewport(
-          isInViewport(
-            boundingClientRect,
-            height,
-            width,
-            get(this, 'viewportTolerance')
-          )
-        );
+  _setRAFViewportEntered() {
+    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
-        if (get(this, 'viewportUseRAF')) {
-          let elementId = get(this, 'elementId');
+    const element = get(this, 'element');
+    if (!element) {
+      return;
+    }
 
-          if (rAFIDS[elementId]) {
-            window.cancelAnimationFrame(rAFIDS[elementId]);
-          }
-          rAFIDS[elementId] = window.requestAnimationFrame(
-            bind(this, this._setViewportEntered)
-          );
-        }
-      }
+    const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
+    const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
+    const boundingClientRect = element.getBoundingClientRect();
+
+    if (boundingClientRect) {
+      this._triggerDidAccessViewport(
+        isInViewport(
+          boundingClientRect,
+          height,
+          width,
+          get(this, 'viewportTolerance')
+        )
+      );
+
+      let elementId = get(this, 'elementId');
+      rAFIDS[elementId] = window.requestAnimationFrame(
+        bind(this, this._setRAFViewportEntered)
+      );
     }
   },
 
@@ -218,12 +255,6 @@ export default Mixin.create({
       this.removeObserver('viewportEntered', this, this._unbindIfEntered);
       set(this, 'viewportEntered', true);
     }
-  },
-
-  _setInitialViewport() {
-    return scheduleOnce('afterRender', this, () => {
-      this._setViewportEntered();
-    });
   },
 
   _debouncedEvent(methodName, ...args) {

@@ -75,7 +75,7 @@ This hook fires whenever the `Component` leaves the viewport.
 The mixin comes with some options. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
 
 ```js
-export default Ember.Component.extend(InViewportMixin, {
+export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
 
