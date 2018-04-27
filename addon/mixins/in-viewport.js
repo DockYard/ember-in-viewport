@@ -23,7 +23,7 @@ const lastPosition = {};
  *
  * @class rAFPoolManager
  */
-class rAFPoolManager {
+export class rAFPoolManager {
   constructor() {
     this.pool = [];
     this.flush();
@@ -48,7 +48,7 @@ class rAFPoolManager {
   }
 
   remove(elementId) {
-    this.pool = this.pool.filter(obj => obj.id !== elementId);
+    this.pool = this.pool.filter(obj => !obj[elementId]);
   }
 
   reset() {
@@ -154,7 +154,7 @@ export default Mixin.create({
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
-        set(this, 'rAFPoolManager', new rAFPoolManager);
+        set(this, 'rAFPoolManager', new rAFPoolManager());
         this._setViewportEntered();
       });
     }
