@@ -8,7 +8,7 @@ import Service from '@ember/service';
  */
 export default class rAFPoolManager extends Service {
   init(...args) {
-    super(...args);
+    super.init(...args);
     this.pool = [];
     this.flush();
   }
