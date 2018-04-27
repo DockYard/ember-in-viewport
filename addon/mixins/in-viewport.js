@@ -73,6 +73,14 @@ export default Mixin.create({
   _debouncedEventHandler: null,
 
   /**
+   * unbinding listeners will short circuit rAF
+   *
+   * @property _stopListening
+   * @default false
+   */
+  _stopListening: false,
+
+  /**
    * @property viewportExited
    * @type Boolean
    */
@@ -204,7 +212,7 @@ export default Mixin.create({
         )
       );
 
-      if (get(this, 'viewportUseRAF')) {
+      if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
         let elementId = get(this, 'elementId');
         rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
           elementId,
@@ -353,6 +361,8 @@ export default Mixin.create({
    * @method _unbindListeners
    */
   _unbindListeners() {
+    set(this, '_stopListening', true);
+
     // 1.
     if (this.intersectionObserver) {
       this.intersectionObserver.unobserve(this.element);
