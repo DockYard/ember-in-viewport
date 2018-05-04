@@ -19,21 +19,17 @@
 
 <div style="height: 100px"></div>
 
-<div class="list-rAF-bottom infinity-container">
-  <ul>
-    {{#each otherModels as |val|}}
-      <div class="infinity-svg-rAF-bottom">
-        <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
-          {{{val}}}
-        </svg>
-      </div>
-    {{/each}}
-  </ul>
-  {{my-component
-    class="infinity-scrollable-rAF-bottom infinity-scrollable"
-    viewportSpyOverride=true
-    viewportIntersectionObserverOverride=false
-    viewportToleranceOverride=viewportToleranceOverride
-    scrollableAreaOverride=".list-rAF-bottom"
-    infinityLoad=(action "infinityLoadOther")}}
-</div>
+<ul>
+  {{#each otherModels as |val|}}
+    <div class="infinity-svg-rAF-bottom">
+      <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        {{{val}}}
+      </svg>
+    </div>
+  {{/each}}
+</ul>
+{{my-component
+  class="infinity-scrollable-rAF-bottom infinity-scrollable"
+  viewportIntersectionObserverOverride=false
+  viewportToleranceOverride=viewportToleranceOverride
+  infinityLoad=(action "infinityLoadOther")}}

@@ -2,6 +2,7 @@ import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
+import { inject as service } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
 import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
@@ -33,10 +34,26 @@ export default Mixin.create({
    */
   _debouncedEventHandler: null,
 
+  /**
+   * unbinding listeners will short circuit rAF
+   *
+   * @property _stopListening
+   * @default false
+   */
+  _stopListening: false,
+
+  rAFPoolManager: service('-in-viewport'),
+
+  /**
+   * @property viewportExited
+   * @type Boolean
+   */
   viewportExited: not('viewportEntered').readOnly(),
 
   init() {
+    // ensure this mixin runs first, then your component can override the options
     this._super(...arguments);
+
     const options = assign({
       viewportUseRAF: canUseRAF(),
       viewportUseIntersectionObserver: canUseIntersectionObserver(),
@@ -94,52 +111,76 @@ export default Mixin.create({
     }
   },
 
-  _setViewportEntered() {
+  _setInitialViewport() {
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      return scheduleOnce('afterRender', this, () => {
+        this._setupIntersectionObserver();
+      });
+    } else {
+      return scheduleOnce('afterRender', this, () => {
+        this._setViewportEntered();
+      });
+    }
+  },
+
+  /**
+   * @method _setupIntersectionObserver
+   */
+  _setupIntersectionObserver() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
     const element = get(this, 'element');
-
     if (!element) {
       return;
     }
 
-    if (get(this, 'viewportUseIntersectionObserver')) {
-      // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-      // IntersectionObserver takes either a Document Element or null for `root`
-      const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
-      const options = {
-        root: scrollableArea,
-        rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-        threshold: get(this, 'intersectionThreshold')
-      };
+    // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+    // IntersectionObserver takes either a Document Element or null for `root`
+    const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
+    const options = {
+      root: scrollableArea,
+      rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
+      threshold: get(this, 'intersectionThreshold')
+    };
 
-      this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
-      this.intersectionObserver.observe(element);
-    } else {
-      const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
-      const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
-      const boundingClientRect = element.getBoundingClientRect();
+    this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
+    this.intersectionObserver.observe(element);
+  },
 
-      if (boundingClientRect) {
-        this._triggerDidAccessViewport(
-          isInViewport(
-            boundingClientRect,
-            height,
-            width,
-            get(this, 'viewportTolerance')
-          )
+  /**
+   * used by rAF and scroll event listeners to determine if mixin is in viewport
+   * Remember to set `viewportSpy` to true if you want to continuously observe your element
+   *
+   * @method _setViewportEntered
+   */
+  _setViewportEntered() {
+    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
+
+    const element = get(this, 'element');
+    if (!element) {
+      return;
+    }
+
+    const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
+    const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
+    const boundingClientRect = element.getBoundingClientRect();
+
+    if (boundingClientRect) {
+      this._triggerDidAccessViewport(
+        isInViewport(
+          boundingClientRect,
+          height,
+          width,
+          get(this, 'viewportTolerance')
+        )
+      );
+
+      if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
+        let elementId = get(this, 'elementId');
+        rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
+          elementId,
+          bind(this, this._setViewportEntered)
         );
-
-        if (get(this, 'viewportUseRAF')) {
-          let elementId = get(this, 'elementId');
-
-          if (rAFIDS[elementId]) {
-            window.cancelAnimationFrame(rAFIDS[elementId]);
-          }
-          rAFIDS[elementId] = window.requestAnimationFrame(
-            bind(this, this._setViewportEntered)
-          );
-        }
       }
     }
   },
@@ -168,6 +209,11 @@ export default Mixin.create({
     }
   },
 
+  /**
+   * @method _triggerDidScrollDirection
+   * @param contextEl
+   * @param sensitivity
+   */
   _triggerDidScrollDirection(contextEl = null, sensitivity = 1) {
     assert('You must pass a valid context element to _triggerDidScrollDirection', contextEl);
     assert('sensitivity cannot be 0', sensitivity);
@@ -191,6 +237,10 @@ export default Mixin.create({
     lastPosition[elementId] = newPosition;
   },
 
+  /**
+   * @method _triggerDidAccessViewport
+   * @param hasEnteredViewport
+   */
   _triggerDidAccessViewport(hasEnteredViewport = false) {
     const viewportEntered = get(this, 'viewportEntered');
     const didEnter = !viewportEntered && hasEnteredViewport;
@@ -216,16 +266,15 @@ export default Mixin.create({
     if (!get(this, 'viewportSpy') && get(this, 'viewportEntered')) {
       this._unbindListeners();
       this.removeObserver('viewportEntered', this, this._unbindIfEntered);
-      set(this, 'viewportEntered', true);
+      set(this, 'viewportEntered', false);
     }
   },
 
-  _setInitialViewport() {
-    return scheduleOnce('afterRender', this, () => {
-      this._setViewportEntered();
-    });
-  },
-
+  /**
+   * General utility function
+   *
+   * @method _debouncedEvent
+   */
   _debouncedEvent(methodName, ...args) {
     assert('You must pass a methodName to _debouncedEvent', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
@@ -255,6 +304,11 @@ export default Mixin.create({
     }
   },
 
+  /**
+   * Only if not using IntersectionObserver and rAF
+   *
+   * @method _bindListeners
+   */
   _bindListeners(context = null, event = null) {
     assert('You must pass a valid context to _bindListeners', context);
     assert('You must pass a valid event to _bindListeners', event);
@@ -266,18 +320,23 @@ export default Mixin.create({
     elem.addEventListener(event, evtListener);
   },
 
+  /**
+   * @method _unbindListeners
+   */
   _unbindListeners() {
+    set(this, '_stopListening', true);
+
     // 1.
     if (this.intersectionObserver) {
       this.intersectionObserver.unobserve(this.element);
     }
 
     // 2.
-    if (get(this, 'viewportUseRAF')) {
+    if (!get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        window.cancelAnimationFrame(rAFIDS[elementId]);
+        get(this, 'rAFPoolManager').remove(elementId);
         delete rAFIDS[elementId];
       });
     }

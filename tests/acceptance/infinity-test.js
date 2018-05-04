@@ -38,7 +38,7 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     assert.equal(findAll('.infinity-scrollable-rAF.inactive').length, 1, 'component is inactive after fetching more data');
   });
 
-  test('rAF (second) component fetches more data when scrolled into viewport', async function(assert) {
+  test('rAF (second) component does not fetch after first call (viewportSpy is false)', async function(assert) {
     await visit('/infinity-scrollable-raf');
 
     assert.equal(findAll('.infinity-svg-rAF-bottom').length, 10);
@@ -50,8 +50,13 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     });
     await waitFor('.infinity-scrollable-rAF-bottom.inactive');
 
-    assert.equal(findAll('.infinity-svg-rAF-bottom').length, 20);
-    assert.equal(findAll('.infinity-scrollable-rAF-bottom.inactive').length, 1, 'component is inactive after fetching more data');
+    document.querySelector('.infinity-scrollable-rAF-bottom').scrollIntoView(false);
+
+    await waitUntil(() => {
+      // one tick is enough to check
+      return findAll('.infinity-svg-rAF-bottom').length === 20;
+    });
+    await waitFor('.infinity-scrollable-rAF-bottom.inactive');
   });
 
   test('scrollEvent Component fetches more data when scrolled into viewport', async function(assert) {

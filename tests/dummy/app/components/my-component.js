@@ -8,6 +8,7 @@ export default Component.extend(InViewportMixin, {
 
   init() {
     this._super(...arguments);
+
     let options = {};
 
     let {
