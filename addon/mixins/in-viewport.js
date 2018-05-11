@@ -54,12 +54,16 @@ export default Mixin.create({
     // ensure this mixin runs first, then your component can override the options
     this._super(...arguments);
 
-    const options = assign({
+    let options = assign({
       viewportUseRAF: canUseRAF(),
-      viewportUseIntersectionObserver: canUseIntersectionObserver(),
       viewportEntered: false,
       viewportListeners: []
     }, this._buildOptions());
+
+    // set viewportUseIntersectionObserver after merging users config to avoid errors in browsers that lack support (https://github.com/DockYard/ember-in-viewport/issues/146)
+    options = assign(options, {
+      viewportUseIntersectionObserver: canUseIntersectionObserver(),
+    });
 
     setProperties(this, options);
     set(this, '_evtListenerClosures', []);

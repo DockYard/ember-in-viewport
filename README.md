@@ -89,7 +89,6 @@ export default Component.extend(InViewportMixin, {
       viewportEnabled                 : true,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
-      viewportUseIntersectionObserver : true,
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 150,
       intersectionThreshold           : 0,
@@ -114,8 +113,9 @@ export default Component.extend(InViewportMixin, {
 - `viewportUseIntersectionObserver: boolean`
 
   Default: Depends on browser
+  Read-only
 
-  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.
+  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
 
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
@@ -191,7 +191,6 @@ module.exports = function(environment) {
       viewportEnabled                 : false,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
-      viewportUseIntersectionObserver : true,
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 100,
       viewportListeners               : [],
