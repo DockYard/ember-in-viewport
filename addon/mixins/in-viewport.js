@@ -208,7 +208,7 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
-    const isTearingDown = this.isDestroyed || this.isDestroying;
+    const isTearingDown = get(this, 'isDestroyed') || get(this, 'isDestroying');
     const [entry] = entries;
     let { isIntersecting, intersectionRatio } = entry;
 
