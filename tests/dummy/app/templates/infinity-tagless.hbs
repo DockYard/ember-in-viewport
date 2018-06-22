@@ -1,0 +1,12 @@
+<ul>
+  {{#each models as |val|}}
+    <li class="image"><img src={{val}} /></li>
+  {{/each}}
+</ul>
+<div class="infinity-component tagless-component">
+  {{tagless-component
+    tagName=""
+    sentinel=".tagless-component"
+    viewportSpyOverride=true
+    infinityLoad=(action "infinityLoad")}}
+</div>

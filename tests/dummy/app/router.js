@@ -11,6 +11,7 @@ Router.map(function() {
   this.route('infinity-scrollable');
   this.route('infinity-scrollable-raf');
   this.route('infinity-scrollable-scrollevent');
+  this.route('infinity-tagless');
 });
 
 export default Router;

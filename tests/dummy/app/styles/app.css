@@ -3,7 +3,7 @@ a.active {
   color: magenta;
 }
 
-.my-component {
+.my-component, .tagless-component {
   display: inline-block;
   width: 300px;
   background-color: black;
