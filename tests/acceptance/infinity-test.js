@@ -82,5 +82,24 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     assert.ok(find('.infinity-scrollable-scrollEvent.inactive'), 'component is inactive after scrolling');
   });
+
+  test('Tagless component moves to active when scrolled into viewport', async function(assert) {
+    await visit('/infinity-tagless');
+
+    await waitUntil(() => {
+      // one tick is enough to check
+      return findAll('li.image').length === 10;
+    });
+    assert.equal(findAll('li.image').length, 10);
+
+    document.querySelector('.tagless-component').scrollIntoView(false);
+
+    await waitUntil(() => {
+      // one tick is enough to check
+      return findAll('li.image').length === 20;
+    });
+
+    assert.equal(findAll('li.image').length, 20);
+  });
 });
 

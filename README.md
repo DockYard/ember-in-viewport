@@ -179,6 +179,32 @@ export default Component.extend(InViewportMixin, {
 
   Also, if your sentinel (component that uses this mixin) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
 
+
+### Tagless Components
+
+`ember-in-viewport` needs a DOM element to work with. To use it with tagless components, specify another element via the `sentinel` property. Please note that the `sentinel` must be unique across the entire document.
+
+```js
+export default Component.extend(InViewportMixin, {
+  tagName: '',
+  sentinel: '#my-unique-element',
+
+  didEnterViewport() {
+    console.log('entered');
+  },
+
+  didExitViewport() {
+    console.log('exited');
+  }
+});
+```
+
+Template:
+
+```hbs
+  <div id="my-unique-element"></div>
+```
+
 ### Global options
 
 You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:

@@ -133,7 +133,13 @@ export default Mixin.create({
   _setupIntersectionObserver() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
-    const element = get(this, 'element');
+    let element;
+    if (get(this, 'sentinel')) {
+      element = document.querySelector(get(this, 'sentinel'));
+    } else {
+      element = get(this, 'element');
+    }
+
     if (!element) {
       return;
     }
@@ -160,7 +166,13 @@ export default Mixin.create({
   _setViewportEntered() {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
 
-    const element = get(this, 'element');
+    let element;
+    if (get(this, 'sentinel')) {
+      element = document.querySelector(get(this, 'sentinel'));
+    } else {
+      element = get(this, 'element');
+    }
+
     if (!element) {
       return;
     }
@@ -196,7 +208,7 @@ export default Mixin.create({
    * @param {Array} - entries
    */
   _onIntersection(entries) {
-    const isTearingDown = this.isDestroyed || this.isDestroying;
+    const isTearingDown = get(this, 'isDestroyed') || get(this, 'isDestroying');
     const [entry] = entries;
     let { isIntersecting, intersectionRatio } = entry;
 
@@ -330,9 +342,16 @@ export default Mixin.create({
   _unbindListeners() {
     set(this, '_stopListening', true);
 
+    let element;
+    if (get(this, 'sentinel')) {
+      element = document.querySelector(get(this, 'sentinel'));
+    } else {
+      element = get(this, 'element');
+    }
+
     // 1.
     if (this.intersectionObserver) {
-      this.intersectionObserver.unobserve(this.element);
+      this.intersectionObserver.unobserve(element);
     }
 
     // 2.
