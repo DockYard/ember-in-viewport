@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "ember build",
-    "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests",
+    "lint:js": "eslint ./*.js addon addon-test-support app blueprints config lib server test-support tests",
     "start": "ember serve",
     "test": "ember test",
     "test:all": "ember try:each"
@@ -20,17 +20,17 @@
   "author": "Lauren Tan",
   "license": "MIT",
   "dependencies": {
-    "ember-cli-babel": "^6.6.0"
+    "ember-cli-babel": "^6.14.1"
   },
   "devDependencies": {
-    "broccoli-asset-rev": "^2.4.5",
-    "ember-cli": "~3.1.2",
+    "broccoli-asset-rev": "^2.7.0",
+    "ember-cli": "~3.1.4",
     "ember-cli-dependency-checker": "^2.0.0",
     "ember-cli-eslint": "^4.2.1",
     "ember-cli-htmlbars": "^2.0.1",
     "ember-cli-htmlbars-inline-precompile": "^1.0.0",
     "ember-cli-inject-live-reload": "^1.4.1",
-    "ember-cli-qunit": "^4.1.1",
+    "ember-cli-qunit": "^4.3.2",
     "ember-cli-shims": "^1.2.0",
     "ember-cli-sri": "^2.1.0",
     "ember-cli-uglify": "^2.0.0",
@@ -40,7 +40,7 @@
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-event-dispatcher": "^0.6.4",
     "ember-resolver": "^4.0.0",
-    "ember-source": "~3.1.0",
+    "ember-source": "~3.2.0",
     "ember-source-channel-url": "^1.0.1",
     "ember-try": "^0.2.23",
     "eslint-plugin-ember": "^5.1.0",
