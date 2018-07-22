@@ -10,6 +10,7 @@ export default class rAFPoolManager extends Service {
   init(...args) {
     super.init(...args);
     this.pool = [];
+    this.isRunning = true;
     this.flush();
   }
 
@@ -22,7 +23,10 @@ export default class rAFPoolManager extends Service {
       pool.forEach((item) => {
         item[Object.keys(item)[0]]();
       });
-      this.flush();
+
+      if (this.isRunning) {
+        this.flush();
+      }
     });
   }
 
@@ -37,5 +41,9 @@ export default class rAFPoolManager extends Service {
 
   reset() {
     this.pool = [];
+  }
+
+  cancel() {
+    this.isRunning = false;
   }
 }
