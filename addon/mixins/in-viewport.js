@@ -340,7 +340,9 @@ export default Mixin.create({
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        get(this, 'rAFPoolManager').remove(elementId);
+        let rAFPoolManager = get(this, 'rAFPoolManager');
+        rAFPoolManager.remove(elementId);
+        rAFPoolManager.cancel();
         delete rAFIDS[elementId];
       });
     }
