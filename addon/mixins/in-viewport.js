@@ -36,9 +36,9 @@ export default Mixin.create({
 
   /**
    * @property _observerOptions
-   * @default {}
+   * @default null
    */
-  _observerOptions: {},
+  _observerOptions: null,
 
   /**
    * unbinding listeners will short circuit rAF
