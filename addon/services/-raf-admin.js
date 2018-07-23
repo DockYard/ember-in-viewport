@@ -4,9 +4,9 @@ import Service from '@ember/service';
  * ensure use on requestAnimationFrame, no matter how many components
  * on the page are using this mixin
  *
- * @class rAFPoolManager
+ * @class RAFAdmin
  */
-export default class rAFPoolManager extends Service {
+export default class RAFAdmin extends Service {
   init(...args) {
     super.init(...args);
     this.pool = [];
