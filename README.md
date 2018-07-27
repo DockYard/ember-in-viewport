@@ -9,9 +9,10 @@
 
 This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it fallsback to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
-## Demo
-- App: http://development.ember-in-viewport-demo.divshot.io/
+## Demo or examples
 - Source: https://github.com/poteto/ember-in-viewport-demo
+- [ember-infinity](https://github.com/ember-infinity/ember-infinity)
+- [ember-light-table](https://github.com/offirgolan/ember-light-table)
 
 # Installation
 

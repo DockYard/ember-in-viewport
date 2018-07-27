@@ -2,7 +2,7 @@ import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
-import { inject as service } from '@ember/service';
+import { inject } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
 import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
@@ -35,6 +35,12 @@ export default Mixin.create({
   _debouncedEventHandler: null,
 
   /**
+   * @property _observerOptions
+   * @default null
+   */
+  _observerOptions: null,
+
+  /**
    * unbinding listeners will short circuit rAF
    *
    * @property _stopListening
@@ -42,7 +48,8 @@ export default Mixin.create({
    */
   _stopListening: false,
 
-  rAFPoolManager: service('-in-viewport'),
+  _observerAdmin: inject('-observer-admin'),
+  _rAFAdmin: inject('-raf-admin'),
 
   /**
    * @property viewportExited
@@ -84,6 +91,7 @@ export default Mixin.create({
 
   willDestroyElement() {
     this._super(...arguments);
+
     this._unbindListeners();
   },
 
@@ -131,7 +139,7 @@ export default Mixin.create({
    * @method _setupIntersectionObserver
    */
   _setupIntersectionObserver() {
-    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
+    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : undefined;
 
     const element = get(this, 'element');
     if (!element) {
@@ -141,14 +149,13 @@ export default Mixin.create({
     // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     // IntersectionObserver takes either a Document Element or null for `root`
     const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
-    const options = {
+    this._observerOptions = {
       root: scrollableArea,
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
       threshold: get(this, 'intersectionThreshold')
     };
 
-    this.intersectionObserver = new IntersectionObserver(bind(this, this._onIntersection), options);
-    this.intersectionObserver.observe(element);
+    get(this, '_observerAdmin').add(element, bind(this, this._onEnterIntersection), bind(this, this._onExitIntersection), this._observerOptions);
   },
 
   /**
@@ -158,7 +165,7 @@ export default Mixin.create({
    * @method _setViewportEntered
    */
   _setViewportEntered() {
-    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : null;
+    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : undefined;
 
     const element = get(this, 'element');
     if (!element) {
@@ -181,7 +188,7 @@ export default Mixin.create({
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
         let elementId = get(this, 'elementId');
-        rAFIDS[elementId] = get(this, 'rAFPoolManager').add(
+        rAFIDS[elementId] = get(this, '_rAFAdmin').add(
           elementId,
           bind(this, this._setViewportEntered)
         );
@@ -190,27 +197,34 @@ export default Mixin.create({
   },
 
   /**
-   * callback provided to IntersectionObserver
+   * Callback provided to IntersectionObserver
+   * trigger didEnterViewport callback
    *
-   * @method _onIntersection
-   * @param {Array} - entries
+   * @method _onEnterIntersection
    */
-  _onIntersection(entries) {
+  _onEnterIntersection() {
     const isTearingDown = this.isDestroyed || this.isDestroying;
-    const [entry] = entries;
-    let { isIntersecting, intersectionRatio } = entry;
 
-    if (isIntersecting) {
-      if (!isTearingDown) {
-        set(this, 'viewportEntered', true);
-      }
-      this.trigger('didEnterViewport');
-    } else if (intersectionRatio <= 0) { // exiting viewport
-      if (!isTearingDown) {
-        set(this, 'viewportEntered', false);
-      }
-      this.trigger('didExitViewport');
+    if (!isTearingDown) {
+      set(this, 'viewportEntered', true);
     }
+
+    this.trigger('didEnterViewport');
+  },
+
+  /**
+   * trigger didExitViewport callback
+   *
+   * @method _onExitIntersection
+   */
+  _onExitIntersection() {
+    const isTearingDown = this.isDestroyed || this.isDestroying;
+
+    if (!isTearingDown) {
+      set(this, 'viewportEntered', false);
+    }
+
+    this.trigger('didExitViewport');
   },
 
   /**
@@ -266,8 +280,13 @@ export default Mixin.create({
     this.trigger(triggeredEventName);
   },
 
+  /**
+   * Unbind when enter viewport only if viewportSpy is false
+   *
+   * @method _unbindIfEntered
+   */
   _unbindIfEntered() {
-    if (!get(this, 'viewportSpy') && get(this, 'viewportEntered')) {
+    if (get(this, 'viewportEntered')) {
       this._unbindListeners();
       this.removeObserver('viewportEntered', this, this._unbindIfEntered);
       set(this, 'viewportEntered', false);
@@ -325,29 +344,33 @@ export default Mixin.create({
   },
 
   /**
+   * Remove listeners for rAF or scroll event listeners
+   * Either from component destroy or viewport entered and
+   * need to turn off listening
+   *
    * @method _unbindListeners
    */
   _unbindListeners() {
     set(this, '_stopListening', true);
 
-    // 1.
-    if (this.intersectionObserver) {
-      this.intersectionObserver.unobserve(this.element);
+    // if IntersectionObserver
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      get(this, '_observerAdmin').unobserve(this.element, get(this, '_observerOptions.root'));
     }
 
-    // 2.
+    // if rAF
     if (!get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        let rAFPoolManager = get(this, 'rAFPoolManager');
-        rAFPoolManager.remove(elementId);
-        rAFPoolManager.cancel();
+        let _rAFAdmin = get(this, '_rAFAdmin');
+        _rAFAdmin.remove(elementId);
+        _rAFAdmin.cancel();
         delete rAFIDS[elementId];
       });
     }
 
-    // 3.
+    // if scroll event listeners
     if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
         let { context, event } = listener;
