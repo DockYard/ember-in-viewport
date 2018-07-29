@@ -10,9 +10,12 @@
 This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it fallsback to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
 ## Demo or examples
-- Source: https://github.com/poteto/ember-in-viewport-demo
+- Dummy app (`ember serve`): https://github.com/DockYard/ember-in-viewport/tree/master/tests/dummy
 - [ember-infinity](https://github.com/ember-infinity/ember-infinity)
 - [ember-light-table](https://github.com/offirgolan/ember-light-table)
+- Tracking advertisement impressions
+- Lazy loading images
+- Occlusion culling
 
 # Installation
 
@@ -114,6 +117,7 @@ export default Component.extend(InViewportMixin, {
 - `viewportUseIntersectionObserver: boolean`
 
   Default: Depends on browser
+
   Read-only
 
   The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
@@ -261,7 +265,7 @@ module.exports = function(environment) {
 ## Running Tests
 
 * `ember test`
-* `ember test --server`
+* `ember test --serve`
 
 ## Building
 
