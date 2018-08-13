@@ -30,6 +30,13 @@ export default class RAFAdmin extends Service {
     });
   }
 
+  restart() {
+    if (!this.isRunning) {
+      this.isRunning = true;
+      this.flush();
+    }
+  }
+
   add(elementId, fn) {
     this.pool.push({ [elementId]: fn });
     return fn;

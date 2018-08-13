@@ -130,6 +130,7 @@ export default Mixin.create({
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
+        this.get('_rAFAdmin').restart();
         this._setViewportEntered();
       });
     }
