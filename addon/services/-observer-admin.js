@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import { bind } from '@ember/runloop';
 
-// WeakMap { root: { elements: [{ element, enterCallback, exitCallback }], IntersectionObserver } }
+// WeakMap { root: { elements: [{ element, enterCallback, exitCallback, options }], IntersectionObserver } }
 let DOMRef = new WeakMap();
 
 /**
@@ -29,13 +29,20 @@ export default class ObserverAdmin extends Service {
     let { elements, intersectionObserver } = this._findRoot(root);
 
     if (elements && elements.length > 0) {
-      elements.push({ element, enterCallback, exitCallback });
-      intersectionObserver.observe(element, options);
-    } else {
-      let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(root)), options);
-      newIO.observe(element);
-      DOMRef.set(root, { elements: [{ element, enterCallback, exitCallback }], intersectionObserver: newIO });
+      let [testElement] = elements;
+      let { options: elementOptions } = testElement;
+
+      // if same options, then we can add to existing intersection observer and return early
+      if (this._areSameOptions(options, elementOptions)) {
+        elements.push({ element, enterCallback, exitCallback, options });
+        intersectionObserver.observe(element);
+        return;
+      }
     }
+
+    let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(root)), options);
+    newIO.observe(element);
+    DOMRef.set(root, { elements: [{ element, enterCallback, exitCallback, options }], intersectionObserver: newIO });
   }
 
   /**
@@ -101,7 +108,39 @@ export default class ObserverAdmin extends Service {
     });
   }
 
+  /**
+   * @method _findRoot
+   */
   _findRoot(root) {
     return DOMRef.get(root) || {};
+  }
+
+  /**
+   * We need to test this because two elements may be using the same `root` but have different options
+   * i.e. viewportTolerance bottom 500px vs bottom 0px
+   * We only compare primitive types and objects; not arrays or functions
+   *
+   * @method _areSameOptions
+   */
+  _areSameOptions(options, elementOptions) {
+    // simple comparison of string, number or even null/undefined
+    let type1 = Object.prototype.toString.call(options);
+    let type2 = Object.prototype.toString.call(elementOptions);
+    if (type1 !== type2) {
+      return false;
+    } else if (type1 !== '[object Object]' && type2 !== '[object Object]') {
+      return options === elementOptions;
+    }
+
+    // complex comparison for only type of [object Object]
+    for (let key in options) {
+      if (options.hasOwnProperty(key)) {
+        // recursion to check nested
+        if (this._areSameOptions(options[key], elementOptions[key]) === false) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
