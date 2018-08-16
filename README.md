@@ -84,12 +84,14 @@ The mixin comes with some options. Due to the way listeners and `IntersectionObs
 
 ```js
 import Component from '@ember/component';
+import { setProperties } from '@ember/object';
 
 export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
 
-    Ember.setProperties(this, {
+    setProperties(this, {
+      viewportDescriptor              : null,
       viewportEnabled                 : true,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
@@ -188,7 +190,7 @@ export default Component.extend(InViewportMixin, {
 
   Default: `null`
 
-  This option tells in-viewport that you have multiple items you want to observe on the same page; however, since you might have multiple elements on the page with the same `scrollableArea` but different options (e.g. `viewportTolerance`), it is necessary to let ember-in-viewport know that we should treat those two elements differently.
+  This option tells ember-in-viewport that you have multiple items you want to observe on the same page.  However, since you might have multiple elements on the page with the same `scrollableArea` but different options (e.g. `viewportTolerance`), it is necessary to let ember-in-viewport know that we should treat those two elements differently.
 
   The reason this is important is because we optimize the IntersectionObserver to reuse the instance instead of creating another IntersectionObserver for every item on the page.  However, due to this optimization, we need to know if the items on the page you want to observe are of different types - see example below:
 
@@ -203,13 +205,13 @@ module.exports = function(environment) {
   var ENV = {
     // ...
     viewportConfig: {
+      viewportDescriptor              : null,
       viewportEnabled                 : false,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 100,
       viewportListeners               : [],
-      viewportDescriptor              : null,
       intersectionThreshold           : 0,
       scrollableArea                  : null,
       viewportTolerance: {
