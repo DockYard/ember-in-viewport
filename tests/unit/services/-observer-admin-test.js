@@ -23,19 +23,19 @@ module('Unit | Utility | -observer admin', function(hooks) {
     let service = this.owner.lookup('service:-observer-admin');
 
     // primitive
-    assert.ok(service._areSameOptions(null, null));
-    assert.notOk(service._areSameOptions(null, undefined));
-    assert.ok(service._areSameOptions(1, 1));
-    assert.ok(service._areSameOptions('abc', 'abc'));
+    assert.ok(service._compareOptions(null, null));
+    assert.notOk(service._compareOptions(null, undefined));
+    assert.ok(service._compareOptions(1, 1));
+    assert.ok(service._compareOptions('abc', 'abc'));
     // object
-    assert.ok(service._areSameOptions({}, {}));
-    assert.notOk(service._areSameOptions({ a: 'ab' }, {}));
-    assert.ok(service._areSameOptions({ a: 'ab' }, { a: 'ab' }));
-    assert.notOk(service._areSameOptions({ a: 'ab' }, { a: 'abc' }));
+    assert.ok(service._compareOptions({}, {}));
+    assert.notOk(service._compareOptions({ a: 'ab' }, {}));
+    assert.ok(service._compareOptions({ a: 'ab' }, { a: 'ab' }));
+    assert.notOk(service._compareOptions({ a: 'ab' }, { a: 'abc' }));
     // nested
-    assert.notOk(service._areSameOptions({ a: { b: 'cd' }}, { a: 'abc' }));
-    assert.ok(service._areSameOptions({ a: { b: 'cd' }}, { a: { b: 'cd' }}));
-    assert.notOk(service._areSameOptions({ a: { b: { c: 'de' }}}, { a: { b: 'cd' }}));
-    assert.ok(service._areSameOptions({ a: { b: { c: 'de' }}}, { a: { b: { c: 'de' }}}));
+    assert.notOk(service._compareOptions({ a: { b: 'cd' }}, { a: 'abc' }));
+    assert.ok(service._compareOptions({ a: { b: 'cd' }}, { a: { b: 'cd' }}));
+    assert.notOk(service._compareOptions({ a: { b: { c: 'de' }}}, { a: { b: 'cd' }}));
+    assert.ok(service._compareOptions({ a: { b: { c: 'de' }}}, { a: { b: { c: 'de' }}}));
   });
 });

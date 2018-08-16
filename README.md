@@ -184,6 +184,16 @@ export default Component.extend(InViewportMixin, {
 
   Also, if your sentinel (component that uses this mixin) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
 
+- `viewportDescriptor: string`
+
+  Default: `null`
+
+  This option tells in-viewport that you have multiple items you want to observe on the same page; however, since you might have multiple elements on the page with the same `scrollableArea` but different options (e.g. `viewportTolerance`), it is necessary to let ember-in-viewport know that we should treat those two elements differently.
+
+  The reason this is important is because we optimize the IntersectionObserver to reuse the instance instead of creating another IntersectionObserver for every item on the page.  However, due to this optimization, we need to know if the items on the page you want to observe are of different types - see example below:
+
+  e.g. `artwork` and `infinityLoader` would be two examples of `viewportDescriptor` where they both use the same `scrollableArea` (window or element) but may have different config options such as `viewportTolerance`, `viewportSpy`, etc;
+
 ### Global options
 
 You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:
@@ -199,6 +209,7 @@ module.exports = function(environment) {
       viewportScrollSensitivity       : 1,
       viewportRefreshRate             : 100,
       viewportListeners               : [],
+      viewportDescriptor              : null,
       intersectionThreshold           : 0,
       scrollableArea                  : null,
       viewportTolerance: {
