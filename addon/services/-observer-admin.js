@@ -70,12 +70,22 @@ export default class ObserverAdmin extends Service {
     }
   }
 
+  /**
+   * @method _setupOnIntersection
+   * @param {window|String} descriptor
+   */
   _setupOnIntersection(descriptor) {
     return function(entries) {
       return this._onAdminIntersection(descriptor, entries);
     }
   }
 
+  /**
+   * callback when the observer is triggered
+   * @method _onAdminIntersection
+   * @param {window|String} descriptor
+   * @param {Array} ioEntries
+   */
   _onAdminIntersection(descriptor, ioEntries) {
     ioEntries.forEach((entry) => {
 
