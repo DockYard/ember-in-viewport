@@ -355,7 +355,7 @@ export default Mixin.create({
 
     // if IntersectionObserver
     if (get(this, 'viewportUseIntersectionObserver')) {
-      get(this, '_observerAdmin').unobserve(this.element, this.viewportDescriptor || get(this, '_observerOptions.root'));
+      get(this, '_observerAdmin').unobserve(this.element, { viewportDescriptor: this.viewportDescriptor } || get(this, '_observerOptions.root'));
     }
 
     // if rAF
