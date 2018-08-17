@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import { bind } from '@ember/runloop';
 
-// WeakMap { root || viewportDescriptor : { elements: [{ element, enterCallback, exitCallback, observerOptions }], IntersectionObserver } }
+// WeakMap { root || viewportDescriptor : { elements: [{ element, enterCallback, exitCallback }], IntersectionObserver } }
 let DOMRef = new WeakMap();
 
 /**
@@ -33,12 +33,12 @@ export default class ObserverAdmin extends Service {
 
     if (elements && elements.length > 0) {
       // if same observerOptions found in another element already being observed, then we can add to existing intersection observer and return early
-      elements.push({ element, enterCallback, exitCallback, observerOptions });
+      elements.push({ element, enterCallback, exitCallback });
       intersectionObserver.observe(element);
     } else {
       let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(descriptor)), observerOptions);
       newIO.observe(element);
-      DOMRef.set(descriptor, { elements: [{ element, enterCallback, exitCallback, observerOptions }], intersectionObserver: newIO });
+      DOMRef.set(descriptor, { elements: [{ element, enterCallback, exitCallback }], intersectionObserver: newIO });
     }
   }
 
