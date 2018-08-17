@@ -84,12 +84,14 @@ The mixin comes with some options. Due to the way listeners and `IntersectionObs
 
 ```js
 import Component from '@ember/component';
+import { setProperties } from '@ember/object';
 
 export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
 
-    Ember.setProperties(this, {
+    setProperties(this, {
+      viewportDescriptor              : null,
       viewportEnabled                 : true,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
@@ -184,6 +186,16 @@ export default Component.extend(InViewportMixin, {
 
   Also, if your sentinel (component that uses this mixin) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
 
+- `viewportDescriptor: string`
+
+  Default: `null`
+
+  This option tells ember-in-viewport that you have multiple items you want to observe on the same page.  However, since you might have multiple elements on the page with the same `scrollableArea` but different options (e.g. `viewportTolerance`), it is necessary to let ember-in-viewport know that we should treat those two elements differently.
+
+  The reason this is important is because we optimize the IntersectionObserver to reuse the instance instead of creating another IntersectionObserver for every item on the page.  However, due to this optimization, we need to know if the items on the page you want to observe are of different types - see example below:
+
+  e.g. `artwork` and `infinityLoader` would be two examples of `viewportDescriptor` where they both use the same `scrollableArea` (window or element) but may have different config options such as `viewportTolerance`, `viewportSpy`, etc;
+
 ### Global options
 
 You can set application wide defaults for `ember-in-viewport` in your app (they are still manually overridable inside of a Component). To set new defaults, just add a config object to `config/environment.js`, like so:
@@ -193,6 +205,7 @@ module.exports = function(environment) {
   var ENV = {
     // ...
     viewportConfig: {
+      viewportDescriptor              : null,
       viewportEnabled                 : false,
       viewportUseRAF                  : true,
       viewportSpy                     : false,

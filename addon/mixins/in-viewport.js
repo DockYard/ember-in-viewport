@@ -155,7 +155,7 @@ export default Mixin.create({
       threshold: get(this, 'intersectionThreshold')
     };
 
-    get(this, '_observerAdmin').add(element, bind(this, this._onEnterIntersection), bind(this, this._onExitIntersection), this._observerOptions);
+    get(this, '_observerAdmin').add(element, bind(this, this._onEnterIntersection), bind(this, this._onExitIntersection), this._observerOptions, this.viewportDescriptor);
   },
 
   /**
@@ -355,7 +355,7 @@ export default Mixin.create({
 
     // if IntersectionObserver
     if (get(this, 'viewportUseIntersectionObserver')) {
-      get(this, '_observerAdmin').unobserve(this.element, get(this, '_observerOptions.root'));
+      get(this, '_observerAdmin').unobserve(this.element, { viewportDescriptor: this.viewportDescriptor } || get(this, '_observerOptions.root'));
     }
 
     // if rAF

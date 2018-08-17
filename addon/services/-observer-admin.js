@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import { bind } from '@ember/runloop';
 
-// WeakMap { root: { elements: [{ element, enterCallback, exitCallback }], IntersectionObserver } }
+// WeakMap { root || viewportDescriptor : { elements: [{ element, enterCallback, exitCallback }], IntersectionObserver } }
 let DOMRef = new WeakMap();
 
 /**
@@ -22,29 +22,33 @@ export default class ObserverAdmin extends Service {
    * @param {Node} element
    * @param {Function} enterCallback
    * @param {Function} exitCallback
-   * @param {Object} options
+   * @param {Object} observerOptions
+   * @param {String} viewportDescriptor
    */
-  add(element, enterCallback, exitCallback, options) {
-    let { root = window } = options;
-    let { elements, intersectionObserver } = this._findRoot(root);
+  add(element, enterCallback, exitCallback, observerOptions, viewportDescriptor) {
+    let { root = window } = observerOptions;
+    // we will set the main key we store the intersectionObserver instance on either viewportDescriptor or root
+    let descriptor = { viewportDescriptor } || root;
+    let { elements, intersectionObserver } = this._findRoot(descriptor);
 
     if (elements && elements.length > 0) {
+      // if same observerOptions found in another element already being observed, then we can add to existing intersection observer and return early
       elements.push({ element, enterCallback, exitCallback });
-      intersectionObserver.observe(element, options);
+      intersectionObserver.observe(element);
     } else {
-      let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(root)), options);
+      let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(descriptor)), observerOptions);
       newIO.observe(element);
-      DOMRef.set(root, { elements: [{ element, enterCallback, exitCallback }], intersectionObserver: newIO });
+      DOMRef.set(descriptor, { elements: [{ element, enterCallback, exitCallback }], intersectionObserver: newIO });
     }
   }
 
   /**
    * @method unobserve
    * @param {Node} element
-   * @param {Node|window} root
+   * @param {Node|window} descriptor
    */
-  unobserve(element, root) {
-    let { intersectionObserver } = this._findRoot(root);
+  unobserve(element, descriptor) {
+    let { intersectionObserver } = this._findRoot(descriptor);
     if (intersectionObserver) {
       intersectionObserver.unobserve(element);
     }
@@ -54,22 +58,32 @@ export default class ObserverAdmin extends Service {
    * to unobserver multiple elements
    *
    * @method disconnect
-   * @param {Node|window} root
+   * @param {Node|window|String} descriptor
    */
-  disconnect(root) {
-    let { intersectionObserver } = this._findRoot(root);
+  disconnect(descriptor) {
+    let { intersectionObserver } = this._findRoot(descriptor);
     if (intersectionObserver) {
       intersectionObserver.disconnect();
     }
   }
 
-  _setupOnIntersection(root) {
+  /**
+   * @method _setupOnIntersection
+   * @param {window|String} descriptor
+   */
+  _setupOnIntersection(descriptor) {
     return function(entries) {
-      return this._onAdminIntersection(root, entries);
+      return this._onAdminIntersection(descriptor, entries);
     }
   }
 
-  _onAdminIntersection(root, ioEntries) {
+  /**
+   * callback when the observer is triggered
+   * @method _onAdminIntersection
+   * @param {window|String} descriptor
+   * @param {Array} ioEntries
+   */
+  _onAdminIntersection(descriptor, ioEntries) {
     ioEntries.forEach((entry) => {
 
       let { isIntersecting, intersectionRatio } = entry;
@@ -77,7 +91,7 @@ export default class ObserverAdmin extends Service {
       // first determine if entry intersecting
       if (isIntersecting) {
         // then find entry's callback in static administration
-        let { elements = [] } = this._findRoot(root);
+        let { elements = [] } = this._findRoot(descriptor);
 
         elements.some(({ element, enterCallback }) => {
           if (element === entry.target) {
@@ -88,7 +102,7 @@ export default class ObserverAdmin extends Service {
         });
       } else if (intersectionRatio <= 0) { // exiting viewport
         // then find entry's callback in static administration
-        let { elements = [] } = this._findRoot(root);
+        let { elements = [] } = this._findRoot(descriptor);
 
         elements.some(({ element, exitCallback }) => {
           if (element === entry.target) {
@@ -101,7 +115,11 @@ export default class ObserverAdmin extends Service {
     });
   }
 
-  _findRoot(root) {
-    return DOMRef.get(root) || {};
+  /**
+   * find element's root || viewportDescriptor in administrator
+   * @method _findRoot
+   */
+  _findRoot(descriptor) {
+    return DOMRef.get(descriptor) || {};
   }
 }
