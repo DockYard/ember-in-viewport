@@ -163,7 +163,7 @@ export default class ObserverAdmin extends Service {
    *
    * @method _determineMatchingElements
    * @param {Object} observerOptions
-   * @param {Object} potentialRootMatch e.g. { stringifiedOptions: [], stringifiedOptions: [], ...}
+   * @param {Object} potentialRootMatch e.g. { stringifiedOptions: { elements: [], ... }, stringifiedOptions: { elements: [], ... }}
    * @return {Object} containing array of elements and other meta
    */
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
