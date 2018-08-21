@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import { bind } from '@ember/runloop';
 
-// WeakMap { root: { stringifiedOptions: [{ element, enterCallback, exitCallback, observerOptions, IntersectionObserver }], stringifiedOptions: [].... } }
+// WeakMap { root: { stringifiedOptions: { elements: [{ element }], enterCallback, exitCallback, observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
 // A root may have multiple keys with different observer options
 let DOMRef = new WeakMap();
 
@@ -31,18 +31,18 @@ export default class ObserverAdmin extends Service {
     // first find shared root element (window or scrollable area)
     let potentialRootMatch = this._findRoot(root);
     // second if there is a matching root, find an entry with the same observerOptions
-    let matchingElements = this._determineMatchingElements(observerOptions, potentialRootMatch);
+    let matchingEntryForRoot = this._determineMatchingElements(observerOptions, potentialRootMatch);
 
-    if (matchingElements.length > 0) {
-      let { intersectionObserver } = matchingElements[0];
-      matchingElements.push({ element, enterCallback, exitCallback, observerOptions, intersectionObserver });
+    if (matchingEntryForRoot) {
+      let { elements, intersectionObserver } = matchingEntryForRoot;
+      elements.push(element);
       intersectionObserver.observe(element);
       return;
     }
 
     let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions)), observerOptions);
     newIO.observe(element);
-    let observerEntry = [{ element, enterCallback, exitCallback, observerOptions, intersectionObserver: newIO }];
+    let observerEntry = {elements: [element], enterCallback, exitCallback, observerOptions, intersectionObserver: newIO };
 
     if (potentialRootMatch) {
       // if share same root and need to add new entry to root match
@@ -107,9 +107,9 @@ export default class ObserverAdmin extends Service {
       // first determine if entry intersecting
       if (isIntersecting) {
         // then find entry's callback in static administration
-        let elements = this._findMatchingRootEntry(observerOptions);
+        let { elements = [], enterCallback } = this._findMatchingRootEntry(observerOptions);
 
-        elements.some(({ element, enterCallback }) => {
+        elements.some((element) => {
           if (element === entry.target) {
             // call entry's enter callback
             enterCallback();
@@ -118,9 +118,9 @@ export default class ObserverAdmin extends Service {
         });
       } else if (intersectionRatio <= 0) { // exiting viewport
         // then find entry's callback in static administration
-        let elements = this._findMatchingRootEntry(observerOptions);
+        let { elements = [], exitCallback } = this._findMatchingRootEntry(observerOptions);
 
-        elements.some(({ element, exitCallback }) => {
+        elements.some((element) => {
           if (element === entry.target) {
             // call entry's exit callback
             exitCallback();
@@ -148,13 +148,13 @@ export default class ObserverAdmin extends Service {
    *
    * @method _findMatchingRootEntry
    * @param {Object} observerOptions
-   * @return {Array} of elements that share same root and observerOptions
+   * @return {Object} entry with elements and other options
    */
   _findMatchingRootEntry(observerOptions) {
-    let { root = window } = observerOptions;
     let stringifiedOptions = JSON.stringify(observerOptions);
+    let { root = window } = observerOptions;
     let matchingRoot = DOMRef.get(root) || {};
-    return matchingRoot[stringifiedOptions] || [];
+    return matchingRoot[stringifiedOptions] || {};
   }
 
   /**
@@ -164,13 +164,13 @@ export default class ObserverAdmin extends Service {
    * @method _determineMatchingElements
    * @param {Object} observerOptions
    * @param {Object} potentialRootMatch e.g. { stringifiedOptions: [], stringifiedOptions: [], ...}
-   * @return {Array}
+   * @return {Object} containing array of elements and other meta
    */
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
     let matchingKey = Object.keys(potentialRootMatch).filter((key) => {
       return this._hasSimilarElement(observerOptions, potentialRootMatch[key]);
     });
-    return potentialRootMatch[matchingKey] || [];
+    return potentialRootMatch[matchingKey];
   }
 
   /**
@@ -181,7 +181,7 @@ export default class ObserverAdmin extends Service {
    * @param {Array} elements
    * @return {Array}
    */
-  _hasSimilarElement(observerOptions, elements) {
+  _hasSimilarElement(observerOptions, { elements = [] }) {
     return elements.some((testElement) => {
       return this._compareOptions(observerOptions, testElement.observerOptions);
     });
