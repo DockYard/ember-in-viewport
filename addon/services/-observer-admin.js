@@ -170,7 +170,7 @@ export default class ObserverAdmin extends Service {
     let matchingKey = Object.keys(potentialRootMatch).filter((key) => {
       let { observerOptions: comparableOptions } = potentialRootMatch[key];
       return this._areOptionsSame(observerOptions, comparableOptions);
-    });
+    })[0];
     return potentialRootMatch[matchingKey];
   }
 
