@@ -60,12 +60,9 @@ export default class ObserverAdmin extends Service {
    * @param {Node|window} root
    */
   unobserve(element, observerOptions) {
-    let elements = this._findMatchingRootEntry(observerOptions);
+    let { intersectionObserver } = this._findMatchingRootEntry(observerOptions);
 
-    if (elements.length > 0) {
-      let { intersectionObserver } = elements[0];
-      intersectionObserver.unobserve(element);
-    }
+    intersectionObserver.unobserve(element);
   }
 
   /**
