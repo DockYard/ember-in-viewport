@@ -6,11 +6,10 @@ import { bind } from '@ember/runloop';
 const DOMRef = new WeakMap();
 
 /**
- * Static administrator to ensure use one IntersectionObserver per viewport
+ * Static administrator to ensure use one IntersectionObserver per combination of root + observerOptions
  * Use `root` (viewport) as lookup property
- * `root` will have one IntersectionObserver with many entries (elements) to watch
- * provided callback will ensure consumer of this service is able to react to enter or exit
- * of intersection observer
+ * `root` will have many options with each option containing one IntersectionObserver instance and various callbacks
+ * Provided callback will ensure consumer of this service is able to react to enter or exit of intersection observer
  *
  * @module Ember.Service
  * @class ObserverAdmin
@@ -129,7 +128,7 @@ export default class ObserverAdmin extends Service {
 
   /**
    * @method _findRoot
-   * @param {Node} root
+   * @param {Node|window} root
    * @return {Object} of elements that share same root
    */
   _findRoot(root) {
@@ -138,9 +137,9 @@ export default class ObserverAdmin extends Service {
 
   /**
    * Used for onIntersection callbacks and unobserving the IntersectionObserver
-   * We don't care about key order in the observerOptions because we already added
+   * We don't care about observerOptions key order because we already added
    * to the static administrator or found an existing IntersectionObserver with the same
-   * root && observerOptions to reuse their IntersectionObserver
+   * root && observerOptions to reuse
    *
    * @method _findMatchingRootEntry
    * @param {Object} observerOptions
@@ -154,8 +153,8 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
-   * determine if existing elements for a given root based on passed in observerOptions
-   * irregardless of sort order of keys
+   * Determine if existing elements for a given root based on passed in observerOptions
+   * regardless of sort order of keys
    *
    * @method _determineMatchingElements
    * @param {Object} observerOptions
@@ -172,6 +171,9 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
+   * recursive method to test primitive string, number, null, etc and complex
+   * object equality.
+   *
    * @method _areOptionsSame
    * @param {Object} observerOptions
    * @param {Object} comparableOptions
