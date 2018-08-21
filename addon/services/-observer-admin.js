@@ -169,18 +169,18 @@ export default class ObserverAdmin extends Service {
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
     let matchingKey = Object.keys(potentialRootMatch).filter((key) => {
       let { observerOptions: comparableOptions } = potentialRootMatch[key];
-      return this._compareOptions(observerOptions, comparableOptions);
+      return this._areOptionsSame(observerOptions, comparableOptions);
     });
     return potentialRootMatch[matchingKey];
   }
 
   /**
-   * @method _compareOptions
+   * @method _areOptionsSame
    * @param {Object} observerOptions
    * @param {Object} comparableOptions
    * @return {Boolean}
    */
-  _compareOptions(observerOptions, comparableOptions) {
+  _areOptionsSame(observerOptions, comparableOptions) {
     // simple comparison of string, number or even null/undefined
     let type1 = Object.prototype.toString.call(observerOptions);
     let type2 = Object.prototype.toString.call(comparableOptions);
@@ -194,7 +194,7 @@ export default class ObserverAdmin extends Service {
     for (let key in observerOptions) {
       if (observerOptions.hasOwnProperty(key)) {
         // recursion to check nested
-        if (this._compareOptions(observerOptions[key], comparableOptions[key]) === false) {
+        if (this._areOptionsSame(observerOptions[key], comparableOptions[key]) === false) {
           return false;
         }
       }
