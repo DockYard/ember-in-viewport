@@ -40,6 +40,7 @@ export default class ObserverAdmin extends Service {
       return;
     }
 
+    // No matching entry for root in static admin, thus create new IntersectionObserver instance
     let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions)), observerOptions);
     newIO.observe(element);
     let observerEntry = {elements: [element], enterCallback, exitCallback, observerOptions, intersectionObserver: newIO };
@@ -171,6 +172,7 @@ export default class ObserverAdmin extends Service {
       let { observerOptions: comparableOptions } = potentialRootMatch[key];
       return this._areOptionsSame(observerOptions, comparableOptions);
     })[0];
+
     return potentialRootMatch[matchingKey];
   }
 
