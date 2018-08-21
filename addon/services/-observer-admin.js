@@ -3,7 +3,7 @@ import { bind } from '@ember/runloop';
 
 // WeakMap { root: { stringifiedOptions: { elements: [{ element }], enterCallback, exitCallback, observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
 // A root may have multiple keys with different observer options
-let DOMRef = new WeakMap();
+const DOMRef = new WeakMap();
 
 /**
  * Static administrator to ensure use one IntersectionObserver per viewport
@@ -35,7 +35,7 @@ export default class ObserverAdmin extends Service {
 
     if (matchingEntryForRoot) {
       let { elements, intersectionObserver } = matchingEntryForRoot;
-      elements.push(element);
+      elements.add(element);
       intersectionObserver.observe(element);
       return;
     }
@@ -43,7 +43,8 @@ export default class ObserverAdmin extends Service {
     // No matching entry for root in static admin, thus create new IntersectionObserver instance
     let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions)), observerOptions);
     newIO.observe(element);
-    let observerEntry = {elements: [element], enterCallback, exitCallback, observerOptions, intersectionObserver: newIO };
+    let SET = new Set(null);
+    let observerEntry = {elements: SET.add(element), enterCallback, exitCallback, observerOptions, intersectionObserver: newIO };
 
     if (potentialRootMatch) {
       // if share same root and need to add new entry to root match
@@ -60,9 +61,12 @@ export default class ObserverAdmin extends Service {
    * @param {Node|window} root
    */
   unobserve(element, observerOptions) {
-    let { intersectionObserver } = this._findMatchingRootEntry(observerOptions);
+    let { elements, intersectionObserver } = this._findMatchingRootEntry(observerOptions);
 
     intersectionObserver.unobserve(element);
+    if (elements) {
+      elements.delete(element);
+    }
   }
 
   /**
@@ -105,26 +109,20 @@ export default class ObserverAdmin extends Service {
       // first determine if entry intersecting
       if (isIntersecting) {
         // then find entry's callback in static administration
-        let { elements = [], enterCallback } = this._findMatchingRootEntry(observerOptions);
+        let { elements, enterCallback } = this._findMatchingRootEntry(observerOptions);
 
-        elements.some((element) => {
-          if (element === entry.target) {
-            // call entry's enter callback
-            enterCallback();
-            return true;
-          }
-        });
+        if (elements && elements.has(entry.target)) {
+          // call entry's enter callback
+          enterCallback();
+        }
       } else if (intersectionRatio <= 0) { // exiting viewport
         // then find entry's callback in static administration
-        let { elements = [], exitCallback } = this._findMatchingRootEntry(observerOptions);
+        let { elements, exitCallback } = this._findMatchingRootEntry(observerOptions);
 
-        elements.some((element) => {
-          if (element === entry.target) {
-            // call entry's exit callback
-            exitCallback();
-            return true;
-          }
-        });
+        if (elements && elements.has(entry.target)) {
+          // call entry's exit callback
+          exitCallback();
+        }
       }
     });
   }
@@ -152,7 +150,7 @@ export default class ObserverAdmin extends Service {
     let stringifiedOptions = JSON.stringify(observerOptions);
     let { root = window } = observerOptions;
     let matchingRoot = DOMRef.get(root) || {};
-    return matchingRoot[stringifiedOptions] || {};
+    return matchingRoot[stringifiedOptions];
   }
 
   /**
