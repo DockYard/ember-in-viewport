@@ -13,7 +13,7 @@ import { bind } from '@ember/runloop';
 export default class ObserverAdmin extends Service {
   init() {
     this._super(...arguments);
-    // WeakMap { root: { stringifiedOptions: { elements: [{ element }], enterCallback, exitCallback, observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
+    // WeakMap { root: { stringifiedOptions: { elements: [{ element, enterCallback, exitCallback }], observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
     // A root may have multiple keys with different observer options
     this._DOMRef = new WeakMap();
   }
@@ -37,7 +37,7 @@ export default class ObserverAdmin extends Service {
 
     if (matchingEntryForRoot) {
       let { elements, intersectionObserver } = matchingEntryForRoot;
-      elements.add(element);
+      elements.push({ element, enterCallback, exitCallback });
       intersectionObserver.observe(element);
       return;
     }
@@ -45,8 +45,11 @@ export default class ObserverAdmin extends Service {
     // No matching entry for root in static admin, thus create new IntersectionObserver instance
     let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions)), observerOptions);
     newIO.observe(element);
-    let SET = new Set(null);
-    let observerEntry = {elements: SET.add(element), enterCallback, exitCallback, observerOptions, intersectionObserver: newIO };
+    let observerEntry = {
+      elements: [{ element, enterCallback, exitCallback }],
+      observerOptions,
+      intersectionObserver: newIO
+    };
 
     if (potentialRootMatch) {
       // if share same root and need to add new entry to root match
@@ -59,28 +62,20 @@ export default class ObserverAdmin extends Service {
 
   /**
    * @method unobserve
-   * @param {Node} element
+   * @param {Node} target
    * @param {Node|window} root
    */
-  unobserve(element, observerOptions) {
-    let { elements, intersectionObserver } = this._findMatchingRootEntry(observerOptions);
+  unobserve(target, observerOptions) {
+    let { elements = [], intersectionObserver } = this._findMatchingRootEntry(observerOptions);
 
-    intersectionObserver.unobserve(element);
-    if (elements) {
-      elements.delete(element);
-    }
-  }
+    intersectionObserver.unobserve(target);
 
-  /**
-   * to unobserver multiple elements
-   *
-   * @method disconnect
-   * @param {Node|window} root
-   */
-  disconnect(root) {
-    let { intersectionObserver } = this._findRoot(root);
-    if (intersectionObserver) {
-      intersectionObserver.disconnect();
+    // important to do this in reverse order
+    for (let i = elements.length - 1; i >= 0; i--) {
+      if (elements[i] && elements[i].element === target) {
+        elements.splice(i, 1);
+        break;
+      }
     }
   }
 
@@ -111,20 +106,26 @@ export default class ObserverAdmin extends Service {
       // first determine if entry intersecting
       if (isIntersecting) {
         // then find entry's callback in static administration
-        let { elements, enterCallback } = this._findMatchingRootEntry(observerOptions);
+        let { elements = [] } = this._findMatchingRootEntry(observerOptions);
 
-        if (elements && elements.has(entry.target)) {
-          // call entry's enter callback
-          enterCallback();
-        }
+        elements.some((obj) => {
+          if (obj.element === entry.target) {
+            // call entry's enter callback
+            obj.enterCallback();
+            return true;
+          }
+        });
       } else if (intersectionRatio <= 0) { // exiting viewport
         // then find entry's callback in static administration
-        let { elements, exitCallback } = this._findMatchingRootEntry(observerOptions);
+        let { elements = [] } = this._findMatchingRootEntry(observerOptions);
 
-        if (elements && elements.has(entry.target)) {
-          // call entry's exit callback
-          exitCallback();
-        }
+        elements.some((obj) => {
+          if (obj.element === entry.target) {
+            // call entry's enter callback
+            obj.exitCallback();
+            return true;
+          }
+        });
       }
     });
   }
