@@ -1,10 +1,6 @@
 import Service from '@ember/service';
 import { bind } from '@ember/runloop';
 
-// WeakMap { root: { stringifiedOptions: { elements: [{ element }], enterCallback, exitCallback, observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
-// A root may have multiple keys with different observer options
-const DOMRef = new WeakMap();
-
 /**
  * Static administrator to ensure use one IntersectionObserver per combination of root + observerOptions
  * Use `root` (viewport) as lookup property
@@ -15,6 +11,13 @@ const DOMRef = new WeakMap();
  * @class ObserverAdmin
  */
 export default class ObserverAdmin extends Service {
+  init() {
+    this._super(...arguments);
+    // WeakMap { root: { stringifiedOptions: { elements: [{ element }], enterCallback, exitCallback, observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
+    // A root may have multiple keys with different observer options
+    this._DOMRef = new WeakMap();
+  }
+
   /**
    * adds element to observe entries of IntersectionObserver
    *
@@ -50,7 +53,7 @@ export default class ObserverAdmin extends Service {
       potentialRootMatch[JSON.stringify(observerOptions)] = observerEntry;
     } else {
       // no root exists, so add to WeakMap
-      DOMRef.set(root, { [JSON.stringify(observerOptions)]: observerEntry });
+      this._DOMRef.set(root, { [JSON.stringify(observerOptions)]: observerEntry });
     }
   }
 
@@ -132,7 +135,7 @@ export default class ObserverAdmin extends Service {
    * @return {Object} of elements that share same root
    */
   _findRoot(root) {
-    return DOMRef.get(root);
+    return this._DOMRef.get(root);
   }
 
   /**
@@ -148,7 +151,7 @@ export default class ObserverAdmin extends Service {
   _findMatchingRootEntry(observerOptions) {
     let stringifiedOptions = JSON.stringify(observerOptions);
     let { root = window } = observerOptions;
-    let matchingRoot = DOMRef.get(root) || {};
+    let matchingRoot = this._DOMRef.get(root) || {};
     return matchingRoot[stringifiedOptions];
   }
 
