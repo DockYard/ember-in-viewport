@@ -149,11 +149,11 @@ export default Mixin.create({
     // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     // IntersectionObserver takes either a Document Element or null for `root`
     const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
-    this._observerOptions = {
+    set(this, '_observerOptions', {
       root: scrollableArea,
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
       threshold: get(this, 'intersectionThreshold')
-    };
+    });
 
     get(this, '_observerAdmin').add(element, bind(this, this._onEnterIntersection), bind(this, this._onExitIntersection), this._observerOptions);
   },
@@ -354,8 +354,8 @@ export default Mixin.create({
     set(this, '_stopListening', true);
 
     // if IntersectionObserver
-    if (get(this, 'viewportUseIntersectionObserver')) {
-      get(this, '_observerAdmin').unobserve(this.element, get(this, '_observerOptions.root'));
+    if (get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportEnabled')) {
+      get(this, '_observerAdmin').unobserve(this.element, get(this, '_observerOptions'));
     }
 
     // if rAF
