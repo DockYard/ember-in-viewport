@@ -168,46 +168,33 @@ export default class ObserverAdmin extends Service {
    */
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
     let matchingKey = Object.keys(potentialRootMatch).filter((key) => {
-      return this._hasSimilarElement(observerOptions, potentialRootMatch[key]);
+      let { observerOptions: comparableOptions } = potentialRootMatch[key];
+      return this._compareOptions(observerOptions, comparableOptions);
     });
     return potentialRootMatch[matchingKey];
   }
 
   /**
-   * determine if share same observerOptions as to be observed element's observerOptions
-   *
-   * @method _hasSimilarElement
-   * @param {Object} observerOptions
-   * @param {Array} elements
-   * @return {Array}
-   */
-  _hasSimilarElement(observerOptions, { elements = [] }) {
-    return elements.some((testElement) => {
-      return this._compareOptions(observerOptions, testElement.observerOptions);
-    });
-  }
-
-  /**
    * @method _compareOptions
    * @param {Object} observerOptions
-   * @param {Object} elementOptions
+   * @param {Object} comparableOptions
    * @return {Boolean}
    */
-  _compareOptions(observerOptions, elementOptions) {
+  _compareOptions(observerOptions, comparableOptions) {
     // simple comparison of string, number or even null/undefined
     let type1 = Object.prototype.toString.call(observerOptions);
-    let type2 = Object.prototype.toString.call(elementOptions);
+    let type2 = Object.prototype.toString.call(comparableOptions);
     if (type1 !== type2) {
       return false;
     } else if (type1 !== '[object Object]' && type2 !== '[object Object]') {
-      return observerOptions === elementOptions;
+      return observerOptions === comparableOptions;
     }
 
     // complex comparison for only type of [object Object]
     for (let key in observerOptions) {
       if (observerOptions.hasOwnProperty(key)) {
         // recursion to check nested
-        if (this._compareOptions(observerOptions[key], elementOptions[key]) === false) {
+        if (this._compareOptions(observerOptions[key], comparableOptions[key]) === false) {
           return false;
         }
       }
