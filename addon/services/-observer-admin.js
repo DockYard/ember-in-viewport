@@ -3,11 +3,14 @@ import { bind } from '@ember/runloop';
 
 /**
  * Static administrator to ensure use one IntersectionObserver per combination of root + observerOptions
- * Use `root` (viewport) as lookup property
- * `root` will have many options with each option containing one IntersectionObserver instance and various callbacks
- * Provided callback will ensure consumer of this service is able to react to enter or exit of intersection observer
+ * Use `root` (viewport) as lookup property and weakly referenced
+ * `root` will have many keys with each value being and object containing one IntersectionObserver instance and all the elements to observe
+ * Provided callbacks will ensure consumer of this service is able to react to enter or exit of intersection observer
+ * This provides important optimizations since we are not instantiating a new IntersectionObserver instance for every element and
+ * instead reusing the instance.
  *
- * @module Ember.Service
+ * @module Service
+ * @extends Ember.Service
  * @class ObserverAdmin
  */
 export default class ObserverAdmin extends Service {
@@ -25,9 +28,12 @@ export default class ObserverAdmin extends Service {
    * @param {Node} element
    * @param {Function} enterCallback
    * @param {Function} exitCallback
-   * @param {Object} options
+   * @param {Object} observerOptions
    */
   add(element, enterCallback, exitCallback, observerOptions) {
+    if (!element || !observerOptions) {
+      return;
+    }
     let { root = window } = observerOptions;
 
     // first find shared root element (window or scrollable area)
@@ -152,7 +158,7 @@ export default class ObserverAdmin extends Service {
   _findMatchingRootEntry(observerOptions) {
     let stringifiedOptions = JSON.stringify(observerOptions);
     let { root = window } = observerOptions;
-    let matchingRoot = this._DOMRef.get(root) || {};
+    let matchingRoot = this._findRoot(root) || {};
     return matchingRoot[stringifiedOptions];
   }
 
