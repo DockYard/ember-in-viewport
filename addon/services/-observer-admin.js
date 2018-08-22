@@ -3,14 +3,18 @@ import { bind } from '@ember/runloop';
 
 /**
  * Static administrator to ensure use one IntersectionObserver per combination of root + observerOptions
- * Use `root` (viewport) as lookup property
- * `root` will have many options with each option containing one IntersectionObserver instance and various callbacks
- * Provided callback will ensure consumer of this service is able to react to enter or exit of intersection observer
+ * Use `root` (viewport) as lookup property and weakly referenced
+ * `root` will have many keys with each value being and object containing one IntersectionObserver instance and all the elements to observe
+ * Provided callbacks will ensure consumer of this service is able to react to enter or exit of intersection observer
+ * This provides important optimizations since we are not instantiating a new IntersectionObserver instance for every element and
+ * instead reusing the instance.
  *
- * @module Ember.Service
+ * @module Service
+ * @extends Ember.Service
  * @class ObserverAdmin
  */
 export default class ObserverAdmin extends Service {
+  /** @private **/
   init() {
     this._super(...arguments);
     // WeakMap { root: { stringifiedOptions: { elements: [{ element, enterCallback, exitCallback }], observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
@@ -19,15 +23,20 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
-   * adds element to observe entries of IntersectionObserver
+   * Adds element to observe via IntersectionObserver and stores element + relevant callbacks and observer options in static
+   * administrator for lookup in the future
    *
    * @method add
    * @param {Node} element
    * @param {Function} enterCallback
    * @param {Function} exitCallback
-   * @param {Object} options
+   * @param {Object} observerOptions
+   * @public
    */
   add(element, enterCallback, exitCallback, observerOptions) {
+    if (!element || !observerOptions) {
+      return;
+    }
     let { root = window } = observerOptions;
 
     // first find shared root element (window or scrollable area)
@@ -61,9 +70,12 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
+   * Unobserve target element and remove element from static admin
+   *
    * @method unobserve
-   * @param {Node} target
-   * @param {Node|window} root
+   * @param {Node|window} target
+   * @param {Object} observerOptions
+   * @public
    */
   unobserve(target, observerOptions) {
     let { elements = [], intersectionObserver } = this._findMatchingRootEntry(observerOptions);
@@ -97,6 +109,7 @@ export default class ObserverAdmin extends Service {
    * @method _onIntersection
    * @param {Object} observerOptions
    * @param {Array} ioEntries
+   * @private
    */
   _onIntersection(observerOptions, ioEntries) {
     ioEntries.forEach((entry) => {
@@ -133,6 +146,7 @@ export default class ObserverAdmin extends Service {
   /**
    * @method _findRoot
    * @param {Node|window} root
+   * @private
    * @return {Object} of elements that share same root
    */
   _findRoot(root) {
@@ -152,7 +166,7 @@ export default class ObserverAdmin extends Service {
   _findMatchingRootEntry(observerOptions) {
     let stringifiedOptions = JSON.stringify(observerOptions);
     let { root = window } = observerOptions;
-    let matchingRoot = this._DOMRef.get(root) || {};
+    let matchingRoot = this._findRoot(root) || {};
     return matchingRoot[stringifiedOptions];
   }
 
@@ -163,6 +177,7 @@ export default class ObserverAdmin extends Service {
    * @method _determineMatchingElements
    * @param {Object} observerOptions
    * @param {Object} potentialRootMatch e.g. { stringifiedOptions: { elements: [], ... }, stringifiedOptions: { elements: [], ... }}
+   * @private
    * @return {Object} containing array of elements and other meta
    */
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
@@ -181,6 +196,7 @@ export default class ObserverAdmin extends Service {
    * @method _areOptionsSame
    * @param {Object} observerOptions
    * @param {Object} comparableOptions
+   * @private
    * @return {Boolean}
    */
   _areOptionsSame(observerOptions, comparableOptions) {
