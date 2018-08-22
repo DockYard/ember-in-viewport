@@ -14,21 +14,24 @@ import { bind } from '@ember/runloop';
  * @class ObserverAdmin
  */
 export default class ObserverAdmin extends Service {
-  init() {
-    this._super(...arguments);
+  /** @private **/
+  constructor(...args) {
+    super(...args)
     // WeakMap { root: { stringifiedOptions: { elements: [{ element, enterCallback, exitCallback }], observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
     // A root may have multiple keys with different observer options
     this._DOMRef = new WeakMap();
   }
 
   /**
-   * adds element to observe entries of IntersectionObserver
+   * Adds element to observe via IntersectionObserver and stores element + relevant callbacks and observer options in static
+   * administrator for lookup in the future
    *
    * @method add
    * @param {Node} element
    * @param {Function} enterCallback
    * @param {Function} exitCallback
    * @param {Object} observerOptions
+   * @public
    */
   add(element, enterCallback, exitCallback, observerOptions) {
     if (!element || !observerOptions) {
@@ -67,9 +70,12 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
+   * Unobserve target element and remove element from static admin
+   *
    * @method unobserve
-   * @param {Node} target
-   * @param {Node|window} root
+   * @param {Node|window} target
+   * @param {Object} observerOptions
+   * @public
    */
   unobserve(target, observerOptions) {
     let { elements = [], intersectionObserver } = this._findMatchingRootEntry(observerOptions);
@@ -103,6 +109,7 @@ export default class ObserverAdmin extends Service {
    * @method _onIntersection
    * @param {Object} observerOptions
    * @param {Array} ioEntries
+   * @private
    */
   _onIntersection(observerOptions, ioEntries) {
     ioEntries.forEach((entry) => {
@@ -139,6 +146,7 @@ export default class ObserverAdmin extends Service {
   /**
    * @method _findRoot
    * @param {Node|window} root
+   * @private
    * @return {Object} of elements that share same root
    */
   _findRoot(root) {
@@ -169,6 +177,7 @@ export default class ObserverAdmin extends Service {
    * @method _determineMatchingElements
    * @param {Object} observerOptions
    * @param {Object} potentialRootMatch e.g. { stringifiedOptions: { elements: [], ... }, stringifiedOptions: { elements: [], ... }}
+   * @private
    * @return {Object} containing array of elements and other meta
    */
   _determineMatchingElements(observerOptions, potentialRootMatch = {}) {
@@ -187,6 +196,7 @@ export default class ObserverAdmin extends Service {
    * @method _areOptionsSame
    * @param {Object} observerOptions
    * @param {Object} comparableOptions
+   * @private
    * @return {Boolean}
    */
   _areOptionsSame(observerOptions, comparableOptions) {
