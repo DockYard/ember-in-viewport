@@ -15,8 +15,8 @@ import { bind } from '@ember/runloop';
  */
 export default class ObserverAdmin extends Service {
   /** @private **/
-  constructor(...args) {
-    super(...args)
+  init() {
+    this._super(...arguments);
     // WeakMap { root: { stringifiedOptions: { elements: [{ element, enterCallback, exitCallback }], observerOptions, IntersectionObserver }, stringifiedOptions: [].... } }
     // A root may have multiple keys with different observer options
     this._DOMRef = new WeakMap();
