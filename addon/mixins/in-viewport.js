@@ -365,7 +365,6 @@ export default Mixin.create({
       next(this, () => {
         let _rAFAdmin = get(this, '_rAFAdmin');
         _rAFAdmin.remove(elementId);
-        _rAFAdmin.cancel();
         delete rAFIDS[elementId];
       });
     }
