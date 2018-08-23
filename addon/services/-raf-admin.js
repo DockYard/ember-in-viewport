@@ -10,7 +10,6 @@ export default class RAFAdmin extends Service {
   init(...args) {
     super.init(...args);
     this.pool = [];
-    this.isRunning = true;
     this.flush();
   }
 
@@ -24,9 +23,7 @@ export default class RAFAdmin extends Service {
         item[Object.keys(item)[0]]();
       });
 
-      if (this.isRunning) {
-        this.flush();
-      }
+      this.flush();
     });
   }
 
