@@ -42,8 +42,4 @@ export default class RAFAdmin extends Service {
   reset() {
     this.pool = [];
   }
-
-  cancel() {
-    this.isRunning = false;
-  }
 }
