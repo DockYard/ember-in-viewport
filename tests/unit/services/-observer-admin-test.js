@@ -4,6 +4,24 @@ import { setupTest } from 'ember-qunit';
 module('Unit | Mixin | -observer-admin', function(hooks) {
   setupTest(hooks);
 
+  // https://github.com/DockYard/ember-in-viewport/issues/160
+  test('handles root element gaining custom properties', function(assert) {
+    let service = this.owner.lookup('service:-observer-admin');
+    let root = document.createElement('div');
+    let observerOptions = {root, rootMargin: '0px 0px 100px 0px', threshold: 0};
+
+    service.add(root, () => {}, () => {}, observerOptions);
+
+    // sense check
+    assert.ok(service._findMatchingRootEntry(observerOptions));
+
+    // simulate jQuery adding a sizzle1234 type property to root HtmlElement
+    root.sizzle1234 = {test: true};
+
+    // failing test for #160
+    assert.ok(service._findMatchingRootEntry(observerOptions));
+  })
+
   test('_areOptionsSame works', function(assert) {
     let service = this.owner.lookup('service:-observer-admin');
 
