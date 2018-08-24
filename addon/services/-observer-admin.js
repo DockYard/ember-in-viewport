@@ -62,10 +62,10 @@ export default class ObserverAdmin extends Service {
 
     if (potentialRootMatch) {
       // if share same root and need to add new entry to root match
-      potentialRootMatch[JSON.stringify(observerOptions)] = observerEntry;
+      potentialRootMatch[this._stringifyObserverOptions(observerOptions)] = observerEntry;
     } else {
       // no root exists, so add to WeakMap
-      this._DOMRef.set(root, { [JSON.stringify(observerOptions)]: observerEntry });
+      this._DOMRef.set(root, { [this._stringifyObserverOptions(observerOptions)]: observerEntry });
     }
   }
 
@@ -164,7 +164,7 @@ export default class ObserverAdmin extends Service {
    * @return {Object} entry with elements and other options
    */
   _findMatchingRootEntry(observerOptions) {
-    let stringifiedOptions = JSON.stringify(observerOptions);
+    let stringifiedOptions = this._stringifyObserverOptions(observerOptions);
     let { root = window } = observerOptions;
     let matchingRoot = this._findRoot(root) || {};
     return matchingRoot[stringifiedOptions];
@@ -219,5 +219,22 @@ export default class ObserverAdmin extends Service {
       }
     }
     return true;
+  }
+
+  /**
+   * Stringify observerOptions for use as a key.
+   * Excludes observerOptions.root so that the resulting key is stable
+   *
+   * @param {Object} observerOptions
+   * @private
+   * @return {String}
+   */
+  _stringifyObserverOptions(observerOptions) {
+    let replacer = (key, value) => {
+      if (key === 'root') return undefined;
+      return value;
+    };
+
+    return JSON.stringify(observerOptions, replacer);
   }
 }
