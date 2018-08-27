@@ -31,9 +31,10 @@ export default class ObserverAdmin extends Service {
    * @param {Function} enterCallback
    * @param {Function} exitCallback
    * @param {Object} observerOptions
+   * @param {String} [scrollableArea]
    * @public
    */
-  add(element, enterCallback, exitCallback, observerOptions) {
+  add(element, enterCallback, exitCallback, observerOptions, scrollableArea) {
     if (!element || !observerOptions) {
       return;
     }
@@ -52,7 +53,7 @@ export default class ObserverAdmin extends Service {
     }
 
     // No matching entry for root in static admin, thus create new IntersectionObserver instance
-    let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions)), observerOptions);
+    let newIO = new IntersectionObserver(bind(this, this._setupOnIntersection(observerOptions, scrollableArea)), observerOptions);
     newIO.observe(element);
     let observerEntry = {
       elements: [{ element, enterCallback, exitCallback }],
@@ -60,12 +61,13 @@ export default class ObserverAdmin extends Service {
       intersectionObserver: newIO
     };
 
+    let stringifiedOptions = this._stringifyObserverOptions(observerOptions, scrollableArea);
     if (potentialRootMatch) {
       // if share same root and need to add new entry to root match
-      potentialRootMatch[JSON.stringify(observerOptions)] = observerEntry;
+      potentialRootMatch[stringifiedOptions] = observerEntry;
     } else {
       // no root exists, so add to WeakMap
-      this._DOMRef.set(root, { [JSON.stringify(observerOptions)]: observerEntry });
+      this._DOMRef.set(root, { [stringifiedOptions]: observerEntry });
     }
   }
 
@@ -75,10 +77,11 @@ export default class ObserverAdmin extends Service {
    * @method unobserve
    * @param {Node|window} target
    * @param {Object} observerOptions
+   * @param {String} scrollableArea
    * @public
    */
-  unobserve(target, observerOptions) {
-    let { elements = [], intersectionObserver } = this._findMatchingRootEntry(observerOptions);
+  unobserve(target, observerOptions, scrollableArea) {
+    let { elements = [], intersectionObserver } = this._findMatchingRootEntry(observerOptions, scrollableArea);
 
     intersectionObserver.unobserve(target);
 
@@ -96,10 +99,11 @@ export default class ObserverAdmin extends Service {
    *
    * @method _setupOnIntersection
    * @param {Object} observerOptions
+   * @param {String} scrollableArea
    */
-  _setupOnIntersection(observerOptions) {
+  _setupOnIntersection(observerOptions, scrollableArea) {
     return function(entries) {
-      return this._onIntersection(observerOptions, entries);
+      return this._onIntersection(observerOptions, scrollableArea, entries);
     }
   }
 
@@ -108,10 +112,11 @@ export default class ObserverAdmin extends Service {
    *
    * @method _onIntersection
    * @param {Object} observerOptions
+   * @param {String} scrollableArea
    * @param {Array} ioEntries
    * @private
    */
-  _onIntersection(observerOptions, ioEntries) {
+  _onIntersection(observerOptions, scrollableArea, ioEntries) {
     ioEntries.forEach((entry) => {
 
       let { isIntersecting, intersectionRatio } = entry;
@@ -119,7 +124,7 @@ export default class ObserverAdmin extends Service {
       // first determine if entry intersecting
       if (isIntersecting) {
         // then find entry's callback in static administration
-        let { elements = [] } = this._findMatchingRootEntry(observerOptions);
+        let { elements = [] } = this._findMatchingRootEntry(observerOptions, scrollableArea);
 
         elements.some((obj) => {
           if (obj.element === entry.target) {
@@ -130,7 +135,7 @@ export default class ObserverAdmin extends Service {
         });
       } else if (intersectionRatio <= 0) { // exiting viewport
         // then find entry's callback in static administration
-        let { elements = [] } = this._findMatchingRootEntry(observerOptions);
+        let { elements = [] } = this._findMatchingRootEntry(observerOptions, scrollableArea);
 
         elements.some((obj) => {
           if (obj.element === entry.target) {
@@ -161,12 +166,13 @@ export default class ObserverAdmin extends Service {
    *
    * @method _findMatchingRootEntry
    * @param {Object} observerOptions
+   * @param {String} scrollableArea
    * @return {Object} entry with elements and other options
    */
-  _findMatchingRootEntry(observerOptions) {
-    let stringifiedOptions = JSON.stringify(observerOptions);
+  _findMatchingRootEntry(observerOptions, scrollableArea) {
     let { root = window } = observerOptions;
     let matchingRoot = this._findRoot(root) || {};
+    let stringifiedOptions = this._stringifyObserverOptions(observerOptions, scrollableArea);
     return matchingRoot[stringifiedOptions];
   }
 
@@ -219,5 +225,23 @@ export default class ObserverAdmin extends Service {
       }
     }
     return true;
+  }
+
+  /**
+   * Stringify observerOptions for use as a key.
+   * Excludes observerOptions.root so that the resulting key is stable
+   *
+   * @param {Object} observerOptions
+   * @param {String} scrollableArea
+   * @private
+   * @return {String}
+   */
+  _stringifyObserverOptions(observerOptions, scrollableArea) {
+    let replacer = (key, value) => {
+      if (key === 'root') return scrollableArea;
+      return value;
+    };
+
+    return JSON.stringify(observerOptions, replacer);
   }
 }
