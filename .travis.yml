@@ -31,7 +31,6 @@ jobs:
     - stage: "Tests"
       name: "Tests"
       script:
-        - npm run lint:hbs
         - npm run lint:js
         - npm test
 
