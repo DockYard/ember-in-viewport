@@ -11,7 +11,7 @@ export default Controller.extend({
   init() {
     this._super(...arguments);
     this.viewportToleranceOverride = {
-      top: 1
+      right: 100
     }
   },
 

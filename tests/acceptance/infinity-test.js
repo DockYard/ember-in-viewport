@@ -19,7 +19,19 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     await waitFor('.infinity-scrollable.inactive');
 
-    // assert.equal(findAll('.infinity-svg').length, 20);
+    assert.equal(findAll('.infinity-svg').length, 20);
+  });
+
+  test('IntersectionObserver Component fetches more data when left to right scrolling', async function(assert) {
+    await visit('/infinity-right-left');
+
+    assert.equal(findAll('.infinity-svg').length, 10);
+    assert.equal(findAll('.infinity-scrollable.inactive').length, 1, 'component is inactive before fetching more data');
+    document.querySelector('.infinity-scrollable').scrollIntoView(false);
+
+    await waitFor('.infinity-scrollable.inactive');
+
+    assert.equal(findAll('.infinity-svg').length, 20);
   });
 
   test('rAF Component fetches more data when scrolled into viewport', async function(assert) {
