@@ -8,8 +8,11 @@ let line = '<line x1="10" x2="50" y1="110" y2="150" stroke="orange" stroke-width
 const images = [rect, circle, line];
 
 export default Controller.extend({
-  viewportToleranceOverride: {
-    right: 1
+  init() {
+    this._super(...arguments);
+    this.viewportToleranceOverride = {
+      right: 100
+    }
   },
 
   actions: {
