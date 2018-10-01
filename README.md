@@ -71,7 +71,9 @@ export default Component.extend(InViewportMixin, {
 To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
 
 ```js
-export default Ember.Component.extend(InViewportMixin, {
+import Component from '@ember/component';
+
+export default Component.extend(InViewportMixin, {
   classNameBindings: [ 'viewportEntered:active' ]
 });
 ```
@@ -84,12 +86,13 @@ The mixin comes with some options. Due to the way listeners and `IntersectionObs
 
 ```js
 import Component from '@ember/component';
+import { setProperties }  from '@ember/object';
 
 export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
 
-    Ember.setProperties(this, {
+    setProperties(this, {
       viewportEnabled                 : true,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
