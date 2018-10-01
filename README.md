@@ -42,6 +42,7 @@ These hooks fire once whenever the `Component` enters or exits the viewport. You
 
 ```js
 import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
 
 export default Component.extend(InViewportMixin, {
   didEnterViewport() {
@@ -59,6 +60,7 @@ The `didScroll` hook fires when an element enters the viewport. For example, if 
 
 ```js
 import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
 
 export default Component.extend(InViewportMixin, {
   didScroll(direction) {
@@ -72,6 +74,7 @@ To apply an `.active` class to your `Component` when it enters the viewport, you
 
 ```js
 import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
 
 export default Component.extend(InViewportMixin, {
   classNameBindings: [ 'viewportEntered:active' ]
@@ -86,6 +89,7 @@ The mixin comes with some options. Due to the way listeners and `IntersectionObs
 
 ```js
 import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
 import { setProperties }  from '@ember/object';
 
 export default Component.extend(InViewportMixin, {
