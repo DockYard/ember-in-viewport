@@ -173,7 +173,7 @@ export default Mixin.create({
     }
 
     const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
-    const width = scrollableArea ? scrollableArea.offsetWidth : window.innerWidth;
+    const width = scrollableArea ? scrollableArea.offsetWidth + scrollableArea.getBoundingClientRect().left : window.innerWidth;
     const boundingClientRect = element.getBoundingClientRect();
 
     if (boundingClientRect) {
