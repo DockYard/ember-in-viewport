@@ -95,6 +95,15 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
+   * @method willDestroy
+   * @public
+   */
+  willDestroy() {
+    this._super(...arguments);
+    this._DOMRef = null;
+  }
+
+  /**
    * use function composition to curry observerOptions
    *
    * @method _setupOnIntersection
