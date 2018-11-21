@@ -18,6 +18,9 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     document.querySelector('.infinity-scrollable').scrollIntoView(false);
 
     await waitFor('.infinity-scrollable.inactive');
+    await waitUntil(() => {
+      return findAll('.infinity-svg').length === 20;
+    });
 
     assert.equal(findAll('.infinity-svg').length, 20);
   });
