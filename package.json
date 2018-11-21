@@ -21,7 +21,9 @@
   "author": "Lauren Tan",
   "license": "MIT",
   "dependencies": {
-    "ember-cli-babel": "^6.16.0"
+    "ember-auto-import": "^1.2.15",
+    "ember-cli-babel": "^6.16.0",
+    "intersection-observer-admin": "0.0.2"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.6.3",
