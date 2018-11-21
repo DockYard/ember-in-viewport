@@ -29,6 +29,7 @@ export default class ObserverAdmin extends Service {
   }
 
   destroy(...args) {
-    return this._observerAdmin.destroy(...args);
+    this._observerAdmin.destroy(...args);
+    this._observerAdmin = null;
   }
 }
