@@ -188,10 +188,7 @@ export default Mixin.create({
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
         let elementId = get(this, 'elementId');
-        rAFIDS[elementId] = get(this, '_rAFAdmin').add(
-          elementId,
-          bind(this, this._setViewportEntered)
-        );
+        rAFIDS[elementId] = window.requestAnimationFrame(bind(this, this._setViewportEntered));
       }
     }
   },
