@@ -24,7 +24,7 @@
     "ember-auto-import": "^1.2.15",
     "ember-cli-babel": "^6.16.0",
     "intersection-observer-admin": "0.0.3",
-    "raf-pool": "0.0.1"
+    "raf-pool": "0.0.2"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.7.0",
