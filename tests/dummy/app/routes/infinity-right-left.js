@@ -8,6 +8,7 @@ const images = [rect, circle, line];
 
 export default Route.extend({
   model() {
-    return [...Array(10).fill().map(() => `${images[(Math.random() * images.length) | 0]}`)];
+    const arr = Array.apply(null, Array(10));
+    return [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
   }
 });
