@@ -17,9 +17,11 @@ export default Controller.extend({
 
   actions: {
     infinityLoad() {
-      const newModels = [...Array(10).fill().map(() => `${images[(Math.random() * images.length) | 0]}`)];
-      get(this, 'model').push(...newModels);
-      set(this, 'model', Array.from(get(this, 'model')));
+      const arr = Array.apply(null, Array(10));
+      const newModels = [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
+      const models = get(this, 'model');
+      models.push(...newModels);
+      set(this, 'model', Array.prototype.slice.call(models));
     }
   }
 });
