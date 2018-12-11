@@ -12,14 +12,18 @@ module('Unit | Utility | is in viewport', function(hooks) {
       top: 450,
       left: 150,
       bottom: 550,
-      right: 1130
+      right: 1130,
+      height: 1,
+      width: 1
     };
 
     fakeRectInViewport = {
       top: 300,
       left: 150,
       bottom: 400,
-      right: 1130
+      right: 1130,
+      height: 1,
+      width: 1
     };
 
     fakeWindow = {
@@ -65,7 +69,9 @@ module('Unit | Utility | is in viewport', function(hooks) {
       top: 300,
       left: 150,
       bottom: 400.4,
-      right: 1130
+      right: 1130,
+      height: 1,
+      width: 1
     };
     const result = isInViewport(fakeRectWithSubpixelsInViewport, innerHeight, innerWidth, fakeNoTolerance);
     assert.ok(result);
@@ -78,7 +84,9 @@ module('Unit | Utility | is in viewport', function(hooks) {
       top: 300,
       left: 150,
       bottom: 400,
-      right: 1280.4
+      right: 1280.4,
+      height: 1,
+      width: 1
     };
     const result = isInViewport(fakeRectWithSubpixelsInViewport, innerHeight, innerWidth, fakeNoTolerance);
     assert.ok(result);
@@ -91,7 +99,9 @@ module('Unit | Utility | is in viewport', function(hooks) {
       top: 300,
       left: 150,
       bottom: 400.8,
-      right: 1130
+      right: 1130,
+      height: 0,
+      width: 0
     };
     const result = isInViewport(fakeRectWithSubpixelsInViewport, innerHeight, innerWidth, fakeNoTolerance);
     assert.notOk(result);
@@ -104,7 +114,9 @@ module('Unit | Utility | is in viewport', function(hooks) {
       top: 300,
       left: 150,
       bottom: 400,
-      right: 1280.7
+      right: 1280.7,
+      height: 0,
+      width: 0
     };
     const result = isInViewport(fakeRectWithSubpixelsInViewport, innerHeight, innerWidth, fakeNoTolerance);
     assert.notOk(result);
