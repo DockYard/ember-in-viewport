@@ -5,15 +5,10 @@ node_js:
   # so that your addon works for all apps
   - "8"
 
-sudo: false
 dist: trusty
 
 addons:
   chrome: stable
-
-cache:
-  directories:
-    - $HOME/.npm
 
 env:
   global:
