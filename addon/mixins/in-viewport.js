@@ -155,7 +155,13 @@ export default Mixin.create({
       threshold: get(this, 'intersectionThreshold')
     });
 
-    get(this, '_observerAdmin').add(element, bind(this, this._onEnterIntersection), bind(this, this._onExitIntersection), this._observerOptions, this.scrollableArea);
+    get(this, '_observerAdmin').add(
+      element,
+      bind(this, this._onEnterIntersection),
+      bind(this, this._onExitIntersection),
+      this._observerOptions,
+      this.scrollableArea
+    );
   },
 
   /**
@@ -172,8 +178,12 @@ export default Mixin.create({
       return;
     }
 
-    const height = scrollableArea ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top : window.innerHeight;
-    const width = scrollableArea ? scrollableArea.offsetWidth + scrollableArea.getBoundingClientRect().left : window.innerWidth;
+    const height = scrollableArea
+      ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top
+      : window.innerHeight;
+    const width = scrollableArea
+      ? scrollableArea.offsetWidth + scrollableArea.getBoundingClientRect().left
+      : window.innerWidth;
     const boundingClientRect = element.getBoundingClientRect();
 
     if (boundingClientRect) {
@@ -355,7 +365,11 @@ export default Mixin.create({
 
     // if IntersectionObserver
     if (get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportEnabled')) {
-      get(this, '_observerAdmin').unobserve(this.element, get(this, '_observerOptions'), get(this, 'scrollableArea'));
+      get(this, '_observerAdmin').unobserve(
+        this.element,
+        get(this, '_observerOptions'),
+        get(this, 'scrollableArea')
+      );
     }
 
     // if rAF
