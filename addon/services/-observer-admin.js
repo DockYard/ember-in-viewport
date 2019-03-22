@@ -17,19 +17,19 @@ export default class ObserverAdmin extends Service {
   /** @private **/
   init() {
     this._super(...arguments);
-    this._observerAdmin = new IntersectionObserverAdmin();
+    this.ioAdmin = new IntersectionObserverAdmin();
   }
 
   add(...args) {
-    return this._observerAdmin.observe(...args);
+    return this.ioAdmin.observe(...args);
   }
 
   unobserve(...args) {
-    return this._observerAdmin.unobserve(...args);
+    return this.ioAdmin.unobserve(...args);
   }
 
   destroy(...args) {
-    this._observerAdmin.destroy(...args);
-    this._observerAdmin = null;
+    this.ioAdmin.destroy(...args);
+    this.ioAdmin = null;
   }
 }
