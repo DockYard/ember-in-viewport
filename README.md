@@ -11,6 +11,7 @@ This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app.
 
 ## Demo or examples
 - Dummy app (`ember serve`): https://github.com/DockYard/ember-in-viewport/tree/master/tests/dummy
+- Use with Ember [Modifiers](#modifiers) and [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
 - [ember-infinity](https://github.com/ember-infinity/ember-infinity)
 - [ember-light-table](https://github.com/offirgolan/ember-light-table)
 - Tracking advertisement impressions
@@ -220,6 +221,49 @@ module.exports = function(environment) {
 
 Note if you want to disable right and left in-viewport triggers, set these values to `Infinity`.
 ```
+
+### Modifiers
+
+Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.
+
+1.  Install [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
+2.  Use the `did-insert` hook inside a component
+3.  Wire up the component like so
+```js
+import Component from '@ember/component';
+import { set } from '@ember/object';
+import InViewportMixin from 'ember-in-viewport';
+
+export default Component.extend(InViewportMixin, {
+  tagName: '',
+
+  // if you do have a tagName ^^, then you can use `didInsertElement` or no-op it.  You choose
+  // didInsertElement() {},
+  didInsertNode(element, [instance]) {
+    instance.watchElement(element);
+  },
+
+  init() {
+    this._super(...arguments);
+
+    set(this, 'viewportSpy', true);
+    set(this, 'viewportTolerance', {
+      bottom: 300
+    });
+  },
+
+  didEnterViewport() {
+    this.infinityLoad();
+  }
+});
+```
+
+```hbs
+<div {{did-insert this.didInsertNode this}}>
+  {{yield}}
+</div>
+```
+
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
 ### Out of the box
