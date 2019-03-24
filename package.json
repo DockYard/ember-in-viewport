@@ -23,8 +23,8 @@
   "dependencies": {
     "ember-auto-import": "^1.2.15",
     "ember-cli-babel": "^7.1.2",
-    "intersection-observer-admin": "0.0.5",
-    "raf-pool": "0.0.4"
+    "intersection-observer-admin": "0.1.0",
+    "raf-pool": "0.1.0"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.7.0",
