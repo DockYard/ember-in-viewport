@@ -229,6 +229,9 @@ Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-
 1.  Install [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
 2.  Use the `did-insert` hook inside a component
 3.  Wire up the component like so
+
+Note - This is in lieu of a `did-enter-viewport` modifier, which we plan on adding in the future.  Compared to the solution below, `did-enter-viewport` won't need a container (`this`) passed to it.  But for now, to start using modifiers, this is the easy path.
+
 ```js
 import Component from '@ember/component';
 import { set } from '@ember/object';
@@ -253,6 +256,7 @@ export default Component.extend(InViewportMixin, {
   },
 
   didEnterViewport() {
+    // this will only work with one element being watched in the container. This is still a TODO to enable
     this.infinityLoad();
   }
 });
