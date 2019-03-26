@@ -23,11 +23,12 @@
   "dependencies": {
     "ember-auto-import": "^1.2.15",
     "ember-cli-babel": "^7.1.2",
-    "intersection-observer-admin": "0.0.5",
-    "raf-pool": "0.0.4"
+    "intersection-observer-admin": "0.1.0",
+    "raf-pool": "0.1.0"
   },
   "devDependencies": {
     "@ember/optional-features": "^0.7.0",
+    "@ember/render-modifiers": "^1.0.0",
     "broccoli-asset-rev": "^3.0.0",
     "ember-cli": "~3.8.1",
     "ember-cli-dependency-checker": "^3.1.0",
@@ -35,7 +36,6 @@
     "ember-cli-htmlbars": "^3.0.0",
     "ember-cli-htmlbars-inline-precompile": "^2.0.0",
     "ember-cli-inject-live-reload": "^2.0.1",
-    "ember-qunit": "^3.4.1",
     "ember-cli-shims": "^1.2.0",
     "ember-cli-sri": "^2.1.0",
     "ember-cli-uglify": "^2.1.0",
@@ -43,6 +43,7 @@
     "ember-export-application-global": "^2.0.0",
     "ember-load-initializers": "^2.0.0",
     "ember-maybe-import-regenerator": "^0.1.6",
+    "ember-qunit": "^3.4.1",
     "ember-resolver": "^5.0.1",
     "ember-source": "~3.8.0",
     "ember-source-channel-url": "^1.1.0",
