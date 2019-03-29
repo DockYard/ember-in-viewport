@@ -165,7 +165,7 @@ export default Component.extend(InViewportMixin, {
 
   When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
 
-  NOTE: If using IntersectionObserver (default), viewportSpy should always be set to true.  However, browsers (Safari) that don't currently support IntersectionObserver, this addon will use rAF which, depending on your use case, the default of `false` may be acceptable.
+  NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
 - `viewportScrollSensitivity: number`
 
