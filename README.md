@@ -7,7 +7,9 @@
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg) [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/DockYard/ember-in-viewport.svg)](https://travis-ci.org/DockYard/ember-in-viewport) [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
-This `ember-cli` addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `View` or `Component` (collectively referred to as `Components`), will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it fallsback to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
+This Ember addon adds a simple, highly performant Ember Mixin to your app. This Mixin, when added to a `Component`, will allow you to check if that `Component` has entered the browser's viewport. By default, the Mixin uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
+
+We utilize pooling techniques to reuse Intersection Observers and rAF observers in order to make your app as performant as possible and do as little works as possible.
 
 ## Demo or examples
 - Dummy app (`ember serve`): https://github.com/DockYard/ember-in-viewport/tree/master/tests/dummy
