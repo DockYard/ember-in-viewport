@@ -169,7 +169,7 @@ export default Component.extend(InViewportMixin, {
 
   NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
-- `viewportScrollDirection: boolean`
+- `viewportDidScroll: boolean`
 
   Default: `true`
 

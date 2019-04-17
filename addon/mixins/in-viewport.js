@@ -110,8 +110,8 @@ export default Mixin.create({
     // TODO: future make this by default false in major release
     // This adds a performance hit and likely many aren't using didScroll hook
     // Willing to leave as true if enough people do use it
-    const viewportScrollDirection = get(this, 'viewportScrollDirection');
-    if (viewportScrollDirection) {
+    const viewportDidScroll = get(this, 'viewportDidScroll');
+    if (viewportDidScroll) {
       this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
     }
 
@@ -406,8 +406,8 @@ export default Mixin.create({
     }
 
     // 4. last but not least
-    const viewportScrollDirection = get(this, 'viewportScrollDirection');
-    if (viewportScrollDirection) {
+    const viewportDidScroll = get(this, 'viewportDidScroll');
+    if (viewportDidScroll) {
       this._unbindScrollDirectionListener();
     }
   },
