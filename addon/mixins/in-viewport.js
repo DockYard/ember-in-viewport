@@ -106,7 +106,14 @@ export default Mixin.create({
   watchElement(element) {
     this._setInitialViewport(element);
     this._addObserverIfNotSpying(element);
-    this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
+
+    // TODO: future make this by default false in major release
+    // This adds a performance hit and likely many aren't using didScroll hook
+    // Willing to leave as true if enough people do use it
+    const viewportScrollDirection = get(this, 'viewportScrollDirection');
+    if (viewportScrollDirection) {
+      this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
+    }
 
     if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
       get(this, 'viewportListeners').forEach((listener) => {
@@ -399,6 +406,9 @@ export default Mixin.create({
     }
 
     // 4. last but not least
-    this._unbindScrollDirectionListener();
+    const viewportScrollDirection = get(this, 'viewportScrollDirection');
+    if (viewportScrollDirection) {
+      this._unbindScrollDirectionListener();
+    }
   },
 });
