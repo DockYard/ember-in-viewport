@@ -169,11 +169,17 @@ export default Component.extend(InViewportMixin, {
 
   NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
+- `viewportDidScroll: boolean`
+
+  Default: `true`
+
+  When `true`, the Mixin enables listening to the `didScroll` hook.  This will become by default false in a future major release
+
 - `viewportScrollSensitivity: number`
 
   Default: `1`
 
-  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSensitivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`.
+  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSensitivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`.  Only applicable if IntersectionObserver and rAF are not applied.
 
 - `viewportRefreshRate: number`
 
