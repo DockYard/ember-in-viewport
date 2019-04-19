@@ -29,6 +29,8 @@ export default Service.extend(Evented, {
     this.trigger(eventName);
   },
 
+  /** IntersectionObserver **/
+
   /**
    * In order to track elements and the state that comes with them, we need to keep track
    * of them in order to get at them at a later time
@@ -70,6 +72,7 @@ export default Service.extend(Evented, {
     this._observerAdmin.unobserve(target, observerOptions, scrollableArea);
   },
 
+  /** RAF **/
   addRAF(elementId, callback) {
     rAFIDS[elementId] = this._rAFAdmin.add(elementId, callback);
   },
@@ -83,6 +86,7 @@ export default Service.extend(Evented, {
     return isInViewport(...args);
   },
 
+  /** other **/
   destroy() {
     this.registry = null;
   }

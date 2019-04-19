@@ -18,25 +18,10 @@ const lastPosition = {};
 
 export default Mixin.create({
   /**
-   * IntersectionObserverEntry
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry
-   *
-   * @property intersectionObserver
-   * @default null
-   */
-  intersectionObserver: null,
-  /**
    * @property _debouncedEventHandler
    * @default null
    */
   _debouncedEventHandler: null,
-
-  /**
-   * @property _observerOptions
-   * @default null
-   */
-  _observerOptions: null,
 
   /**
    * unbinding listeners will short circuit rAF
