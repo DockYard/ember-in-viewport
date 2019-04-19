@@ -3,6 +3,8 @@ import { inject } from '@ember/service';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import Evented from '@ember/object/evented';
 
+const rAFIDS = {};
+
 /**
  * ensure use on requestAnimationFrame, no matter how many components
  * on the page are using this mixin
@@ -66,6 +68,15 @@ export default Service.extend(Evented, {
 
     const { observerOptions, scrollableArea } = this.registry.get(target);
     this._observerAdmin.unobserve(target, observerOptions, scrollableArea);
+  },
+
+  addRAF(elementId, callback) {
+    rAFIDS[elementId] = this._rAFAdmin.add(elementId, callback);
+  },
+
+  removeRAF(elementId) {
+    this._rAFAdmin.remove(elementId);
+    delete rAFIDS[elementId];
   },
 
   isInViewport(...args) {

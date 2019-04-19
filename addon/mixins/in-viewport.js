@@ -13,7 +13,6 @@ import findElem from 'ember-in-viewport/utils/find-elem';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
-const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
@@ -47,7 +46,6 @@ export default Mixin.create({
    */
   _stopListening: false,
 
-  _rAFAdmin: inject('-raf-admin'),
   inViewport: inject(),
 
   /**
@@ -194,9 +192,8 @@ export default Mixin.create({
       );
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
-        let elementId = get(this, 'elementId');
-        rAFIDS[elementId] = get(this, '_rAFAdmin').add(
-          elementId,
+        this.inViewport.addRAF(
+          get(this, 'elementId'),
           bind(this, this._setViewportEntered, element)
         );
       }
@@ -377,9 +374,7 @@ export default Mixin.create({
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        let _rAFAdmin = get(this, '_rAFAdmin');
-        _rAFAdmin.remove(elementId);
-        delete rAFIDS[elementId];
+        get(this, 'inViewport').removeRAF(elementId);
       });
     }
 
