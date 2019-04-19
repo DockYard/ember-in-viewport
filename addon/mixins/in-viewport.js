@@ -199,6 +199,7 @@ export default Mixin.create({
     }
 
     this.trigger('didEnterViewport');
+    this.inViewport.triggerEvent('didEnterViewport');
   },
 
   /**
@@ -214,6 +215,7 @@ export default Mixin.create({
     }
 
     this.trigger('didExitViewport');
+    this.inViewport.triggerEvent('didExitViewport');
   },
 
   /**

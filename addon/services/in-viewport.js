@@ -22,7 +22,10 @@ export default Service.extend(Evented, {
   },
 
   /**
+   * Trigger various events like didEnterViewport and didExitViewport
+   *
    * @method triggerEvent
+   * @param String eventName
    * @void
    */
   triggerEvent(eventName) {
