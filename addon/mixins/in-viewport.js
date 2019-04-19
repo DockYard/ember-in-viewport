@@ -11,7 +11,6 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import findElem from 'ember-in-viewport/utils/find-elem';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
-import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
 const rAFIDS = {};
@@ -185,12 +184,13 @@ export default Mixin.create({
 
     if (boundingClientRect) {
       this._triggerDidAccessViewport(
-        isInViewport(
+        this.inViewport.isInViewport(
           boundingClientRect,
           height,
           width,
           get(this, 'viewportTolerance')
-        )
+        ),
+        get(this, 'viewportEntered')
       );
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
@@ -266,13 +266,12 @@ export default Mixin.create({
    * @method _triggerDidAccessViewport
    * @param hasEnteredViewport
    */
-  _triggerDidAccessViewport(hasEnteredViewport = false) {
+  _triggerDidAccessViewport(hasEnteredViewport = false, viewportEntered) {
     const isTearingDown = this.isDestroyed || this.isDestroying;
     if (isTearingDown) {
       return;
     }
 
-    const viewportEntered = get(this, 'viewportEntered');
     const didEnter = !viewportEntered && hasEnteredViewport;
     const didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
@@ -289,7 +288,10 @@ export default Mixin.create({
       set(this, 'viewportEntered', hasEnteredViewport);
     }
 
-    this.trigger(triggeredEventName);
+    if (triggeredEventName) {
+      this.trigger(triggeredEventName);
+      this.inViewport.triggerEvent(triggeredEventName);
+    }
   },
 
   /**

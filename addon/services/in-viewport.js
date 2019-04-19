@@ -1,5 +1,7 @@
 import Service from '@ember/service';
 import { inject } from '@ember/service';
+import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
+import Evented from '@ember/object/evented';
 
 /**
  * ensure use on requestAnimationFrame, no matter how many components
@@ -7,7 +9,7 @@ import { inject } from '@ember/service';
  *
  * @class RAFAdmin
  */
-export default Service.extend({
+export default Service.extend(Evented, {
   _observerAdmin: inject('-observer-admin'),
   _rAFAdmin: inject('-raf-admin'),
 
@@ -15,6 +17,14 @@ export default Service.extend({
     this._super(...arguments);
 
     this.registry = new WeakMap();
+  },
+
+  /**
+   * @method triggerEvent
+   * @void
+   */
+  triggerEvent(eventName) {
+    this.trigger(eventName);
   },
 
   /**
@@ -56,6 +66,10 @@ export default Service.extend({
 
     const { observerOptions, scrollableArea } = this.registry.get(target);
     this._observerAdmin.unobserve(target, observerOptions, scrollableArea);
+  },
+
+  isInViewport(...args) {
+    return isInViewport(...args);
   },
 
   destroy() {
