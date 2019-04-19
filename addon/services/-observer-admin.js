@@ -18,18 +18,74 @@ export default class ObserverAdmin extends Service {
   init() {
     this._super(...arguments);
     this.ioAdmin = new IntersectionObserverAdmin();
+    this.registry = new WeakMap();
   }
 
+  /**
+   * @method addToRegistry
+   * @void
+   */
+  addToRegistry(element, observerOptions, scrollableArea) {
+    this.registry.set(element, { observerOptions, scrollableArea });
+  }
+
+  /**
+   * @method add
+   * @param HTMLElement element
+   * @param Object observerOptions
+   * @param HTMLElement|window scrollableArea
+   * @param Function enterCallback
+   * @param Function exitCallback
+   * @void
+   */
   add(...args) {
     return this.ioAdmin.observe(...args);
   }
 
-  unobserve(...args) {
-    return this.ioAdmin.unobserve(...args);
+  /**
+   * This method takes a target element, observerOptions and a the scrollable area.
+   * The latter two act as unique identifiers to figure out which intersection observer instance
+   * needs to be used to call `unobserve`
+   *
+   * @method unobserve
+   * @param HTMLElement target
+   * @param Object observerOptions
+   * @param String scrollableArea
+   * @void
+   */
+  unobserve(target) {
+    if (!target) {
+      return;
+    }
+
+    const { observerOptions, scrollableArea } = this.registry.get(target);
+    this.ioAdmin.unobserve(target, observerOptions, scrollableArea);
   }
 
   destroy(...args) {
     this.ioAdmin.destroy(...args);
     this.ioAdmin = null;
+    this.registry = null;
+  }
+
+  /**
+   * @method setupIntersectionObserver
+   * @param HTMLElement element
+   * @param Object observerOptions
+   * @param HTMLElement|window scrollableArea
+   * @param Function enterCallback
+   * @param Function exitCallback
+   * @void
+   */
+  setupIntersectionObserver(element, observerOptions, scrollableArea, domScrollableArea, enterCallback, exitCallback) {
+    this.addToRegistry(element, observerOptions, scrollableArea);
+
+    this.add(
+      element,
+      enterCallback,
+      exitCallback,
+      observerOptions,
+      scrollableArea
+    );
   }
 }
