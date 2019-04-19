@@ -338,7 +338,7 @@ export default Mixin.create({
 
     let evtListener = (() => this._debouncedEvent('_setViewportEntered', element));
     this._evtListenerClosures.push({ event: event, evtListener });
-    elem.addEventListener(event, evtListener, { passive: true });
+    elem.addEventListener(event, evtListener, false);
   },
 
   /**
@@ -373,7 +373,7 @@ export default Mixin.create({
         let elem = findElem(context);
         let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event) || {};
 
-        elem.removeEventListener(event, evtListener, { passive: true });
+        elem.removeEventListener(event, evtListener, false);
       });
     }
 
