@@ -1,4 +1,5 @@
 import Service from '@ember/service';
+import { get, set } from '@ember/object';
 import { inject } from '@ember/service';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import Evented from '@ember/object/evented';
@@ -18,7 +19,7 @@ export default Service.extend(Evented, {
   init() {
     this._super(...arguments);
 
-    this.registry = new WeakMap();
+    set(this, 'registry', new WeakMap());
   },
 
   /**
@@ -42,7 +43,7 @@ export default Service.extend(Evented, {
    * @void
    */
   addToRegistry(element, observerOptions, scrollableArea) {
-    this.registry.set(element, { observerOptions, scrollableArea });
+    get(this, 'registry').set(element, { observerOptions, scrollableArea });
   },
 
   /**
@@ -57,7 +58,7 @@ export default Service.extend(Evented, {
   setupIntersectionObserver(element, observerOptions, scrollableArea, domScrollableArea, enterCallback, exitCallback) {
     this.addToRegistry(element, observerOptions, scrollableArea);
 
-    this._observerAdmin.add(
+    get(this, '_observerAdmin').add(
       element,
       enterCallback,
       exitCallback,
@@ -71,17 +72,17 @@ export default Service.extend(Evented, {
       return;
     }
 
-    const { observerOptions, scrollableArea } = this.registry.get(target);
-    this._observerAdmin.unobserve(target, observerOptions, scrollableArea);
+    const { observerOptions, scrollableArea } = get(this, 'registry').get(target);
+    get(this, '_observerAdmin').unobserve(target, observerOptions, scrollableArea);
   },
 
   /** RAF **/
   addRAF(elementId, callback) {
-    rAFIDS[elementId] = this._rAFAdmin.add(elementId, callback);
+    rAFIDS[elementId] = get(this, '_rAFAdmin').add(elementId, callback);
   },
 
   removeRAF(elementId) {
-    this._rAFAdmin.remove(elementId);
+    get(this,'_rAFAdmin').remove(elementId);
     delete rAFIDS[elementId];
   },
 
@@ -91,6 +92,6 @@ export default Service.extend(Evented, {
 
   /** other **/
   destroy() {
-    this.registry = null;
+    set(this, 'registry', null);
   }
 });
