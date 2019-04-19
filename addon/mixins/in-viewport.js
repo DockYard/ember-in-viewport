@@ -167,7 +167,7 @@ export default Mixin.create({
 
     if (boundingClientRect) {
       this._triggerDidAccessViewport(
-        this.inViewport.isInViewport(
+        get(this, 'inViewport').isInViewport(
           boundingClientRect,
           height,
           width,
@@ -177,7 +177,7 @@ export default Mixin.create({
       );
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
-        this.inViewport.addRAF(
+        get(this, 'inViewport').addRAF(
           get(this, 'elementId'),
           bind(this, this._setViewportEntered, element)
         );
