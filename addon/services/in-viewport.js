@@ -1,8 +1,9 @@
 import Service from '@ember/service';
 import { get, set } from '@ember/object';
-import { inject } from '@ember/service';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import Evented from '@ember/object/evented';
+import ObserverAdmin from 'ember-in-viewport/-private/observer-admin';
+import RAFAdmin from 'ember-in-viewport/-private/raf-admin';
 
 const rAFIDS = {};
 
@@ -13,12 +14,11 @@ const rAFIDS = {};
  * @class RAFAdmin
  */
 export default Service.extend(Evented, {
-  _observerAdmin: inject('-observer-admin'),
-  _rAFAdmin: inject('-raf-admin'),
-
   init() {
     this._super(...arguments);
 
+    this._observerAdmin = new ObserverAdmin();
+    this._rAFAdmin = new RAFAdmin();
     set(this, 'registry', new WeakMap());
   },
 

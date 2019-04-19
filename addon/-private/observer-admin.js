@@ -1,4 +1,3 @@
-import Service from '@ember/service';
 import IntersectionObserverAdmin from 'intersection-observer-admin';
 
 /**
@@ -13,10 +12,9 @@ import IntersectionObserverAdmin from 'intersection-observer-admin';
  * @extends Ember.Service
  * @class ObserverAdmin
  */
-export default class ObserverAdmin extends Service {
+export default class ObserverAdmin {
   /** @private **/
-  init() {
-    this._super(...arguments);
+  constructor() {
     this.ioAdmin = new IntersectionObserverAdmin();
   }
 
