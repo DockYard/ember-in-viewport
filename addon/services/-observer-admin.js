@@ -22,6 +22,9 @@ export default class ObserverAdmin extends Service {
   }
 
   /**
+   * In order to track elements and the state that comes with them, we need to keep track
+   * of them in order to get at them at a later time
+   *
    * @method addToRegistry
    * @void
    */
