@@ -48,8 +48,8 @@ export default Mixin.create({
    */
   _stopListening: false,
 
-  _observerAdmin: inject('-observer-admin'),
   _rAFAdmin: inject('-raf-admin'),
+  inViewport: inject(),
 
   /**
    * @property viewportExited
@@ -150,7 +150,7 @@ export default Mixin.create({
         };
 
         // create IntersectionObserver instance or add to existing
-        get(this, '_observerAdmin').setupIntersectionObserver(
+        get(this, 'inViewport').setupIntersectionObserver(
           element,
           observerOptions,
           scrollableArea,
@@ -367,7 +367,7 @@ export default Mixin.create({
 
     // if IntersectionObserver
     if (get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportEnabled')) {
-      get(this, '_observerAdmin').unobserve(element);
+      get(this, 'inViewport').unobserveIntersectionObserver(element);
     }
 
     // if rAF
