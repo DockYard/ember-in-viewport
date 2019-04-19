@@ -48,6 +48,5 @@ export default class ObserverAdmin {
 
   destroy(...args) {
     this.ioAdmin.destroy(...args);
-    this.ioAdmin = null;
   }
 }

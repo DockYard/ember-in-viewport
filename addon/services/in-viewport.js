@@ -93,5 +93,7 @@ export default Service.extend(Evented, {
   /** other **/
   destroy() {
     set(this, 'registry', null);
+    get(this, '_observerAdmin').destroy();
+    get(this, '_rAFAdmin').reset();
   }
 });
