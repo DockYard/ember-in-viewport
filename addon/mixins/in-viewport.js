@@ -135,8 +135,6 @@ export default Mixin.create({
         get(this, 'inViewport').setupIntersectionObserver(
           element,
           observerOptions,
-          scrollableArea,
-          domScrollableArea,
           bind(this, this._onEnterIntersection),
           bind(this, this._onExitIntersection)
         );

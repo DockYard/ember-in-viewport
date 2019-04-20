@@ -16,7 +16,7 @@ export default class InViewport extends Service {
   init() {
     this._super(...arguments);
 
-    this._observerAdmin = new ObserverAdmin();
+    this.observerAdmin = new ObserverAdmin();
     this._rAFAdmin = new RAFAdmin();
     set(this, 'registry', new WeakMap());
   }
@@ -41,28 +41,26 @@ export default class InViewport extends Service {
    * @method addToRegistry
    * @void
    */
-  addToRegistry(element, observerOptions, scrollableArea) {
-    get(this, 'registry').set(element, { observerOptions, scrollableArea });
+  addToRegistry(element, observerOptions) {
+    get(this, 'registry').set(element, { observerOptions });
   }
 
   /**
    * @method setupIntersectionObserver
    * @param HTMLElement element
    * @param Object observerOptions
-   * @param HTMLElement|window scrollableArea
    * @param Function enterCallback
    * @param Function exitCallback
    * @void
    */
-  setupIntersectionObserver(element, observerOptions, scrollableArea, domScrollableArea, enterCallback, exitCallback) {
-    this.addToRegistry(element, observerOptions, scrollableArea);
+  setupIntersectionObserver(element, observerOptions, enterCallback, exitCallback) {
+    this.addToRegistry(element, observerOptions);
 
-    get(this, '_observerAdmin').add(
+    get(this, 'observerAdmin').add(
       element,
-      enterCallback,
-      exitCallback,
       observerOptions,
-      scrollableArea
+      enterCallback,
+      exitCallback
     );
   }
 
@@ -72,7 +70,7 @@ export default class InViewport extends Service {
     }
 
     const { observerOptions, scrollableArea } = get(this, 'registry').get(target);
-    get(this, '_observerAdmin').unobserve(target, observerOptions, scrollableArea);
+    get(this, 'observerAdmin').unobserve(target, observerOptions, scrollableArea);
   }
 
   /** RAF **/
@@ -92,7 +90,7 @@ export default class InViewport extends Service {
   /** other **/
   destroy() {
     set(this, 'registry', null);
-    get(this, '_observerAdmin').destroy();
+    get(this, 'observerAdmin').destroy();
     get(this, '_rAFAdmin').reset();
   }
 }
