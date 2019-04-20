@@ -1,4 +1,3 @@
-import Service from '@ember/service';
 import RafPool from 'raf-pool';
 
 /**
@@ -7,10 +6,9 @@ import RafPool from 'raf-pool';
  *
  * @class RAFAdmin
  */
-export default class RAFAdmin extends Service {
+export default class RAFAdmin {
   /** @private **/
-  init() {
-    this._super(...arguments);
+  constructor() {
     this._rafPool = new RafPool();
   }
 
@@ -28,6 +26,5 @@ export default class RAFAdmin extends Service {
 
   reset(...args) {
     this._rafPool.reset(...args);
-    this._rafPool = null;
   }
 }

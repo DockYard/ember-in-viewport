@@ -11,34 +11,17 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import findElem from 'ember-in-viewport/utils/find-elem';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
-import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import checkScrollDirection from 'ember-in-viewport/utils/check-scroll-direction';
 
-const rAFIDS = {};
 const lastDirection = {};
 const lastPosition = {};
 
 export default Mixin.create({
   /**
-   * IntersectionObserverEntry
-   *
-   * https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry
-   *
-   * @property intersectionObserver
-   * @default null
-   */
-  intersectionObserver: null,
-  /**
    * @property _debouncedEventHandler
    * @default null
    */
   _debouncedEventHandler: null,
-
-  /**
-   * @property _observerOptions
-   * @default null
-   */
-  _observerOptions: null,
 
   /**
    * unbinding listeners will short circuit rAF
@@ -48,8 +31,7 @@ export default Mixin.create({
    */
   _stopListening: false,
 
-  _observerAdmin: inject('-observer-admin'),
-  _rAFAdmin: inject('-raf-admin'),
+  inViewport: inject(),
 
   /**
    * @property viewportExited
@@ -131,43 +113,39 @@ export default Mixin.create({
   },
 
   _setInitialViewport(element) {
+    if (!element) {
+      return;
+    }
+
     if (get(this, 'viewportUseIntersectionObserver')) {
       return scheduleOnce('afterRender', this, () => {
-        this._setupIntersectionObserver(element);
+        const scrollableArea = get(this, 'scrollableArea');
+        const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+        // IntersectionObserver takes either a Document Element or null for `root`
+        const { top = 0, left = 0, bottom = 0, right = 0 } = get(this, 'viewportTolerance');
+        const observerOptions = {
+          root: domScrollableArea,
+          rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
+          threshold: get(this, 'intersectionThreshold')
+        };
+
+        // create IntersectionObserver instance or add to existing
+        get(this, 'inViewport').setupIntersectionObserver(
+          element,
+          observerOptions,
+          scrollableArea,
+          domScrollableArea,
+          bind(this, this._onEnterIntersection),
+          bind(this, this._onExitIntersection)
+        );
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
         this._setViewportEntered(element);
       });
     }
-  },
-
-  /**
-   * @method _setupIntersectionObserver
-   */
-  _setupIntersectionObserver(element) {
-    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : undefined;
-
-    if (!element) {
-      return;
-    }
-
-    // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-    // IntersectionObserver takes either a Document Element or null for `root`
-    const { top = 0, left = 0, bottom = 0, right = 0 } = this.viewportTolerance;
-    set(this, '_observerOptions', {
-      root: scrollableArea,
-      rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-      threshold: get(this, 'intersectionThreshold')
-    });
-
-    get(this, '_observerAdmin').add(
-      element,
-      bind(this, this._onEnterIntersection),
-      bind(this, this._onExitIntersection),
-      this._observerOptions,
-      this.scrollableArea
-    );
   },
 
   /**
@@ -179,10 +157,6 @@ export default Mixin.create({
   _setViewportEntered(element) {
     const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : undefined;
 
-    if (!element) {
-      return;
-    }
-
     const height = scrollableArea
       ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top
       : window.innerHeight;
@@ -193,18 +167,18 @@ export default Mixin.create({
 
     if (boundingClientRect) {
       this._triggerDidAccessViewport(
-        isInViewport(
+        get(this, 'inViewport').isInViewport(
           boundingClientRect,
           height,
           width,
           get(this, 'viewportTolerance')
-        )
+        ),
+        get(this, 'viewportEntered')
       );
 
       if (get(this, 'viewportUseRAF') && !get(this, '_stopListening')) {
-        let elementId = get(this, 'elementId');
-        rAFIDS[elementId] = get(this, '_rAFAdmin').add(
-          elementId,
+        get(this, 'inViewport').addRAF(
+          get(this, 'elementId'),
           bind(this, this._setViewportEntered, element)
         );
       }
@@ -274,13 +248,12 @@ export default Mixin.create({
    * @method _triggerDidAccessViewport
    * @param hasEnteredViewport
    */
-  _triggerDidAccessViewport(hasEnteredViewport = false) {
+  _triggerDidAccessViewport(hasEnteredViewport = false, viewportEntered) {
     const isTearingDown = this.isDestroyed || this.isDestroying;
     if (isTearingDown) {
       return;
     }
 
-    const viewportEntered = get(this, 'viewportEntered');
     const didEnter = !viewportEntered && hasEnteredViewport;
     const didLeave = viewportEntered && !hasEnteredViewport;
     let triggeredEventName = '';
@@ -297,7 +270,10 @@ export default Mixin.create({
       set(this, 'viewportEntered', hasEnteredViewport);
     }
 
-    this.trigger(triggeredEventName);
+    if (triggeredEventName) {
+      this.trigger(triggeredEventName);
+      // get(this, 'inViewport').triggerEvent(triggeredEventName);
+    }
   },
 
   /**
@@ -332,7 +308,7 @@ export default Mixin.create({
     const elem = findElem(contextEl);
 
     this._debouncedEventHandler = this._debouncedEvent.bind(this, '_triggerDidScrollDirection', elem, sensitivity);
-    elem.addEventListener('scroll', this._debouncedEventHandler, false);
+    elem.addEventListener('scroll', this._debouncedEventHandler, { passive: true });
   },
 
   _unbindScrollDirectionListener() {
@@ -341,7 +317,7 @@ export default Mixin.create({
     const elem = findElem(context);
 
     if (elem) {
-      elem.removeEventListener('scroll', this._debouncedEventHandler, false);
+      elem.removeEventListener('scroll', this._debouncedEventHandler, { passive: true });
       delete lastPosition[elementId];
       delete lastDirection[elementId];
     }
@@ -360,7 +336,7 @@ export default Mixin.create({
 
     let evtListener = (() => this._debouncedEvent('_setViewportEntered', element));
     this._evtListenerClosures.push({ event: event, evtListener });
-    elem.addEventListener(event, evtListener);
+    elem.addEventListener(event, evtListener, false);
   },
 
   /**
@@ -375,11 +351,7 @@ export default Mixin.create({
 
     // if IntersectionObserver
     if (get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportEnabled')) {
-      get(this, '_observerAdmin').unobserve(
-        element,
-        get(this, '_observerOptions'),
-        get(this, 'scrollableArea')
-      );
+      get(this, 'inViewport').unobserveIntersectionObserver(element);
     }
 
     // if rAF
@@ -387,9 +359,7 @@ export default Mixin.create({
       const elementId = get(this, 'elementId');
 
       next(this, () => {
-        let _rAFAdmin = get(this, '_rAFAdmin');
-        _rAFAdmin.remove(elementId);
-        delete rAFIDS[elementId];
+        get(this, 'inViewport').removeRAF(elementId);
       });
     }
 
@@ -401,7 +371,7 @@ export default Mixin.create({
         let elem = findElem(context);
         let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event) || {};
 
-        elem.removeEventListener(event, evtListener);
+        elem.removeEventListener(event, evtListener, false);
       });
     }
 

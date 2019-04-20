@@ -1,4 +1,3 @@
-import Service from '@ember/service';
 import IntersectionObserverAdmin from 'intersection-observer-admin';
 
 /**
@@ -13,23 +12,41 @@ import IntersectionObserverAdmin from 'intersection-observer-admin';
  * @extends Ember.Service
  * @class ObserverAdmin
  */
-export default class ObserverAdmin extends Service {
+export default class ObserverAdmin {
   /** @private **/
-  init() {
-    this._super(...arguments);
+  constructor() {
     this.ioAdmin = new IntersectionObserverAdmin();
   }
 
+  /**
+   * @method add
+   * @param HTMLElement element
+   * @param Object observerOptions
+   * @param HTMLElement|window scrollableArea
+   * @param Function enterCallback
+   * @param Function exitCallback
+   * @void
+   */
   add(...args) {
     return this.ioAdmin.observe(...args);
   }
 
+  /**
+   * This method takes a target element, observerOptions and a the scrollable area.
+   * The latter two act as unique identifiers to figure out which intersection observer instance
+   * needs to be used to call `unobserve`
+   *
+   * @method unobserve
+   * @param HTMLElement target
+   * @param Object observerOptions
+   * @param String scrollableArea
+   * @void
+   */
   unobserve(...args) {
-    return this.ioAdmin.unobserve(...args);
+    this.ioAdmin.unobserve(...args);
   }
 
   destroy(...args) {
     this.ioAdmin.destroy(...args);
-    this.ioAdmin = null;
   }
 }
