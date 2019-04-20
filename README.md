@@ -232,7 +232,7 @@ Note if you want to disable right and left in-viewport triggers, set these value
 
 ### Modifiers
 
-Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.
+Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.  Note, modifiers currently only works to watch entering the viewport.
 
 1.  Install [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
 2.  Use the `did-insert` hook inside a component
