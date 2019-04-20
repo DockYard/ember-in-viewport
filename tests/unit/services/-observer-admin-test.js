@@ -11,16 +11,16 @@ module('Unit Class | -observer-admin', function(hooks) {
     let root = document.createElement('div');
     let observerOptions = { root, rootMargin: '0px 0px 100px 0px', threshold: 0 };
 
-    service.add(root, () => {}, () => {}, observerOptions);
+    service.add(root, observerOptions);
     assert.ok(true);
   });
 
   test('handles root element gaining custom properties with scrollableArea', function(assert) {
     let service = new ObserverAdmin();
     let root = document.createElement('div');
-    let observerOptions = { root, rootMargin: '0px 0px 100px 0px', threshold: 0 };
+    let observerOptions = { root, rootMargin: '0px 0px 100px 0px', threshold: 0, scrollableArea: '.main-area' };
 
-    service.add(root, () => {}, () => {}, observerOptions, 'main-area');
+    service.add(root, observerOptions, () => {}, () => {});
     assert.ok(true);
   });
 });

@@ -15,20 +15,26 @@ import IntersectionObserverAdmin from 'intersection-observer-admin';
 export default class ObserverAdmin {
   /** @private **/
   constructor() {
-    this.ioAdmin = new IntersectionObserverAdmin();
+    this.instance = new IntersectionObserverAdmin();
   }
 
   /**
    * @method add
    * @param HTMLElement element
    * @param Object observerOptions
-   * @param HTMLElement|window scrollableArea
    * @param Function enterCallback
    * @param Function exitCallback
    * @void
    */
-  add(...args) {
-    return this.ioAdmin.observe(...args);
+  add(element, observerOptions, enterCallback, exitCallback) {
+    if (enterCallback) {
+      this.instance.addEnterCallback(element, enterCallback);
+    }
+    if (exitCallback) {
+      this.instance.addExitCallback(element, exitCallback);
+    }
+
+    return this.instance.observe(element, observerOptions);
   }
 
   /**
@@ -43,10 +49,10 @@ export default class ObserverAdmin {
    * @void
    */
   unobserve(...args) {
-    this.ioAdmin.unobserve(...args);
+    this.instance.unobserve(...args);
   }
 
   destroy(...args) {
-    this.ioAdmin.destroy(...args);
+    this.instance.destroy(...args);
   }
 }
