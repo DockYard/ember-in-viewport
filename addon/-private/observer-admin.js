@@ -28,13 +28,21 @@ export default class ObserverAdmin {
    */
   add(element, observerOptions, enterCallback, exitCallback) {
     if (enterCallback) {
-      this.instance.addEnterCallback(element, enterCallback);
+      this.addEnterCallback(element, enterCallback);
     }
     if (exitCallback) {
-      this.instance.addExitCallback(element, exitCallback);
+      this.addExitCallback(element, exitCallback);
     }
 
     return this.instance.observe(element, observerOptions);
+  }
+
+  addEnterCallback(element, enterCallback) {
+      this.instance.addEnterCallback(element, enterCallback);
+  }
+
+  addExitCallback(element, exitCallback) {
+      this.instance.addExitCallback(element, exitCallback);
   }
 
   /**

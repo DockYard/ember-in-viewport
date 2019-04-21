@@ -131,13 +131,13 @@ export default Mixin.create({
           threshold: get(this, 'intersectionThreshold')
         };
 
-        // create IntersectionObserver instance or add to existing
-        get(this, 'inViewport').setupIntersectionObserver(
+        get(this, 'inViewport').watchElement(
           element,
           observerOptions,
           bind(this, this._onEnterIntersection),
           bind(this, this._onExitIntersection)
-        );
+        )
+
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
@@ -270,7 +270,6 @@ export default Mixin.create({
 
     if (triggeredEventName) {
       this.trigger(triggeredEventName);
-      // get(this, 'inViewport').triggerEvent(triggeredEventName);
     }
   },
 
