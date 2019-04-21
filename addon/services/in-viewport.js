@@ -41,15 +41,13 @@ export default class InViewport extends Service {
   /**
    * @method watchElement
    * @param HTMLElement element
-   * @param Object observerOptions
+   * @param Object configOptions
    * @param Function enterCallback
    * @param Function exitCallback
    * @void
    */
-  watchElement(element, observerOptions, enterCallback, exitCallback) {
-    if (!observerOptions) {
-      this.buildObserverOptions();
-    }
+  watchElement(element, configOptions = {}, enterCallback, exitCallback) {
+    const observerOptions = this.buildObserverOptions(configOptions);
     if (get(this, 'viewportUseIntersectionObserver')) {
       // create IntersectionObserver instance or add to existing
       this.setupIntersectionObserver(
@@ -61,17 +59,16 @@ export default class InViewport extends Service {
     }
   }
 
-  buildObserverOptions() {
-    const scrollableArea = get(this, 'scrollableArea');
+  buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
     const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     // IntersectionObserver takes either a Document Element or null for `root`
-    const { top = 0, left = 0, bottom = 0, right = 0 } = get(this, 'viewportTolerance');
+    const { top = 0, left = 0, bottom = 0, right = 0 } = viewportTolerance;
     return {
       root: domScrollableArea,
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-      threshold: get(this, 'intersectionThreshold')
+      threshold: intersectionThreshold
     };
   }
 

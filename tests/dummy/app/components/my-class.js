@@ -1,4 +1,5 @@
 import Component from '@ember/component';
+import { get } from '@ember/object';
 import { tagName } from '@ember-decorators/component';
 import { inject as service } from '@ember/service';
 
@@ -8,8 +9,8 @@ export default class MyClass extends Component {
 
   didInsertElement() {
     const loader = document.getElementById('loader');
-    this.inViewport.watchElement(loader);
-    this.inViewport.addEnterCallback(loader, this.didEnterViewport.bind(this));
+    get(this, 'inViewport').watchElement(loader);
+    get(this, 'inViewport').addEnterCallback(loader, this.didEnterViewport.bind(this));
   }
 
   didEnterViewport() {
