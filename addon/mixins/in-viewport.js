@@ -136,8 +136,7 @@ export default Mixin.create({
           observerOptions,
           bind(this, this._onEnterIntersection),
           bind(this, this._onExitIntersection)
-        )
-
+        );
       });
     } else {
       return scheduleOnce('afterRender', this, () => {
