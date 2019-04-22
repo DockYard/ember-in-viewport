@@ -273,7 +273,7 @@ export default Mixin.create({
   _unbindIfEntered(element) {
     if (get(this, 'viewportEntered')) {
       this._unbindListeners(element);
-      this.removeObserver('viewportEntered', this, this._unbindIfEntered);
+      this.removeObserver('viewportEntered', this, '_unbindIfEntered');
       set(this, 'viewportEntered', false);
     }
   },

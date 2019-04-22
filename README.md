@@ -310,7 +310,7 @@ export default class MyClass extends Component {
 }
 ```
 
-Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea` && `viewportTolerance`
+Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`
 
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
