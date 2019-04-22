@@ -292,7 +292,8 @@ export default class MyClass extends Component {
 
   didInsertElement() {
     const loader = document.getElementById('loader');
-    const { onEnter, onExit } = this.inViewport.watchElement(loader);
+    const viewportTolerance = { bottom: 200 };
+    const { onEnter, onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
     onEnter(this.didEnterViewport.bind(this));
   }
 
@@ -308,6 +309,8 @@ export default class MyClass extends Component {
   }
 }
 ```
+
+Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea` && `viewportTolerance`
 
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
