@@ -16,4 +16,9 @@ export default class MyClass extends Component {
   didEnterViewport() {
     this.infinityLoad();
   }
+
+  willDestroyElement() {
+    const loader = document.getElementById('loader');
+    this.inViewport.stopWatching(loader);
+  }
 }

@@ -176,7 +176,7 @@ export default class InViewport extends Service {
   }
 
   /** other **/
-  stop(target) {
+  stopWatching(target) {
     this.unobserveIntersectionObserver(target);
     this.removeRAF(target);
   }

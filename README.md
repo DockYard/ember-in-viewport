@@ -303,7 +303,7 @@ export default class MyClass extends Component {
   willDestroy() {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
-    this.inViewport.stop(loader);
+    this.inViewport.stopWatching(loader);
   }
 }
 ```
