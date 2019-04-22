@@ -28,14 +28,14 @@ module('Acceptance | infinity-scrollable', function(hooks) {
   test('ember-in-viewport works with classes', async function(assert) {
     await visit('/infinity-class');
 
-    assert.equal(findAll('.infinity-class-item').length, 10);
+    assert.equal(findAll('.infinity-class-item').length, 20);
     document.querySelector('#loader').scrollIntoView(false);
 
     await waitUntil(() => {
-      return findAll('.infinity-class-item').length === 20;
+      return findAll('.infinity-class-item').length === 40;
     });
 
-    assert.equal(findAll('.infinity-class-item').length, 20);
+    assert.equal(findAll('.infinity-class-item').length, 40);
   });
 
   test('IntersectionObserver Component fetches more data when left to right scrolling', async function(assert) {

@@ -4,7 +4,7 @@ import { tagName } from '@ember-decorators/component';
 import { inject as service } from '@ember/service';
 
 @tagName('')
-export default class MyClass extends Component {
+export default class MyRafClass extends Component {
   @service inViewport
 
   didInsertElement() {

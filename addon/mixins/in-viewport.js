@@ -236,6 +236,7 @@ export default Mixin.create({
   /**
    * @method _triggerDidAccessViewport
    * @param hasEnteredViewport
+   * @param viewportEntered
    */
   _triggerDidAccessViewport(hasEnteredViewport = false, viewportEntered) {
     const isTearingDown = this.isDestroyed || this.isDestroying;

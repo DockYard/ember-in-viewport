@@ -2,13 +2,14 @@ import Service from '@ember/service';
 import { get, set, setProperties } from '@ember/object';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
+import { scheduleOnce } from '@ember/runloop';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
 import ObserverAdmin from 'ember-in-viewport/-private/observer-admin';
-import RAFAdmin from 'ember-in-viewport/-private/raf-admin';
+import RAFAdmin, { startRAF } from 'ember-in-viewport/-private/raf-admin';
 
-const rAFIDS = {};
+const noop = () => {};
 
 /**
  * ensure use on requestAnimationFrame, no matter how many components
@@ -22,6 +23,7 @@ export default class InViewport extends Service {
 
     this.observerAdmin = new ObserverAdmin();
     this.rafAdmin = new RAFAdmin();
+
     set(this, 'registry', new WeakMap());
 
     let options = assign({
@@ -47,16 +49,30 @@ export default class InViewport extends Service {
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
-    const observerOptions = this.buildObserverOptions(configOptions);
-    if (get(this, 'viewportUseIntersectionObserver')) {
-      // create IntersectionObserver instance or add to existing
-      this.setupIntersectionObserver(
-        element,
-        observerOptions,
-        enterCallback,
-        exitCallback
-      );
-    }
+      if (get(this, 'viewportUseIntersectionObserver')) {
+        const observerOptions = this.buildObserverOptions(configOptions);
+
+        scheduleOnce('afterRender', this, () => {
+          // create IntersectionObserver instance or add to existing
+          this.setupIntersectionObserver(
+            element,
+            observerOptions,
+            enterCallback,
+            exitCallback
+          );
+        });
+      } else {
+        scheduleOnce('afterRender', this, () => {
+          const { enterCallback = noop, exitCallback = noop } = get(this, 'rafAdmin').getCallbacks(element) || {};
+          startRAF(
+            element,
+            configOptions,
+            enterCallback,
+            exitCallback,
+            this.addRAF.bind(this, element.elementId)
+          );
+        });
+      }
   }
 
   buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
@@ -79,6 +95,8 @@ export default class InViewport extends Service {
   addEnterCallback(element, enterCallback) {
     if (get(this, 'viewportUseIntersectionObserver')) {
       this.observerAdmin.addEnterCallback(element, enterCallback);
+    } else {
+      this.rafAdmin.addEnterCallback(element, enterCallback);
     }
   }
 
@@ -89,6 +107,8 @@ export default class InViewport extends Service {
   addExitCallback(element, exitCallback) {
     if (get(this, 'viewportUseIntersectionObserver')) {
       this.observerAdmin.addExitCallback(element, exitCallback);
+    } else {
+      this.rafAdmin.addExitCallback(element, exitCallback);
     }
   }
 
@@ -134,13 +154,13 @@ export default class InViewport extends Service {
   }
 
   /** RAF **/
-  addRAF(elementId, callback) {
-    rAFIDS[elementId] = get(this, 'rafAdmin').add(elementId, callback);
+
+  addRAF(elementId, fn) {
+    get(this, 'rafAdmin').add(elementId, fn);
   }
 
   removeRAF(elementId) {
     get(this,'rafAdmin').remove(elementId);
-    delete rAFIDS[elementId];
   }
 
   isInViewport(...args) {
