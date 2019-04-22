@@ -19,6 +19,6 @@ export default class MyClass extends Component {
 
   willDestroyElement() {
     const loader = document.getElementById('loader');
-    this.inViewport.stopWatching(loader);
+    get(this, 'inViewport').stopWatching(loader);
   }
 }
