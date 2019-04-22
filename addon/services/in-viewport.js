@@ -69,8 +69,14 @@ export default class InViewport extends Service {
       return;
     }
 
-    const { observerOptions, scrollableArea } = get(this, 'registry').get(target);
-    get(this, 'observerAdmin').unobserve(target, observerOptions, scrollableArea);
+    const registeredTarget = get(this, 'registry').get(target);
+    if (registeredTarget) {
+      get(this, 'observerAdmin').unobserve(
+        target,
+        registeredTarget.observerOptions,
+        registeredTarget.scrollableArea
+      );
+    }
   }
 
   /** RAF **/
