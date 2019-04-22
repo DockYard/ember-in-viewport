@@ -64,6 +64,8 @@ export default class InViewport extends Service {
       } else {
         scheduleOnce('afterRender', this, () => {
           const { enterCallback = noop, exitCallback = noop } = get(this, 'rafAdmin').getCallbacks(element) || {};
+          // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
+          // So just rewrote it with pure functions for now
           startRAF(
             element,
             configOptions,

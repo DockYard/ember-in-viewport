@@ -89,6 +89,7 @@ export function startRAF(
 
     if (viewportSpy || viewportEntered !== 'true') {
       // recursive
+      // add to pool of requestAnimationFrame listeners and executed on set schedule
       addRAF(
         startRAF.bind(
           this,
@@ -119,14 +120,12 @@ function triggerDidEnterViewport(
     enterCallback();
   }
 
-  if (didLeave && viewportSpy) {
-    element.setAttribute('data-in-viewport-entered', false);
+  if (didLeave) {
     exitCallback();
-  }
 
-  if (viewportSpy || !didEnter) {
-    return false;
+    // reset so we can call again
+    if (viewportSpy) {
+      element.setAttribute('data-in-viewport-entered', false);
+    }
   }
-
-  return true;
 }
