@@ -44,8 +44,8 @@ export default class InViewport extends Service {
    * @method watchElement
    * @param HTMLElement element
    * @param Object configOptions
-   * @param Function enterCallback
-   * @param Function exitCallback
+   * @param Function enterCallback - support mixin approach
+   * @param Function exitCallback - support mixin approach
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
@@ -63,7 +63,11 @@ export default class InViewport extends Service {
         });
       } else {
         scheduleOnce('afterRender', this, () => {
-          const { enterCallback = noop, exitCallback = noop } = get(this, 'rafAdmin').getCallbacks(element) || {};
+          // grab the user added callbacks when we enter/leave the element
+          const {
+            enterCallback = noop,
+            exitCallback = noop
+          } = get(this, 'rafAdmin').getCallbacks(element) || {};
           // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
           // So just rewrote it with pure functions for now
           startRAF(
@@ -81,19 +85,6 @@ export default class InViewport extends Service {
         onEnter: this.addEnterCallback.bind(this, element),
         onExit: this.addExitCallback.bind(this, element)
       };
-  }
-
-  buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
-    const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
-
-    // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-    // IntersectionObserver takes either a Document Element or null for `root`
-    const { top = 0, left = 0, bottom = 0, right = 0 } = viewportTolerance;
-    return {
-      root: domScrollableArea,
-      rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-      threshold: intersectionThreshold
-    };
   }
 
   /**
@@ -152,6 +143,19 @@ export default class InViewport extends Service {
     );
   }
 
+  buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
+    const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+    // IntersectionObserver takes either a Document Element or null for `root`
+    const { top = 0, left = 0, bottom = 0, right = 0 } = viewportTolerance;
+    return {
+      root: domScrollableArea,
+      rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
+      threshold: intersectionThreshold
+    };
+  }
+
   unobserveIntersectionObserver(target) {
     if (!target) {
       return;
@@ -168,7 +172,7 @@ export default class InViewport extends Service {
   }
 
   removeRAF(elementId) {
-    get(this,'rafAdmin').remove(elementId);
+    get(this, 'rafAdmin').remove(elementId);
   }
 
   isInViewport(...args) {
@@ -194,5 +198,4 @@ export default class InViewport extends Service {
       return assign(defaultOptions, owner.lookup('config:in-viewport'));
     }
   }
-
 }

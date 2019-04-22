@@ -297,6 +297,7 @@ export default class MyClass extends Component {
   }
 
   didEnterViewport() {
+    // do some other stuff
     this.infinityLoad();
   },
 

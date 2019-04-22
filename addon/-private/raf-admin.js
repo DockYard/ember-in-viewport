@@ -11,7 +11,7 @@ export default class RAFAdmin {
   /** @private **/
   constructor() {
     this._rafPool = new RafPool();
-    this.registry = new WeakMap();
+    this.elementRegistry = new WeakMap();
   }
 
   add(...args) {
@@ -30,25 +30,50 @@ export default class RAFAdmin {
     this._rafPool.reset(...args);
   }
 
+  /**
+   * We provide our own element registry to add callbacks the user creates
+   *
+   * @method addEnterCallback
+   * @param {HTMLElement} element
+   * @param {Function} enterCallback
+   */
   addEnterCallback(element, enterCallback) {
-    this.registry.set(
+    this.elementRegistry.set(
       element,
-      Object.assign({}, this.registry.get(element), { enterCallback })
+      Object.assign({}, this.elementRegistry.get(element), { enterCallback })
     );
   }
 
+  /**
+   * We provide our own element registry to add callbacks the user creates
+   *
+   * @method addExitCallback
+   * @param {HTMLElement} element
+   * @param {Function} exitCallback
+   */
   addExitCallback(element, exitCallback) {
-    this.registry.set(
+    this.elementRegistry.set(
       element,
-      Object.assign({}, this.registry.get(element), { exitCallback })
+      Object.assign({}, this.elementRegistry.get(element), { exitCallback })
     );
   }
 
   getCallbacks(element) {
-    return this.registry.get(element);
+    return this.elementRegistry.get(element);
   }
 }
 
+/**
+ * This is a recursive function that adds itself to raf-pool to be executed on a set schedule
+ *
+ * @method startRAF
+ * @param {HTMLElement} element
+ * @param {Object} configurationOptions
+ * @param {Function} enterCallback
+ * @param {Function} exitCallback
+ * @param {Function} addRAF
+ * @param {Function} removeRAF
+ */
 export function startRAF(
   element,
   {
