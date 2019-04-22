@@ -70,7 +70,7 @@ export default class InViewport extends Service {
     }
 
     const registeredTarget = get(this, 'registry').get(target);
-    if (registeredTarget) {
+    if (typeof registeredTarget === 'object') {
       get(this, 'observerAdmin').unobserve(
         target,
         registeredTarget.observerOptions,
