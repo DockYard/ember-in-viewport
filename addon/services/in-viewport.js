@@ -71,10 +71,16 @@ export default class InViewport extends Service {
             configOptions,
             enterCallback,
             exitCallback,
-            this.addRAF.bind(this, element.elementId)
+            this.addRAF.bind(this, element.elementId),
+            this.removeRAF.bind(this, element.elementId)
           );
         });
       }
+
+      return {
+        onEnter: this.addEnterCallback.bind(this, element),
+        onExit: this.addExitCallback.bind(this, element)
+      };
   }
 
   buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
@@ -170,6 +176,11 @@ export default class InViewport extends Service {
   }
 
   /** other **/
+  stop(target) {
+    this.unobserveIntersectionObserver(target);
+    this.removeRAF(target);
+  }
+
   destroy() {
     set(this, 'registry', null);
     get(this, 'observerAdmin').destroy();

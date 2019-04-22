@@ -9,8 +9,8 @@ export default class MyClass extends Component {
 
   didInsertElement() {
     const loader = document.getElementById('loader');
-    get(this, 'inViewport').addEnterCallback(loader, this.didEnterViewport.bind(this));
-    get(this, 'inViewport').watchElement(loader);
+    const { onEnter } = get(this, 'inViewport').watchElement(loader);
+    onEnter(this.didEnterViewport.bind(this));
   }
 
   didEnterViewport() {

@@ -58,7 +58,8 @@ export function startRAF(
   },
   enterCallback,
   exitCallback,
-  addRAF
+  addRAF, // bound function from service to add elementId to raf pool
+  removeRAF // bound function from service to remove elementId to raf pool
 ) {
   const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
 
@@ -100,6 +101,8 @@ export function startRAF(
           addRAF
         )
       );
+    } else {
+      removeRAF()
     }
   }
 }

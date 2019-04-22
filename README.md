@@ -292,8 +292,8 @@ export default class MyClass extends Component {
 
   didInsertElement() {
     const loader = document.getElementById('loader');
-    this.inViewport.watchElement(loader);
-    this.inViewport.addEnterCallback(loader, this.didEnterViewport.bind(this));
+    const { onEnter, onExit } = this.inViewport.watchElement(loader);
+    onEnter(this.didEnterViewport.bind(this));
   }
 
   didEnterViewport() {
@@ -302,7 +302,8 @@ export default class MyClass extends Component {
 
   willDestroy() {
     // need to manage cache yourself if you don't use the mixin
-    this.inViewport.destroy();
+    const loader = document.getElementById('loader');
+    this.inViewport.stop(loader);
   }
 }
 ```
