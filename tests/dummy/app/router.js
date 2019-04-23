@@ -13,6 +13,7 @@ Router.map(function() {
   this.route('infinity-scrollable-raf');
   this.route('infinity-scrollable-scrollevent');
   this.route('infinity-right-left');
+  this.route('infinity-class');
 });
 
 export default Router;

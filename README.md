@@ -14,6 +14,7 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
 ## Demo or examples
 - Dummy app (`ember serve`): https://github.com/DockYard/ember-in-viewport/tree/master/tests/dummy
 - Use with Ember [Modifiers](#modifiers) and [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
+- Use with [Native Classes](#classes)
 - [ember-infinity](https://github.com/ember-infinity/ember-infinity)
 - [ember-light-table](https://github.com/offirgolan/ember-light-table)
 - Tracking advertisement impressions
@@ -275,6 +276,41 @@ export default Component.extend(InViewportMixin, {
   {{yield}}
 </div>
 ```
+
+### Classes
+
+This allows you to absolve yourself from using a mixin in native classes!
+
+```js
+import Component from '@ember/component';
+import { tagName } from '@ember-decorators/component';
+import { inject as service } from '@ember/service'; // with polyfill
+
+@tagName('')
+export default class MyClass extends Component {
+  @service inViewport
+
+  didInsertElement() {
+    const loader = document.getElementById('loader');
+    const viewportTolerance = { bottom: 200 };
+    const { onEnter, onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
+    onEnter(this.didEnterViewport.bind(this));
+  }
+
+  didEnterViewport() {
+    // do some other stuff
+    this.infinityLoad();
+  },
+
+  willDestroy() {
+    // need to manage cache yourself if you don't use the mixin
+    const loader = document.getElementById('loader');
+    this.inViewport.stopWatching(loader);
+  }
+}
+```
+
+Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`
 
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 

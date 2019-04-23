@@ -120,21 +120,12 @@ export default Mixin.create({
     if (get(this, 'viewportUseIntersectionObserver')) {
       return scheduleOnce('afterRender', this, () => {
         const scrollableArea = get(this, 'scrollableArea');
-        const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
+        const viewportTolerance = get(this, 'viewportTolerance');
+        const intersectionThreshold = get(this, 'intersectionThreshold');
 
-        // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
-        // IntersectionObserver takes either a Document Element or null for `root`
-        const { top = 0, left = 0, bottom = 0, right = 0 } = get(this, 'viewportTolerance');
-        const observerOptions = {
-          root: domScrollableArea,
-          rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-          threshold: get(this, 'intersectionThreshold')
-        };
-
-        // create IntersectionObserver instance or add to existing
-        get(this, 'inViewport').setupIntersectionObserver(
+        get(this, 'inViewport').watchElement(
           element,
-          observerOptions,
+          { intersectionThreshold, viewportTolerance, scrollableArea },
           bind(this, this._onEnterIntersection),
           bind(this, this._onExitIntersection)
         );
@@ -245,6 +236,7 @@ export default Mixin.create({
   /**
    * @method _triggerDidAccessViewport
    * @param hasEnteredViewport
+   * @param viewportEntered
    */
   _triggerDidAccessViewport(hasEnteredViewport = false, viewportEntered) {
     const isTearingDown = this.isDestroyed || this.isDestroying;
@@ -270,7 +262,6 @@ export default Mixin.create({
 
     if (triggeredEventName) {
       this.trigger(triggeredEventName);
-      // get(this, 'inViewport').triggerEvent(triggeredEventName);
     }
   },
 
@@ -282,7 +273,7 @@ export default Mixin.create({
   _unbindIfEntered(element) {
     if (get(this, 'viewportEntered')) {
       this._unbindListeners(element);
-      this.removeObserver('viewportEntered', this, this._unbindIfEntered);
+      this.removeObserver('viewportEntered', this, '_unbindIfEntered');
       set(this, 'viewportEntered', false);
     }
   },

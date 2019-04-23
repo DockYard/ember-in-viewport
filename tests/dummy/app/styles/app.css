@@ -39,3 +39,11 @@ a.active {
   height: 10px;
 }
 
+.class-components {
+  display: flex;
+  justify-content: space-between;
+}
+
+#raf-loader {
+  height: 10px;
+}
