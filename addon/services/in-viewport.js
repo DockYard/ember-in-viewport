@@ -67,7 +67,7 @@ export default class InViewport extends Service {
           const {
             enterCallback = noop,
             exitCallback = noop
-          } = get(this, 'rafAdmin').getCallbacks(element) || {};
+          } = this.getCallbacks(element) || {};
           // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
           // So just rewrote it with pure functions for now
           startRAF(
@@ -75,8 +75,8 @@ export default class InViewport extends Service {
             configOptions,
             enterCallback,
             exitCallback,
-            this.addRAF.bind(this, element.elementId),
-            this.removeRAF.bind(this, element.elementId)
+            this.addRAF.bind(this, element.id),
+            this.removeRAF.bind(this, element.id)
           );
         });
       }
@@ -109,6 +109,10 @@ export default class InViewport extends Service {
     } else {
       this.rafAdmin.addExitCallback(element, exitCallback);
     }
+  }
+
+  getCallbacks(target) {
+    return get(this, 'rafAdmin').getCallbacks(target);
   }
 
   /** IntersectionObserver **/

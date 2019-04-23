@@ -123,7 +123,8 @@ export function startRAF(
           { scrollableArea, viewportTolerance, viewportSpy },
           enterCallback,
           exitCallback,
-          addRAF
+          addRAF,
+          removeRAF
         )
       );
     } else {
