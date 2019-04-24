@@ -5,8 +5,7 @@ import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
 function checkIntersectionObserver(window) {
   if ('IntersectionObserver' in window &&
-  'IntersectionObserverEntry' in window &&
-  'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
+  'IntersectionObserverEntry' in window) {
 
     // Minimal polyfill for Edge 15's lack of `isIntersecting`
     // See: https://github.com/w3c/IntersectionObserver/issues/211
