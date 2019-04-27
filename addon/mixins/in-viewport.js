@@ -4,9 +4,10 @@ import { typeOf } from '@ember/utils';
 import { assert } from '@ember/debug';
 import { inject } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
-import { next, bind, debounce, scheduleOnce } from '@ember/runloop';
+import { bind, debounce, scheduleOnce } from '@ember/runloop';
 import { not } from '@ember/object/computed';
 import { getOwner } from '@ember/application';
+import { startRAF } from 'ember-in-viewport/-private/raf-admin';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import findElem from 'ember-in-viewport/utils/find-elem';
@@ -130,6 +131,36 @@ export default Mixin.create({
           bind(this, this._onExitIntersection)
         );
       });
+    } else if (get(this, 'viewportUseRAF')) {
+      const scrollableArea = get(this, 'scrollableArea');
+      const viewportTolerance = get(this, 'viewportTolerance');
+      const viewportSpy = get(this, 'viewportSpy');
+
+      const enterCallback = () => {
+        const isTearingDown = this.isDestroyed || this.isDestroying;
+        const viewportEntered = element.getAttribute('data-in-viewport-entered');
+        if (!isTearingDown && viewportSpy || viewportEntered) {
+          set(this, 'viewportEntered', true);
+          this.trigger('didEnterViewport');
+        }
+      }
+      const exitCallback = () => {
+        const isTearingDown = this.isDestroyed || this.isDestroying;
+        if (!isTearingDown && viewportSpy) {
+          set(this, 'viewportEntered', false);
+          this.trigger('didExitViewport');
+        }
+      }
+
+      const inViewport = get(this, 'inViewport');
+      startRAF(
+        element,
+        { scrollableArea, viewportTolerance, viewportSpy },
+        enterCallback,
+        exitCallback,
+        inViewport.addRAF.bind(inViewport, element.id),
+        inViewport.removeRAF.bind(inViewport, element.id)
+      );
     } else {
       return scheduleOnce('afterRender', this, () => {
         this._setViewportEntered(element);
@@ -347,9 +378,7 @@ export default Mixin.create({
     if (!get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportUseRAF')) {
       const elementId = get(this, 'elementId');
 
-      next(this, () => {
-        get(this, 'inViewport').removeRAF(elementId);
-      });
+      get(this, 'inViewport').removeRAF(elementId);
     }
 
     // if scroll event listeners
