@@ -146,9 +146,7 @@ export default Mixin.create({
       }
       const exitCallback = () => {
         const isTearingDown = this.isDestroyed || this.isDestroying;
-        const viewportEntered = element.getAttribute('data-in-viewport-entered');
-        if (!isTearingDown && viewportSpy || !viewportEntered) {
-          // we may want to set this b/c hasEnteredViewport yet for the first time && not viewportEntered
+        if (!isTearingDown && viewportSpy) {
           set(this, 'viewportEntered', false);
           this.trigger('didExitViewport');
         }
