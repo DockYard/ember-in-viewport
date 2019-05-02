@@ -118,13 +118,17 @@ export default Mixin.create({
       return;
     }
 
+    const inViewport = get(this, 'inViewport');
+
     if (get(this, 'viewportUseIntersectionObserver')) {
+      inViewport.startIntersectionObserver();
+
       return scheduleOnce('afterRender', this, () => {
         const scrollableArea = get(this, 'scrollableArea');
         const viewportTolerance = get(this, 'viewportTolerance');
         const intersectionThreshold = get(this, 'intersectionThreshold');
 
-        get(this, 'inViewport').watchElement(
+        inViewport.watchElement(
           element,
           { intersectionThreshold, viewportTolerance, scrollableArea },
           bind(this, this._onEnterIntersection),
@@ -132,6 +136,8 @@ export default Mixin.create({
         );
       });
     } else if (get(this, 'viewportUseRAF')) {
+      inViewport.startRAF();
+
       const scrollableArea = get(this, 'scrollableArea');
       const viewportTolerance = get(this, 'viewportTolerance');
       const viewportSpy = get(this, 'viewportSpy');
@@ -152,7 +158,6 @@ export default Mixin.create({
         }
       }
 
-      const inViewport = get(this, 'inViewport');
       startRAF(
         element,
         { scrollableArea, viewportTolerance, viewportSpy },
