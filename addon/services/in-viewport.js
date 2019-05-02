@@ -22,7 +22,6 @@ export default class InViewport extends Service {
     this._super(...arguments);
 
     this.observerAdmin = new ObserverAdmin();
-    this.rafAdmin = new RAFAdmin();
 
     set(this, 'registry', new WeakMap());
 
@@ -62,6 +61,7 @@ export default class InViewport extends Service {
           );
         });
       } else {
+        set(this, 'rafAdmin', new RAFAdmin());
         scheduleOnce('afterRender', this, () => {
           // grab the user added callbacks when we enter/leave the element
           const {
