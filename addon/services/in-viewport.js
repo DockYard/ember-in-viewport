@@ -15,13 +15,12 @@ const noop = () => {};
  * ensure use on requestAnimationFrame, no matter how many components
  * on the page are using this mixin
  *
- * @class RAFAdmin
+ * @class InViewport
+ * @module Ember.Service
  */
 export default class InViewport extends Service {
   init() {
     this._super(...arguments);
-
-    this.observerAdmin = new ObserverAdmin();
 
     set(this, 'registry', new WeakMap());
 
@@ -37,6 +36,14 @@ export default class InViewport extends Service {
     setProperties(this, options);
   }
 
+  startIntersectionObserver() {
+    this.observerAdmin = new ObserverAdmin();
+  }
+
+  startRAF() {
+    this.rafAdmin = new RAFAdmin();
+  }
+
   /** Any strategy **/
 
   /**
@@ -49,6 +56,9 @@ export default class InViewport extends Service {
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
       if (get(this, 'viewportUseIntersectionObserver')) {
+        if (!get(this, 'observerAdmin')) {
+          this.startIntersectionObserver();
+        }
         const observerOptions = this.buildObserverOptions(configOptions);
 
         scheduleOnce('afterRender', this, () => {
@@ -61,7 +71,9 @@ export default class InViewport extends Service {
           );
         });
       } else {
-        set(this, 'rafAdmin', new RAFAdmin());
+        if (!get(this, 'rafAdmin')) {
+          this.startRAF();
+        }
         scheduleOnce('afterRender', this, () => {
           // grab the user added callbacks when we enter/leave the element
           const {
@@ -191,14 +203,22 @@ export default class InViewport extends Service {
 
   /** other **/
   stopWatching(target) {
-    this.unobserveIntersectionObserver(target);
-    this.removeRAF(target);
+    if (get(this, 'observerAdmin')) {
+      this.unobserveIntersectionObserver(target);
+    }
+    if (get(this, 'rafAdmin')) {
+      this.removeRAF(target);
+    }
   }
 
   destroy() {
     set(this, 'registry', null);
-    get(this, 'observerAdmin').destroy();
-    get(this, 'rafAdmin').reset();
+    if (get(this, 'observerAdmin')) {
+      get(this, 'observerAdmin').destroy();
+    }
+    if (get(this, 'rafAdmin')) {
+      get(this, 'rafAdmin').reset();
+    }
   }
 
   _buildOptions(defaultOptions = {}) {
