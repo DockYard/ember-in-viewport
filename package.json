@@ -23,7 +23,7 @@
   "dependencies": {
     "ember-auto-import": "^1.2.15",
     "ember-cli-babel": "^7.7.3",
-    "intersection-observer-admin": "0.2.0",
+    "intersection-observer-admin": "0.2.1",
     "raf-pool": "0.1.0"
   },
   "devDependencies": {
@@ -59,10 +59,9 @@
   "keywords": [
     "ember-addon",
     "ember",
-    "ember-cli",
     "viewport",
-    "in viewport",
-    "is on screen",
+    "intersection observer",
+    "lazy load",
     "scrollspy"
   ],
   "ember-addon": {
