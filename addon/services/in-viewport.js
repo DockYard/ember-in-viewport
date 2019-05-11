@@ -194,7 +194,9 @@ export default class InViewport extends Service {
   }
 
   removeRAF(elementId) {
-    get(this, 'rafAdmin').remove(elementId);
+    if (get(this, 'rafAdmin')) {
+      get(this, 'rafAdmin').remove(elementId);
+    }
   }
 
   isInViewport(...args) {

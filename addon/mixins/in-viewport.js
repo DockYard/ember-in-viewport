@@ -114,7 +114,8 @@ export default Mixin.create({
   },
 
   _setInitialViewport(element) {
-    if (!element) {
+    const isTearingDown = this.isDestroyed || this.isDestroying;
+    if (!element || isTearingDown) {
       return;
     }
 
