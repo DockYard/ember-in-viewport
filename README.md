@@ -18,7 +18,7 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
 - [ember-infinity](https://github.com/ember-infinity/ember-infinity)
 - [ember-light-table](https://github.com/offirgolan/ember-light-table)
 - Tracking advertisement impressions
-- Lazy loading images
+- Lazy loading images (see `dummy-artwork` for an example artwork component)
 - Occlusion culling
 
 # Installation
@@ -249,19 +249,18 @@ import InViewportMixin from 'ember-in-viewport';
 export default Component.extend(InViewportMixin, {
   tagName: '',
 
-  // if you do have a tagName ^^, then you can use `didInsertElement` or no-op it.  You choose
-  // didInsertElement() {},
   didInsertNode(element, [instance]) {
     instance.watchElement(element);
   },
 
-  init() {
+  didInsertElement() {
     this._super(...arguments);
-
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
       bottom: 300
     });
+
+    this._super(...arguments);
   },
 
   didEnterViewport() {
@@ -291,6 +290,7 @@ export default class MyClass extends Component {
   @service inViewport
 
   didInsertElement() {
+    super();
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
     const { onEnter, onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
@@ -302,12 +302,48 @@ export default class MyClass extends Component {
     this.infinityLoad();
   },
 
-  willDestroy() {
+  willDestroyElement() {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
   }
 }
+```
+
+And with Classes + Modifiers!
+
+```js
+import Component from '@ember/component';
+import { tagName } from '@ember-decorators/component';
+import { inject as service } from '@ember/service'; // with polyfill
+
+@tagName('')
+export default class MyClass extends Component {
+  @service inViewport
+
+  didInsertNode(element, [instance]) {
+    const viewportTolerance = { bottom: 200 };
+    const { onEnter, onExit } = instance.inViewport.watchElement(element, { viewportTolerance });
+    onEnter(instance.didEnterViewport.bind(instance));
+  }
+
+  didEnterViewport() {
+    // do some other stuff
+    this.infinityLoad();
+  },
+
+  willDestroyElement() {
+    // need to manage cache yourself if you don't use the mixin
+    const loader = document.getElementById('loader');
+    this.inViewport.stopWatching(loader);
+  }
+}
+```
+
+```hbs
+<div {{did-insert this.didInsertNode this}}>
+  {{yield}}
+</div>
 ```
 
 Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`
