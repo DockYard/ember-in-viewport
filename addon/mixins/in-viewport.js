@@ -262,7 +262,7 @@ export default Mixin.create({
     const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
     const directionChanged = scrollDirection !== lastDirectionForEl;
 
-    if (scrollDirection && directionChanged && get(this, 'viewportEntered')) {
+    if (scrollDirection && directionChanged && get(this, 'viewportDidScroll')) {
       this.trigger('didScroll', scrollDirection);
       lastDirection[elementId] = scrollDirection;
     }
