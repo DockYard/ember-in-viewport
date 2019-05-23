@@ -8,11 +8,15 @@
       </div>
     {{/each}}
 
-    {{my-component
+    {{#my-component
       class="infinity-scrollable"
       scrollableAreaOverride=".list"
       viewportSpyOverride=true
       viewportToleranceOverride=viewportToleranceOverride
+      intersectionThresholdOverride=1
+      viewportSpyOverride=true
       infinityLoad=(action "infinityLoad")}}
+      &npbs;
+    {{/my-component}}
   </ul>
 </div>
