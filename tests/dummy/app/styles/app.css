@@ -37,6 +37,12 @@ a.active {
 }
 .infinity-component, .infinity-scrollable {
   height: 10px;
+  background-color: red;
+}
+
+.infinity-scrollable {
+  width: 100px;
+  min-height: 1px;
 }
 
 .class-components {
