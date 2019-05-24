@@ -20,7 +20,8 @@ const noop = () => {};
  */
 export default class InViewport extends Service {
   init() {
-    this._super(...arguments);
+    super.init(...arguments);
+
 
     set(this, 'registry', new WeakMap());
 
