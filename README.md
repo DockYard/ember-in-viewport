@@ -12,13 +12,13 @@ This Ember addon adds a simple, highly performant Ember Mixin to your app. This 
 We utilize pooling techniques to reuse Intersection Observers and rAF observers in order to make your app as performant as possible and do as little works as possible.
 
 ## Demo or examples
+- Lazy loading responsive images (see `dummy-artwork` for an example artwork component).  Visit `http://localhost:4200/infinity-modifier` to see it in action
 - Dummy app (`ember serve`): https://github.com/DockYard/ember-in-viewport/tree/master/tests/dummy
 - Use with Ember [Modifiers](#modifiers) and [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
 - Use with [Native Classes](#classes)
 - [ember-infinity](https://github.com/ember-infinity/ember-infinity)
 - [ember-light-table](https://github.com/offirgolan/ember-light-table)
 - Tracking advertisement impressions
-- Lazy loading images (see `dummy-artwork` for an example artwork component)
 - Occlusion culling
 
 # Installation

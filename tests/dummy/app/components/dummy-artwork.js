@@ -4,7 +4,7 @@ import { assign } from '@ember/polyfills';
 import { set, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import InViewportMixin from 'ember-in-viewport';
-import config from '../config';
+import config from '../-config';
 import { and, readOnly } from '@ember/object/computed';
 import ENV from 'dummy/config/environment';
 

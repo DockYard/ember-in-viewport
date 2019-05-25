@@ -1,6 +1,8 @@
 <ul>
-  {{#each models as |val|}}
-    <li><img src={{val}} /></li>
+  {{#each models as |artwork|}}
+    <li>
+      {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+    </li>
   {{/each}}
 </ul>
 {{my-modifier infinityLoad=(action "infinityLoad")}}
