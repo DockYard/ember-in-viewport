@@ -21,6 +21,30 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
 - Tracking advertisement impressions
 - Occlusion culling
 
+
+# Table of Contents
+
+- [Installation](#installation)
+  * [Usage](#usage)
+    + [Basic usage](#basic-usage)
+      - [Available hooks](#available-hooks)
+        * [`didEnterViewport`, `didExitViewport`](#didenterviewport-didexitviewport)
+        * [`didScroll(up,down,left,right)`](#didscrollupdownleftright)
+        * [`viewportEntered`](#viewportentered)
+        * [`viewportExited`](#viewportexited)
+    + [Advanced usage (options)](#advanced-usage-options)
+    + [Global options](#global-options)
+    + [Modifiers](#modifiers)
+    + [Classes](#classes)
+  * [**IntersectionObserver**'s Browser Support](#intersectionobservers-browser-support)
+    + [Out of the box](#out-of-the-box)
+  * [Running](#running)
+  * [Running Tests](#running-tests)
+  * [Building](#building)
+  * [Legal](#legal)
+
+
+
 # Installation
 
 ```
