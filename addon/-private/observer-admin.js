@@ -8,8 +8,6 @@ import IntersectionObserverAdmin from 'intersection-observer-admin';
  * This provides important optimizations since we are not instantiating a new IntersectionObserver instance for every element and
  * instead reusing the instance.
  *
- * @module Service
- * @extends Ember.Service
  * @class ObserverAdmin
  */
 export default class ObserverAdmin {
