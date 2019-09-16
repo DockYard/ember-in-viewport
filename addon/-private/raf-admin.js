@@ -28,6 +28,7 @@ export default class RAFAdmin {
 
   reset(...args) {
     this._rafPool.reset(...args);
+    this._rafPool.stop(...args);
   }
 
   /**
