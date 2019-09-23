@@ -145,7 +145,7 @@ export default Mixin.create({
 
       const enterCallback = () => {
         const isTearingDown = this.isDestroyed || this.isDestroying;
-        const viewportEntered = JSON.parse(element.getAttribute('data-in-viewport-entered'));
+        const viewportEntered = element.getAttribute('data-in-viewport-entered') === "true";
         if (!isTearingDown && (viewportSpy || viewportEntered)) {
           set(this, 'viewportEntered', true);
           this.trigger('didEnterViewport');
