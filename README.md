@@ -174,7 +174,7 @@ export default Component.extend(InViewportMixin, {
     - To get around the above issue and have `didExitViewport` fire, set your `intersectionThreshold` to `[0, 1.0]`.  When set to just `1.0`, when the element is 99% visible and still has isIntersecting as true, when the element leaves the viewport, the element isn't applicable to the observer anymore, so the callback isn't called again.
     - If your intersectionThreshold is set to 0 you will get notified if the target `didEnterViewport` and `didExitViewport` at the appropriate time.
 
-- `scrollableArea`
+- `scrollableArea: string | HTMLElement`
 
   Default: null
 
