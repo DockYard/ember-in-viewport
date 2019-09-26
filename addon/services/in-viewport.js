@@ -161,7 +161,10 @@ export default class InViewport extends Service {
   }
 
   buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
-    const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
+    const domScrollableArea =
+      scrollableArea instanceof HTMLElement ? scrollableArea
+      : typeof scrollableArea === 'string' ? document.querySelector(scrollableArea)
+      : undefined;
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     // IntersectionObserver takes either a Document Element or null for `root`
