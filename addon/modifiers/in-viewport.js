@@ -21,7 +21,7 @@ export default class InViewportModifier extends Modifier {
   }
 
   get hasStaleOptions() {
-    !deepEqual(this.options, this.lastOptions);
+    return !deepEqual(this.options, this.lastOptions);
   }
 
   validateArguments() {
@@ -32,19 +32,22 @@ export default class InViewportModifier extends Modifier {
     assert(
       `'{{in-viewport}}' expects 'onEnter', 'onExit' or both to be present.`,
       typeof this.args.named.onEnter === 'function' ||
-        this.args.named.onExit === 'function'
+        typeof this.args.named.onExit === 'function'
     );
   }
 
   @action
   onEnter() {
-    if (this.args.named.onEnter)
+    if (this.args.named.onEnter) {
       this.args.named.onEnter.call(null, this.element);
+    }
   }
 
   @action
   onExit() {
-    if (this.args.named.onExit) this.args.named.onExit.call(null, this.element);
+    if (this.args.named.onExit) {
+      this.args.named.onExit.call(null, this.element);
+    }
   }
 
   setupWatcher() {
