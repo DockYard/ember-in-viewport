@@ -16,9 +16,9 @@
   },
   "repository": "https://github.com/dockyard/ember-in-viewport",
   "engines": {
-    "node": "6.* || 8.* || >= 10.*"
+    "node": "8.* || >= 10.*"
   },
-  "author": "Lauren Tan, Scott Newcomer",
+  "author": "Scott Newcomer",
   "license": "MIT",
   "dependencies": {
     "ember-auto-import": "^1.5.2",
