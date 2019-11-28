@@ -441,3 +441,39 @@ For more information on using ember-cli, visit [http://www.ember-cli.com/](http:
 [@dockyard](http://twitter.com/dockyard)
 
 [Licensed under the MIT license](http://www.opensource.org/licenses/mit-license.php)
+
+## Contributors
+
+We're grateful to these wonderful contributors who've contributed to `ember-in-viewport`:
+
+[//]: contributor-faces
+<a href="https://github.com/poteto"><img src="https://avatars0.githubusercontent.com/u/1390709?v=4" title="poteto" width="80" height="80"></a>
+<a href="https://github.com/snewcomer"><img src="https://avatars0.githubusercontent.com/u/7374640?v=4" title="snewcomer" width="80" height="80"></a>
+<a href="https://github.com/kellyselden"><img src="https://avatars1.githubusercontent.com/u/602423?v=4" title="kellyselden" width="80" height="80"></a>
+<a href="https://github.com/martndemus"><img src="https://avatars2.githubusercontent.com/u/903637?v=4" title="martndemus" width="80" height="80"></a>
+<a href="https://github.com/cibernox"><img src="https://avatars2.githubusercontent.com/u/265339?v=4" title="cibernox" width="80" height="80"></a>
+<a href="https://github.com/Alinaki"><img src="https://avatars0.githubusercontent.com/u/832780?v=4" title="Alinaki" width="80" height="80"></a>
+<a href="https://github.com/bcardarella"><img src="https://avatars0.githubusercontent.com/u/18524?v=4" title="bcardarella" width="80" height="80"></a>
+<a href="https://github.com/danorton-cubic-austin"><img src="https://avatars2.githubusercontent.com/u/11525236?v=4" title="danorton-cubic-austin" width="80" height="80"></a>
+<a href="https://github.com/michaeldupuisjr"><img src="https://avatars3.githubusercontent.com/u/1060866?v=4" title="michaeldupuisjr" width="80" height="80"></a>
+<a href="https://github.com/miguelcobain"><img src="https://avatars1.githubusercontent.com/u/631691?v=4" title="miguelcobain" width="80" height="80"></a>
+<a href="https://github.com/offirgolan"><img src="https://avatars2.githubusercontent.com/u/575938?v=4" title="offirgolan" width="80" height="80"></a>
+<a href="https://github.com/twokul"><img src="https://avatars2.githubusercontent.com/u/1131196?v=4" title="twokul" width="80" height="80"></a>
+<a href="https://github.com/langalex"><img src="https://avatars0.githubusercontent.com/u/2173?v=4" title="langalex" width="80" height="80"></a>
+<a href="https://github.com/alvincrespo"><img src="https://avatars0.githubusercontent.com/u/151311?v=4" title="alvincrespo" width="80" height="80"></a>
+<a href="https://github.com/blimmer"><img src="https://avatars1.githubusercontent.com/u/630449?v=4" title="blimmer" width="80" height="80"></a>
+<a href="https://github.com/duggiefresh"><img src="https://avatars2.githubusercontent.com/u/1206678?v=4" title="duggiefresh" width="80" height="80"></a>
+<a href="https://github.com/elidupuis"><img src="https://avatars3.githubusercontent.com/u/196410?v=4" title="elidupuis" width="80" height="80"></a>
+<a href="https://github.com/Kjaer"><img src="https://avatars0.githubusercontent.com/u/1381484?v=4" title="Kjaer" width="80" height="80"></a>
+<a href="https://github.com/jmurphyau"><img src="https://avatars0.githubusercontent.com/u/445432?v=4" title="jmurphyau" width="80" height="80"></a>
+<a href="https://github.com/jeffplang"><img src="https://avatars2.githubusercontent.com/u/102718?v=4" title="jeffplang" width="80" height="80"></a>
+<a href="https://github.com/jheth"><img src="https://avatars0.githubusercontent.com/u/222011?v=4" title="jheth" width="80" height="80"></a>
+<a href="https://github.com/jpadilla"><img src="https://avatars0.githubusercontent.com/u/83319?v=4" title="jpadilla" width="80" height="80"></a>
+<a href="https://github.com/les2"><img src="https://avatars3.githubusercontent.com/u/1066080?v=4" title="les2" width="80" height="80"></a>
+<a href="https://github.com/LevelbossMike"><img src="https://avatars3.githubusercontent.com/u/242299?v=4" title="LevelbossMike" width="80" height="80"></a>
+<a href="https://github.com/rwjblue"><img src="https://avatars0.githubusercontent.com/u/12637?v=4" title="rwjblue" width="80" height="80"></a>
+<a href="https://github.com/vasind"><img src="https://avatars0.githubusercontent.com/u/5652920?v=4" title="vasind" width="80" height="80"></a>
+<a href="https://github.com/hybridmuse"><img src="https://avatars0.githubusercontent.com/u/27986936?v=4" title="hybridmuse" width="80" height="80"></a>
+<a href="https://github.com/csand"><img src="https://avatars2.githubusercontent.com/u/142865?v=4" title="csand" width="80" height="80"></a>
+
+[//]: contributor-faces
