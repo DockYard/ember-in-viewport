@@ -30,7 +30,7 @@ export default class InViewportModifier extends Modifier {
       this.args.positional.length === 0
     );
     assert(
-      `'{{in-viewport}}' expects 'onEnter', 'onExit' or both to be present.`,
+      `'{{in-viewport}}' either expects 'onEnter', 'onExit' or both to be present.`,
       typeof this.args.named.onEnter === 'function' ||
         typeof this.args.named.onExit === 'function'
     );
@@ -52,8 +52,7 @@ export default class InViewportModifier extends Modifier {
 
   setupWatcher() {
     assert(
-      `'${this.element}' is already being watched. Make sure that '{{${this.name}}}' is the only viewport modifier on this element and that you are not calling 'inViewport.watchElement(element)' in other places.`,
-
+      `'${this.element}' is already being watched. Make sure that '{{in-viewport}}' is only used once on this element and that you are not calling 'inViewport.watchElement(element)' in other places.`,
       !WATCHED_ELEMENTS.has(this.element)
     );
     if (DEBUG) WATCHED_ELEMENTS.add(this.element);
@@ -88,30 +87,5 @@ export default class InViewportModifier extends Modifier {
 
   willRemove() {
     this.destroyWatcher();
-  }
-}
-
-export class ShortcutInViewportModifier extends InViewportModifier {
-  positionalCallback() {
-    this.args.positional[0].call(null, this.element);
-  }
-
-  onEnter() {}
-
-  onExit() {}
-
-  validateArguments() {
-    assert(
-      `'{{${
-        this.name
-      }}}' only accepts a function as the listener, but you provided: '${
-        this.args.positional[0]
-      }'`,
-      typeof this.args.positional[0] === 'function'
-    );
-    assert(
-      `'{{${this.name}}}' only accepts a single positional argument (the listener), but you provided: '${this.args.positional}'`,
-      this.args.positional.length === 1
-    );
   }
 }
