@@ -23,8 +23,8 @@
   "license": "MIT",
   "dependencies": {
     "ember-auto-import": "^1.5.2",
-    "ember-class-based-modifier": "^0.10.0",
     "ember-cli-babel": "^7.7.3",
+    "ember-modifier": "^1.0.2",
     "fast-deep-equal": "^2.0.1",
     "intersection-observer-admin": "~0.2.8",
     "raf-pool": "~0.1.3"

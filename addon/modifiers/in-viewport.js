@@ -2,7 +2,7 @@ import { assert } from '@ember/debug';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { DEBUG } from '@glimmer/env';
-import Modifier from 'ember-class-based-modifier';
+import Modifier from 'ember-modifier';
 import deepEqual from 'fast-deep-equal';
 
 const WATCHED_ELEMENTS = DEBUG ? new WeakSet() : undefined;
