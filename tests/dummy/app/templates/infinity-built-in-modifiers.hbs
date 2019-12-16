@@ -1,0 +1,36 @@
+<nav>
+  Direction:
+  {{link-to "both" (query-params direction="both")}}
+  {{link-to "enter" (query-params direction="enter")}}
+  {{link-to "exit" (query-params direction="exit")}}
+</nav>
+{{#if (eq this.direction "both")}}
+  <ul>
+    {{#each this.models as |artwork i|}}
+      <li
+        {{in-viewport
+          onEnter=(action "didEnterViewport" artwork i)
+          onExit=(action "didExitViewport" artwork i)
+        }}
+      >
+        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+      </li>
+    {{/each}}
+  </ul>
+{{else if (eq this.direction "enter")}}
+  <ul>
+    {{#each this.models as |artwork i|}}
+      <li {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}>
+        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+      </li>
+    {{/each}}
+  </ul>
+{{else if (eq this.direction "exit")}}
+  <ul>
+    {{#each this.models as |artwork i|}}
+      <li {{in-viewport onExit=(action "didExitViewport" artwork i)}}>
+        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+      </li>
+    {{/each}}
+  </ul>
+{{/if}}
