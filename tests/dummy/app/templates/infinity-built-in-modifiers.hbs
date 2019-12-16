@@ -8,14 +8,12 @@
   <ul>
     {{#each this.models as |artwork i|}}
       <li
-        {{in-viewport
-          onEnter=(action "didEnterViewport" artwork i)
-          onExit=(action "didExitViewport" artwork i)
-        }}
+        class="infinity-item infinity-item-{{i}}"
       >
         {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
       </li>
     {{/each}}
+    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}></div>
   </ul>
 {{else if (eq this.direction "enter")}}
   <ul>

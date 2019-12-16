@@ -25,6 +25,19 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     assert.equal(findAll('.infinity-svg').length, 20);
   });
 
+  test('works with in-viewport modifier', async function(assert) {
+    await visit('/infinity-built-in-modifiers');
+
+    assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
+    document.querySelector('.infinity-item-9').scrollIntoView(false);
+
+    await waitUntil(() => {
+      return findAll('.infinity-item').length === 20;
+    });
+
+    assert.equal(findAll('.infinity-item').length, 20, 'after infinity has more items');
+  });
+
   test('ember-in-viewport works with classes', async function(assert) {
     await visit('/infinity-class');
 

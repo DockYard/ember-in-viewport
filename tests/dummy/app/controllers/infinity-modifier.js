@@ -7,7 +7,10 @@ const images = ["jarjan", "aio___", "kushsolitary", "kolage", "idiot", "gt"];
 
 const arr = Array.apply(null, Array(10));
 const models = [...arr.map(() => {
-  return { bgColor: 'E8D26F', url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg` }
+  return {
+    bgColor: 'E8D26F',
+    url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`
+  }
 })];
 
 export default Controller.extend({
@@ -17,7 +20,10 @@ export default Controller.extend({
     infinityLoad() {
       const arr = Array.apply(null, Array(10));
       const newModels = [...arr.map(() => {
-        return { bgColor: '0790EB', url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg` }
+        return {
+          bgColor: '0790EB',
+          url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`
+        }
       })];
 
       return new Promise((resolve) => {
