@@ -13,22 +13,24 @@
         {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
       </li>
     {{/each}}
-    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}></div>
+    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i) onExit=(action "didExitViewport") scrollableArea="list"}}></div>
   </ul>
 {{else if (eq this.direction "enter")}}
   <ul>
-    {{#each this.models as |artwork i|}}
-      <li {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}>
+    {{#each this.models as |artwork|}}
+      <li>
         {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
       </li>
     {{/each}}
+    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}></div>
   </ul>
 {{else if (eq this.direction "exit")}}
   <ul>
-    {{#each this.models as |artwork i|}}
-      <li {{in-viewport onExit=(action "didExitViewport" artwork i)}}>
+    {{#each this.models as |artwork|}}
+      <li>
         {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
       </li>
     {{/each}}
+    <div class="sentinel" {{in-viewport onExit=(action "didExitViewport")}}></div>
   </ul>
 {{/if}}
