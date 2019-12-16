@@ -26,7 +26,7 @@ export default Controller.extend({
     this._super(...arguments);
 
     set(this, 'viewportTolerance', {
-      bottom: 500
+      bottom: 300
     });
   },
 
