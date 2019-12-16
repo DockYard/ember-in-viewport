@@ -21,11 +21,11 @@ export default Controller.extend({
   models,
 
   actions: {
-    didEnterViewport(artwork, i, element) {
-      console.log('enter', { artwork, i, element });
+    didEnterViewport(/*artwork, i, element*/) {
+      // console.log('enter', { artwork, i, element });
     },
-    didExitViewport(artwork, i, element) {
-      console.log('exit', { artwork, i, element });
+    didExitViewport(/*artwork, i, element*/) {
+      // console.log('exit', { artwork, i, element });
     }
   }
 });
