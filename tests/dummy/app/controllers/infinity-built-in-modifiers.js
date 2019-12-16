@@ -22,6 +22,14 @@ export default Controller.extend({
 
   models,
 
+  init() {
+    this._super(...arguments);
+
+    set(this, 'viewportTolerance', {
+      bottom: 500
+    });
+  },
+
   actions: {
     didEnterViewport(/*artwork, i, element*/) {
       const arr = Array.apply(null, Array(10));

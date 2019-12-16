@@ -13,7 +13,10 @@
         {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
       </li>
     {{/each}}
-    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i) onExit=(action "didExitViewport")}}></div>
+    <div
+      class="sentinel"
+      {{in-viewport onEnter=(action "didEnterViewport") onExit=(action "didExitViewport") viewportTolerance=this.viewportTolerance}}
+    ></div>
   </ul>
 {{else if (eq this.direction "enter")}}
   <ul>
