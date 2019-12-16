@@ -5,7 +5,7 @@
   {{link-to "exit" (query-params direction="exit")}}
 </nav>
 {{#if (eq this.direction "both")}}
-  <ul>
+  <ul class="infinity-container">
     {{#each this.models as |artwork i|}}
       <li
         class="infinity-item infinity-item-{{i}}"
@@ -15,7 +15,7 @@
     {{/each}}
     <div
       class="sentinel"
-      {{in-viewport onEnter=(action "didEnterViewport") onExit=(action "didExitViewport") viewportTolerance=this.viewportTolerance}}
+      {{in-viewport onEnter=(action "didEnterViewport") onExit=(action "didExitViewport") viewportTolerance=this.viewportTolerance scrollableArea=".infinity-container"}}
     ></div>
   </ul>
 {{else if (eq this.direction "enter")}}
