@@ -259,7 +259,7 @@ Note if you want to disable right and left in-viewport triggers, set these value
 
 Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.
 
-You can either use ember-in-viewport's built in modifier or a more verbose, but potentially more flexible generic modifier:
+You can either use our built in modifier `{{in-viewport}}` or a more verbose, but potentially more flexible generic modifier. Let's start with the former.
 
 1. Use `{{in-viewport}}` modifier on target element
 2. Ensure you have a callbacks in context for enter and/or exit
