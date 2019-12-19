@@ -122,8 +122,6 @@ export default Mixin.create({
     const inViewport = get(this, 'inViewport');
 
     if (get(this, 'viewportUseIntersectionObserver')) {
-      inViewport.startIntersectionObserver();
-
       return scheduleOnce('afterRender', this, () => {
         const scrollableArea = get(this, 'scrollableArea');
         const viewportTolerance = get(this, 'viewportTolerance');
