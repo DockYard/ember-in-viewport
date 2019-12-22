@@ -33,7 +33,7 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     await waitUntil(() => {
       return findAll('.infinity-item').length === 20;
-    }, { timeoutMessage: 'did not find all items in tim' });
+    }, { timeoutMessage: 'did not find all items in time' });
 
     await settled();
 
