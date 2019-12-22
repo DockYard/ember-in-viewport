@@ -1,6 +1,6 @@
 <div class="list-rAF infinity-container">
   <ul>
-    {{#each model as |val|}}
+    {{#each this.model as |val|}}
       <div class="infinity-svg-rAF">
         <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
           {{{val}}}
@@ -8,19 +8,19 @@
       </div>
     {{/each}}
   </ul>
-  {{my-component
+  <MyComponent
     class="infinity-scrollable-rAF infinity-scrollable"
-    viewportSpyOverride=true
-    viewportIntersectionObserverOverride=false
-    viewportToleranceOverride=viewportToleranceOverride
-    scrollableAreaOverride=".list-rAF"
-    infinityLoad=(action "infinityLoad")}}
+    @viewportSpyOverride={{true}}
+    @viewportIntersectionObserverOverride={{false}}
+    @viewportToleranceOverride={{this.viewportToleranceOverride}}
+    @scrollableAreaOverride=".list-rAF"
+    @infinityLoad={{this.infinityLoadOther}} />
 </div>
 
 <div style="height: 100px"></div>
 
 <ul>
-  {{#each otherModels as |val|}}
+  {{#each this.otherModels as |val|}}
     <div class="infinity-svg-rAF-bottom">
       <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
         {{{val}}}
@@ -28,8 +28,8 @@
     </div>
   {{/each}}
 </ul>
-{{my-component
+<MyComponent
   class="infinity-scrollable-rAF-bottom infinity-scrollable"
-  viewportIntersectionObserverOverride=false
-  viewportToleranceOverride=viewportToleranceOverride
-  infinityLoad=(action "infinityLoadOther")}}
+  @viewportIntersectionObserverOverride={{false}}
+  @viewportToleranceOverride={{this.viewportToleranceOverride}}
+  @infinityLoad={{this.infinityLoadOther}} />

@@ -13,7 +13,7 @@
           onExit=(action "didExitViewport" artwork i)
         }}
       >
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
   </ul>
@@ -21,7 +21,7 @@
   <ul>
     {{#each this.models as |artwork i|}}
       <li {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}>
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
   </ul>
@@ -29,7 +29,7 @@
   <ul>
     {{#each this.models as |artwork i|}}
       <li {{in-viewport onExit=(action "didExitViewport" artwork i)}}>
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
   </ul>
