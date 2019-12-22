@@ -1,8 +1,8 @@
 <ul>
   {{#each models as |artwork|}}
     <li>
-      {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+      <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
     </li>
   {{/each}}
 </ul>
-{{my-modifier infinityLoad=(action "infinityLoad")}}
+<MyModifier @infinityLoad={{this.infinityLoad}} />
