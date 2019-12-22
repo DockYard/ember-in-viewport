@@ -257,7 +257,27 @@ Note if you want to disable right and left in-viewport triggers, set these value
 
 ### Modifiers
 
-Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.  Note, modifiers currently only works to watch entering the viewport.
+Using with [Modifiers](https://blog.emberjs.com/2019/03/06/coming-soon-in-ember-octane-part-4.html) is easy.
+
+You can either use our built in modifier `{{in-viewport}}` or a more verbose, but potentially more flexible generic modifier. Let's start with the former.
+
+1. Use `{{in-viewport}}` modifier on target element
+2. Ensure you have a callbacks in context for enter and/or exit
+3. `options` are optional - see [Advanced usage (options)](#advanced-usage-options)
+
+```hbs
+<ul class="list">
+  <li></li>
+  <li></li>
+  <div {{in-viewport onEnter=(fn this.onEnter artwork) onExit=this.onExit scrollableArea=".list"}}>
+    List sentinel
+  </div>
+</ul>
+```
+
+This modifier is useful for a variety of scenarios where you need to watch a sentinel.  With template only components, functionality like this is even more important!  If you have logic that currently uses the `did-insert` modifier to start watching an element, try this one out!
+
+If you need more than our built in modifier...
 
 1.  Install [@ember/render-modifiers](https://github.com/emberjs/ember-render-modifiers)
 2.  Use the `did-insert` hook inside a component

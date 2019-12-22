@@ -56,48 +56,48 @@ export default class InViewport extends Service {
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
-      if (get(this, 'viewportUseIntersectionObserver')) {
-        if (!get(this, 'observerAdmin')) {
-          this.startIntersectionObserver();
-        }
-        const observerOptions = this.buildObserverOptions(configOptions);
-
-        scheduleOnce('afterRender', this, () => {
-          // create IntersectionObserver instance or add to existing
-          this.setupIntersectionObserver(
-            element,
-            observerOptions,
-            enterCallback,
-            exitCallback
-          );
-        });
-      } else {
-        if (!get(this, 'rafAdmin')) {
-          this.startRAF();
-        }
-        scheduleOnce('afterRender', this, () => {
-          // grab the user added callbacks when we enter/leave the element
-          const {
-            enterCallback = noop,
-            exitCallback = noop
-          } = this.getCallbacks(element) || {};
-          // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
-          // So just rewrote it with pure functions for now
-          startRAF(
-            element,
-            configOptions,
-            enterCallback,
-            exitCallback,
-            this.addRAF.bind(this, element.id),
-            this.removeRAF.bind(this, element.id)
-          );
-        });
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      if (!get(this, 'observerAdmin')) {
+        this.startIntersectionObserver();
       }
+      const observerOptions = this.buildObserverOptions(configOptions);
 
-      return {
-        onEnter: this.addEnterCallback.bind(this, element),
-        onExit: this.addExitCallback.bind(this, element)
-      };
+      scheduleOnce('afterRender', this, () => {
+        // create IntersectionObserver instance or add to existing
+        this.setupIntersectionObserver(
+          element,
+          observerOptions,
+          enterCallback,
+          exitCallback
+        );
+      });
+    } else {
+      if (!get(this, 'rafAdmin')) {
+        this.startRAF();
+      }
+      scheduleOnce('afterRender', this, () => {
+        // grab the user added callbacks when we enter/leave the element
+        const {
+          enterCallback = noop,
+          exitCallback = noop
+        } = this.getCallbacks(element) || {};
+        // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
+        // So just rewrote it with pure functions for now
+        startRAF(
+          element,
+          configOptions,
+          enterCallback,
+          exitCallback,
+          this.addRAF.bind(this, element.id),
+          this.removeRAF.bind(this, element.id)
+        );
+      });
+    }
+
+    return {
+      onEnter: this.addEnterCallback.bind(this, element),
+      onExit: this.addExitCallback.bind(this, element)
+    };
   }
 
   /**
