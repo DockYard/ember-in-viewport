@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
 import { later } from '@ember/runloop';
-import { set, get } from '@ember/object';
+import { action, set, get } from '@ember/object';
 
 const images = ['jarjan', 'aio___', 'kushsolitary', 'kolage', 'idiot', 'gt'];
 
@@ -16,42 +16,41 @@ const models = [
   })
 ];
 
-export default Controller.extend({
-  queryParams: ['direction'],
-  direction: 'both',
-
-  models,
+export default class BuiltIn extends Controller {
+  queryParams = ['direction'];
+  direction = 'both';
 
   init() {
-    this._super(...arguments);
+    super.init(...arguments);
 
+    this.models = models;
     set(this, 'viewportTolerance', {
       bottom: 300
     });
-  },
-
-  actions: {
-    didEnterViewport(/*artwork, i, element*/) {
-      const arr = Array.apply(null, Array(10));
-      const newModels = [...arr.map(() => {
-        return {
-          bgColor: '0790EB',
-          url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`
-        }
-      })];
-
-      return new Promise((resolve) => {
-        later(() => {
-          const models = get(this, 'models');
-          models.push(...newModels);
-          set(this, 'models', Array.prototype.slice.call(models));
-          resolve();
-        }, 0);
-      });
-    },
-
-    didExitViewport(/*artwork, i, element*/) {
-      // console.log('exit', { artwork, i, element });
-    }
   }
-});
+
+  @action
+  didEnterViewport(/*artwork, i, element*/) {
+    const arr = Array.apply(null, Array(10));
+    const newModels = [...arr.map(() => {
+      return {
+        bgColor: '0790EB',
+        url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`
+      }
+    })];
+
+    return new Promise((resolve) => {
+      later(() => {
+        const models = get(this, 'models');
+        models.push(...newModels);
+        set(this, 'models', Array.prototype.slice.call(models));
+        resolve();
+      }, 0);
+    });
+  }
+
+  @action
+  didExitViewport(/*artwork, i, element*/) {
+    // console.log('exit', { artwork, i, element });
+  }
+}
