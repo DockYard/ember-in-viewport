@@ -84,25 +84,24 @@ export default class InViewport extends Service {
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
-
-      if (get(this, 'viewportUseIntersectionObserver')) {
-        if (!get(this, 'observerAdmin')) {
-          this.startIntersectionObserver();
-        }
-        const observerOptions = this.buildObserverOptions(configOptions);
-
-        scheduleOnce('afterRender', this, callbackIO.bind(this, element, observerOptions, enterCallback, exitCallback));
-      } else {
-        if (!get(this, 'rafAdmin')) {
-          this.startRAF();
-        }
-        scheduleOnce('afterRender', this, callbackRAF.bind(this, element, configOptions));
+    if (get(this, 'viewportUseIntersectionObserver')) {
+      if (!get(this, 'observerAdmin')) {
+        this.startIntersectionObserver();
       }
+      const observerOptions = this.buildObserverOptions(configOptions);
 
-      return {
-        onEnter: this.addEnterCallback.bind(this, element),
-        onExit: this.addExitCallback.bind(this, element)
-      };
+      scheduleOnce('afterRender', this, callbackIO.bind(this, element, observerOptions, enterCallback, exitCallback));
+    } else {
+      if (!get(this, 'rafAdmin')) {
+        this.startRAF();
+      }
+      scheduleOnce('afterRender', this, callbackRAF.bind(this, element, configOptions));
+    }
+
+    return {
+      onEnter: this.addEnterCallback.bind(this, element),
+      onExit: this.addExitCallback.bind(this, element)
+    };
   }
 
   /**

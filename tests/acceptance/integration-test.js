@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
-import { find, visit, waitFor } from '@ember/test-helpers';
+import { find, settled, visit, waitFor } from '@ember/test-helpers';
 
 module('Acceptance | Intersection Observer', function(hooks) {
   setupApplicationTest(hooks);
@@ -15,6 +15,7 @@ module('Acceptance | Intersection Observer', function(hooks) {
 
     await visit('/');
 
+    await settled();
     assert.ok(find('.my-component.top.start-enabled.active'), 'component is active');
   });
 
