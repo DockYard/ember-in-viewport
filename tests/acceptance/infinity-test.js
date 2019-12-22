@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
-import { find, findAll, visit, waitFor, waitUntil } from '@ember/test-helpers';
+import { find, findAll, visit, settled, waitFor, waitUntil } from '@ember/test-helpers';
 
 module('Acceptance | infinity-scrollable', function(hooks) {
   setupApplicationTest(hooks);
@@ -33,7 +33,9 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     await waitUntil(() => {
       return findAll('.infinity-item').length === 20;
-    });
+    }, { timeoutMessage: 'did not find all items in tim' });
+
+    await settled();
 
     assert.equal(findAll('.infinity-item').length, 20, 'after infinity has more items');
   });
