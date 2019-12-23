@@ -230,8 +230,6 @@ export default class DummyArtwork extends Component {
     }
 
     /**
-     * This is the aspect ratio of the estimate artwork dimensions.
-     *
      * @property aspectRatio The aspect ratio of the artwork from the config
      * @type Number
      * @private
