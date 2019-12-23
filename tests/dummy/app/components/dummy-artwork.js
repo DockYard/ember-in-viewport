@@ -1,10 +1,11 @@
 import Component from '@ember/component';
+import { tagName } from '@ember-decorators/component';
 import { htmlSafe } from '@ember/string';
 import { assign } from '@ember/polyfills';
 import { set, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
-import InViewportMixin from 'ember-in-viewport';
 import config from '../-config';
+import { guidFor } from '@ember/object/internals'
 import { and, readOnly } from '@ember/object/computed';
 import ENV from 'dummy/config/environment';
 
@@ -39,23 +40,10 @@ export function buildSrcset(url, options, pixelDensity = 1) {
 }
 
 /**
- * This component will generate a `div` tag with an `<img srcset="">` tag.
- * This means that we are not handling different aspect ratios per viewport. We call this "art direction"
- * without adding `source` elements.
- * Also we use just the srcset given current browser support for RESKIN
- *
- * e.g. { large: { height, width, crop }, medium: {}, small: {} }
- *
- * TODO: add fastboot compatibility
- *
  * #### Usage
  *
  * ```hbs
- *  <DummyArtwork @artwork={{artwork}} @artworkProfile="album" />
- * ```
- * or
- * ```hbs
- *  <DummyArtwork @artwork={{artwork}} @artworkProfile={{customProfile}} />
+ *  <DummyArtwork @artwork={{artwork}} @artworkProfile="user-profile" />
  * ```
  *
  * @class DummyArtwork
@@ -63,18 +51,12 @@ export function buildSrcset(url, options, pixelDensity = 1) {
  * @extends {Ember.Component}
  * @public
  */
-export default Component.extend(InViewportMixin, {
-    media: service(),
+@tagName('')
+export default class DummyArtwork extends Component {
+    @service inViewport
+    @service media
 
-    tagName: 'div',
-    classNameBindings: [
-        'shouldLazyLoad:dummy-artwork--lazyload',
-        'isDownloaded:dummy-artwork--downloaded'
-    ],
-    classNames: ['dummy-artwork', 'dummy-artwork--aspect-ratio'],
-    'data-test-media-artwork': true,
-
-    rootURL: ENV.rootURL,
+    rootURL = ENV.rootURL
 
     /**
      * Provide an `alt` attribute for the `<img>` tag. Default is an empty string.
@@ -83,7 +65,21 @@ export default Component.extend(InViewportMixin, {
      * @type String
      * @public
      */
-    alt: '',
+    alt;
+
+    /**
+     * @property class
+     * @type {String}
+     * @public
+     */
+    class;
+
+    /**
+     * @property artworkProfile
+     * @type {String|Object}
+     * @public
+     */
+    artworkProfile;
 
     /**
      * @property isDownloaded
@@ -91,7 +87,22 @@ export default Component.extend(InViewportMixin, {
      * @default false
      * @public
      */
-    isDownloaded: false,
+    isDownloaded = false;
+
+    /**
+     * @property isErrored
+     * @type {Boolean}
+     * @default false
+     * @public
+     */
+    isErrored = false;
+
+    /**
+     * @property fileType
+     * @type String
+     * @public
+     */
+    fileType = 'jpg';
 
     /**
      * @property lazyLoad
@@ -99,7 +110,7 @@ export default Component.extend(InViewportMixin, {
      * @default true
      * @public
      */
-    lazyLoad: true,
+    lazyLoad = true;
 
     /**
      * The value to be used for background-color CSS property
@@ -109,7 +120,7 @@ export default Component.extend(InViewportMixin, {
      * @type {String}
      * @public
      */
-    overrideBgColor: null,
+    overrideBgColor;
 
     /**
      * Indicates if a background color should be added to
@@ -119,7 +130,7 @@ export default Component.extend(InViewportMixin, {
      * @type {Boolean}
      * @public
      */
-    addBgColor: true,
+    addBgColor;
 
     /**
      *
@@ -127,7 +138,7 @@ export default Component.extend(InViewportMixin, {
      * @type {String}
      * @public
      */
-    userInitials: readOnly('actualArtwork.userInitials'),
+    @readOnly('actualArtwork.userInitials') userInitials
 
     /**
      *
@@ -135,7 +146,7 @@ export default Component.extend(InViewportMixin, {
      * @type {Boolean}
      * @public
      */
-    isFallbackArtwork: readOnly('actualArtwork.isFallback'),
+    @readOnly('actualArtwork.isFallback') isFallbackArtwork
 
     /**
      *
@@ -143,36 +154,53 @@ export default Component.extend(InViewportMixin, {
      * @type {Boolean}
      * @public
      */
-    isUserMonogram: and('isFallbackArtwork', 'userInitials'),
+    @and('isFallbackArtwork', 'userInitials') isUserMonogram
 
     /**
-     * @property shouldLazyLoad
-     * @type {String|Number}
+     * @property artworkClasses
+     * @type {String}
      * @public
      */
-    shouldLazyLoad: computed('lazyLoad', 'isFallbackArtwork', function() {
-        return this.lazyLoad && !this.isFallbackArtwork;
-    }),
+    @computed('isDownloaded')
+    get artworkClasses() {
+        let classes = this.class || '';
+        if (this.isDownloaded) {
+            classes += ' dummy-artwork--downloaded ';
+        }
+
+        return classes.trim();
+    }
 
     /**
      * @property height
      * @type {String|Number}
      * @public
      */
-    height: computed('profile', 'media.matches.[]', function() {
-        const [viewport] = this.media.matches;
-        return this.profile && this.profile[viewport].height;
-    }),
+    @computed('profiles', 'media.matches.[]')
+    get height() {
+        const [viewport = 'medium'] = this.media.matches;
+        if (this.profiles && this.profiles[viewport]) {
+            return this.profiles[viewport].height;
+        }
+
+        return this.profiles.large && this.profiles.large.height;
+    }
 
     /**
      * @property width
      * @type {String|Number}
      * @public
      */
-    width: computed('profile', 'media.matches.[]', function() {
-        const [viewport] = this.media.matches;
-        return this.profile && this.profile[viewport].width;
-    }),
+    @computed('profiles', 'media.matches.[]')
+    get width() {
+        const [viewport = 'medium'] = this.media.matches;
+        if (this.profiles && this.profiles[viewport]) {
+            return this.profiles[viewport].width;
+        }
+
+        // no profile if no artwork
+        return this.profiles.large && this.profiles.large.width;
+    }
 
     /**
      * The background color inline style for the artwork.
@@ -182,7 +210,8 @@ export default Component.extend(InViewportMixin, {
      * @type String
      * @public
      */
-    bgColor: computed('actualArtwork.{bgColor,hasAlpha}', 'addBgColor', function() {
+    @computed('actualArtwork.{bgColor,hasAlpha}', 'addBgColor')
+    get bgColor() {
         if (!this.actualArtwork || this.actualArtwork.hasAlpha) {
             return htmlSafe('');
         }
@@ -191,26 +220,24 @@ export default Component.extend(InViewportMixin, {
         if (addBgColor && bgColor) {
             return `#${bgColor}`;
         }
-    }),
+    }
 
-    imgBgColor: computed('bgColor', function() {
+    @computed('bgColor')
+    get imgBgColor() {
         if (this.bgColor) {
             return htmlSafe(`background-color: ${this.bgColor};`);
         }
-    }),
+    }
 
     /**
-     * This is the aspect ratio of the artwork itself, as opposed to the desired width/height
-     * passed in by the consumer.
-     *
-     * @property aspectRatio The aspect ratio of the artwork from the server
+     * @property aspectRatio The aspect ratio of the artwork from the config
      * @type Number
      * @private
      */
-    aspectRatio: computed('width', 'height', function() {
-        const { height, width } = this;
-        return width / height;
-    }),
+    @computed('width', 'height')
+    get aspectRatio() {
+        return this.width / this.height;
+    }
 
     /**
      * This is the aspect ratio of the artwork itself, as opposed to the desired width/height
@@ -220,22 +247,36 @@ export default Component.extend(InViewportMixin, {
      * @type number
      * @private
      */
-    mediaQueries: computed('profiles', function() {
-        return viewports.map(({ mediaQueryStrict, name }) =>
-            `${mediaQueryStrict} ${this.profiles[name].width}px`
-        ).join(', ');
-    }),
+    @computed('profiles')
+    get mediaQueries() {
+        return viewports.map(({ mediaQueryStrict, name }) => {
+            if (!this.profiles[name]) {
+                return;
+            }
+            return `${mediaQueryStrict} ${this.profiles[name].width}px`;
+        }
+        ).filter(Boolean).join(', ').trim();
+    }
 
     /**
-     * An artworkProfile may be a string or object. So we ensure we return an object of viewports
-     * e.g. { large: { height, width, crop }, medium: {}, small: {} }
+     * An artworkProfile may be a string or object.
+     * There may not be different viewport defined sizes for an artwork profile.
+     * As a result, we dont want to avoid duplicate * work and tell the browser that the same size
+     * exists for each lg/medium/small viewport.
+     *
+     * { large: { height, width, crop }, medium: { height, width, crop }, small: { ... } }
+     *
+     * or just this
+     *
+     * e.g. { large: { height, width, crop } }
      *
      * @property profile
      * @type Object
      * @public
      */
-    profile: computed('artworkProfile', function() {
-        let profile;
+    @computed('artworkProfile')
+    get profile() {
+        let profile = {};
         if (typeof this.artworkProfile === 'string') {
             profile = artworkProfiles[this.artworkProfile];
         } else if (typeof this.artworkProfile === 'object') {
@@ -243,30 +284,26 @@ export default Component.extend(InViewportMixin, {
         }
 
         return profile;
-    }),
+    }
 
     /**
      * @property profiles
      * @type Object
      * @public
      */
-    profiles: computed('height', 'width', 'profile', function() {
+    @computed('height', 'width', 'profile')
+    get profiles() {
         // eslint-disable-next-line arrow-body-style
         return viewports.reduce((acc, view) => {
-            const { height, width, crop } = this.profile[view.name];
-            acc[view.name] = { width, height, crop };
+            // the artwork-profile might not define a size at a specific viewport defined in app/breakpoints.js
+            if (this.profile[view.name]) {
+                const { height, width, crop } = this.profile[view.name];
+                acc[view.name] = { width, height, crop };
+            }
+
             return acc;
         }, {});
-    }),
-
-    /**
-     * @property fileType
-     * @type String
-     * @public
-     */
-    fileType: computed('actualArtwork.hasAlpha', function() {
-        return this.actualArtwork && this.actualArtwork.hasAlpha ? 'png' : 'jpg';
-    }),
+    }
 
     /**
      * we render the fallback src directly in the image with no srcset
@@ -275,76 +312,47 @@ export default Component.extend(InViewportMixin, {
      * @type String
      * @private
      */
-    fallbackSrc: computed('actualArtwork.{url,urlDark,isFallback}', function() {
+    @computed('actualArtwork.{url,urlDark,isFallback}')
+    get fallbackSrc() {
         const {
             actualArtwork: { url, isFallback = false }
         } = this;
         if (isFallback) {
             return url;
         }
-    }),
-
-    /**
-     * we render the single src directly in the image with srcset
-     *
-     * @property isCloudArtwork
-     * @type Boolean
-     * @private
-     */
-    isCloudArtwork: readOnly('artwork.isCloudArtwork'),
+    }
 
     /**
      * @property srcset
      * @type String
      * @private
      */
-    srcset: computed('actualArtwork.url', 'fileType', 'profiles', function() {
+    @computed('actualArtwork.url', 'fileType', 'profiles')
+    get srcset() {
         const { actualArtwork: { url, isFallback = false } } = this;
-        // bring back to [1, 2] after DEMOWARE
         return [1, 2].map(pixelDensity =>
             viewports.map(({ name }) => {
-                const settings = assign({}, { fileType: this.fileType }, this.profiles[name]);
-                // Build a srcset from patterned URL
-                if (isFallback) {
-                    return;
-                }
-                return buildSrcset(url, settings, pixelDensity);
+              const settings = assign({}, { fileType: this.fileType }, this.profiles[name]);
+              // Build a srcset from patterned URL
+              if (isFallback) {
+                  return;
+              }
+              return buildSrcset(url, settings, pixelDensity);
             })
         ).join(', ');
-    }),
+    }
 
     /**
-     * @property adjustedHeight
-     * @type String
-     * @private
-     */
-    adjustedHeight: computed('aspectRatio', 'height', function() {
-        return this.height; // fallback cases can go here
-    }),
-
-    /**
-     * @property adjustedWidth
-     * @type String
-     * @private
-     */
-    adjustedWidth: computed('aspectRatio', 'width', function() {
-        return this.width; // fallback cases can go here
-    }),
-
-    /**
-     * We use a private property to abstract whether we are provided
-     * a valid artwork object or are using a fallback, provided via
-     * the `fallbackProfile` property.
-     *
      * @property actualArtwork
      * @type Object
      * @private
     */
-    actualArtwork: computed('artwork', 'fallbackArtwork', function() {
+    @computed('artwork.url', 'fallbackArtwork', 'isErrored')
+    get actualArtwork() {
         const { url } = this.artwork || {};
-        const { fallbackArtwork } = this;
+        const { fallbackArtwork, isErrored } = this;
 
-        if (!url && fallbackArtwork) {
+        if (!url && fallbackArtwork || isErrored) {
             return assign(
                 {},
                 fallbackArtwork,
@@ -353,7 +361,7 @@ export default Component.extend(InViewportMixin, {
         }
 
         return this.artwork;
-    }),
+    }
 
     /**
      * If the fallback profile provided exists, we find the corresponding
@@ -364,7 +372,8 @@ export default Component.extend(InViewportMixin, {
      * @type object
      * @private
     */
-    fallbackArtwork: computed('fallbackProfile', function() {
+    @computed('fallbackProfile')
+    get fallbackArtwork() {
         const { fallbackProfile } = this;
         if (typeof fallbackProfile === 'object') {
             return fallbackProfile;
@@ -376,7 +385,7 @@ export default Component.extend(InViewportMixin, {
         }
 
         return null;
-    }),
+    }
 
     /**
      * Inline style to properly scale the img element.
@@ -385,16 +394,17 @@ export default Component.extend(InViewportMixin, {
      * @type String
      * @public
      */
-    imgStyle: computed('profiles', function() {
+    @computed('profiles')
+    get imgStyle() {
         return Object.keys(this.profiles).map(name => {
             const source = this.profiles[name];
             let style = '';
             if (source.width > 0) {
-                style = `.${this.elementId}, #${this.elementId}::before {
+                style = `#${this.guid}, #${this.guid}::before {
                     width: ${source.width}px;
                     height: ${source.height}px;
                 }
-                .${this.elementId}::before {
+                #${this.guid}::before {
                     padding-top: ${source.height / source.width * 100}%;
                 }`;
             }
@@ -407,19 +417,29 @@ export default Component.extend(InViewportMixin, {
 
             return style;
         }).reverse().join('\n');
-    }),
+    }
 
-    didInsertElement() {
-        if (this.lazyLoad) {
+    init(...args) {
+        super.init(...args);
+
+        // for use in template
+        this.boundOnError = this.onError.bind(this);
+        this.boundOnLoad = this.onLoad.bind(this);
+        this.guid = guidFor(this);
+    }
+
+    didInsertNode(element, [instance]) {
+        if (instance.lazyLoad) {
             // find distance of top left corner of artwork to bottom of screen. Shave off 50px so user has to scroll slightly to trigger load
-            const { bottom } = this.element.getBoundingClientRect();
-            const tolerance = bottom - window.innerHeight - this.element.offsetHeight - (50 * (1 + Math.random()));
-            // margin for up/down and right/left scrolling
-            set(this, 'viewportTolerance', { top: 200, right: 200, bottom: Math.abs(tolerance), left: 200 });
-        }
+            window.requestAnimationFrame(() => {
+                const { onEnter } = instance.inViewport.watchElement(element, {
+                    viewportTolerance: { top: 200, right: 200, bottom: 200, left: 200 }
+                });
 
-        this._super(...arguments);
-    },
+                onEnter(instance.didEnterViewport.bind(instance));
+            });
+        }
+    }
 
     /**
      * in-viewport hook to set src and srset based on data-* attrs
@@ -433,7 +453,35 @@ export default Component.extend(InViewportMixin, {
         }
 
         this._swapSource();
-    },
+        this.inViewport.stopWatching(document.getElementById(this.guid));
+    }
+
+    /**
+     * @method onError
+     */
+    onError() {
+        if (this.isDestroyed || this.isDestroying) {
+            return;
+        }
+
+        set(this, 'isErrored', true);
+    }
+
+    /**
+     * @method onLoad
+     */
+    onLoad() {
+        if (this.isDestroyed || this.isDestroying) {
+            return;
+        }
+        set(this, 'isDownloaded', true);
+    }
+
+    willDestroyElement(...args) {
+        this.inViewport.stopWatching(document.getElementById(this.guid));
+
+        super.willDestroyElement(...args);
+    }
 
     /**
      * swap src and srset with data attributes that hold the real src
@@ -442,21 +490,15 @@ export default Component.extend(InViewportMixin, {
      * @private
      */
     _swapSource() {
-        const { lazyLoad, element, isDownloaded, isFallbackArtwork } = this;
+        const { lazyLoad, isDownloaded, isFallbackArtwork } = this;
+        const element = document.getElementById(this.guid);
 
         if (lazyLoad && element && !isDownloaded && !isFallbackArtwork) {
             const img = element.querySelector('img');
             if (img && img.dataset) {
-                // happy path, no need for sad path b/c 1x1 pixel image is in place so no need for .onerror
-                const imgLoad = () => {
-                    if (this.isDestroyed || this.isDestroying) {
-                        return;
-                    }
-                    set(this, 'isDownloaded', true);
-                };
-                img.onload = imgLoad;
+                img.onload = this.onLoad.bind(this);
                 img.srcset = img.dataset.srcset;
             }
         }
     }
-});
+}

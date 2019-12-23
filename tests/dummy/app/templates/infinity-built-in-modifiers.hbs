@@ -10,7 +10,7 @@
       <li
         class="infinity-item infinity-item-{{i}}"
       >
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
     <div
@@ -22,7 +22,7 @@
   <ul>
     {{#each this.models as |artwork|}}
       <li>
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
     <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}></div>
@@ -31,7 +31,7 @@
   <ul>
     {{#each this.models as |artwork|}}
       <li>
-        {{dummy-artwork artwork=artwork artworkProfile="dummy"}}
+        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
     <div class="sentinel" {{in-viewport onExit=(action "didExitViewport")}}></div>

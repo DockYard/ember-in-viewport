@@ -1,47 +1,47 @@
-{{#if this.actualArtwork}}
+<div
+  {{did-insert this.didInsertNode this}}
+  class={{concat "dummy-artwork " this.artworkClasses}}
+  id={{this.guid}}
+  data-aspect-ratio={{this.aspectRatio}}
+  data-test-dummy-artwork={{true}}>
 
-  {{#if this.isUserMonogram}}
+  {{#if this.actualArtwork}}
+    {{#if this.isUserMonogram}}
 
-    <svg class="dummy-artwork__image" width="100%" height="100%" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#A5ABB8"/><stop offset="100%" stop-color="#848993"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#a)"/><text x="320" y="50%" dy="0.35em" font-size="250" fill="#fff" text-anchor="middle" font-weight="500">{{this.userInitials}}</text></svg>
+      <svg class="dummy-artwork__image" width="100%" height="100%" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="a" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#A5ABB8"/><stop offset="100%" stop-color="#848993"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#a)"/><text x="320" y="50%" dy="0.35em" font-size="250" fill="#fff" text-anchor="middle" font-weight="500">{{this.userInitials}}</text></svg>
 
-  {{else if this.isFallbackArtwork}}
+    {{else if this.isFallbackArtwork}}
+      <img
+        class="dummy-artwork__image"
+        src={{this.fallbackSrc}}
+        height={{this.height}}
+        width={{this.width}}
+        alt={{alt}}>
 
-    <img
-      class="dummy-artwork__image {{this.elementId}}"
-      src={{this.fallbackSrc}}
-      height={{this.adjustedHeight}}
-      width={{this.adjustedWidth}}
-      alt={{alt}}>
+    {{else if this.lazyLoad}}
+      <img
+        class="dummy-artwork__image"
+        sizes={{this.mediaQueries}}
+        src="{{this.rootURL}}assets/1x1.gif"
+        data-srcset={{this.srcset}}
+        height={{this.height}}
+        width={{this.width}}
+        style={{this.imgBgColor}}
+        alt={{alt}}>
 
-  {{else if this.lazyLoad}}
-    {{!-- if we are lazyloading an image, we want to still show the image src if it turns out the client has no scripting --}}
-    {{!-- `sizes` must come before `src` and `data-srcset` to avoid double downloads --}}
-    <img
-      class="dummy-artwork__image {{this.elementId}}"
-      sizes={{this.mediaQueries}}
-      src="{{this.rootURL}}assets/1x1.gif"
-      data-srcset={{this.srcset}}
-      height={{this.adjustedHeight}}
-      width={{this.adjustedWidth}}
-      style={{this.imgBgColor}}
-      alt={{alt}}>
+    {{else}}
+      <img
+        class="dummy-artwork__image"
+        sizes={{this.mediaQueries}}
+        src="{{this.rootURL}}assets/1x1.gif"
+        srcset={{this.srcset}}
+        height={{this.height}}
+        width={{this.width}}
+        style={{this.imgBgColor}}
+        alt={{alt}}>
 
-  {{else}}
-
-    {{!-- responsive images --}}
-    {{!-- `sizes` must come before `src` and `srcset` to avoid double downloads --}}
-    <img
-      class="dummy-artwork__image {{this.elementId}}"
-      sizes={{this.mediaQueries}}
-      src="{{this.rootURL}}assets/1x1.gif"
-      srcset={{this.srcset}}
-      height={{this.adjustedHeight}}
-      width={{this.adjustedWidth}}
-      style={{this.imgBgColor}}
-      alt={{alt}}>
-
+    {{/if}}
   {{/if}}
 
-{{/if}}
-
 {{yield}}
+</div>
