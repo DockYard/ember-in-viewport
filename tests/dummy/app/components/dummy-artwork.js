@@ -345,10 +345,6 @@ export default class DummyArtwork extends Component {
     }
 
     /**
-     * We use a private property to abstract whether we are provided
-     * a valid artwork object or are using a fallback, provided via
-     * the `fallbackProfile` property.
-     *
      * @property actualArtwork
      * @type Object
      * @private
