@@ -16,6 +16,7 @@ module.exports = {
     browser: true
   },
   rules: {
+    'getter-return': 0
   },
   overrides: [
     // node files
