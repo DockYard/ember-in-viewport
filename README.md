@@ -7,7 +7,7 @@
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg) [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/DockYard/ember-in-viewport.svg)](https://travis-ci.org/DockYard/ember-in-viewport) [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
-This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if that `Component` or DOM element has entered the browser's viewport. By default, the this uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
+This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if a `Component` or DOM element has entered the browser's viewport. By default, this uses the `IntersectionObserver` API if it detects it the DOM element is in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
 We utilize pooling techniques to reuse Intersection Observers and rAF observers in order to make your app as performant as possible and do as little works as possible.
 
@@ -339,7 +339,7 @@ export default class Infinity extends Component(InViewportMixin) {
 
 ### Classes
 
-This allows you to absolve yourself from using a mixin in native classes!
+Special note: The service based approach allows you to absolve yourself from using a mixin in native classes!
 
 ```js
 import Component from '@ember/component';
@@ -367,6 +367,8 @@ export default class MyClass extends Component {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
+
+    super.willDestroyElement(...arguments);
   }
 }
 ```
