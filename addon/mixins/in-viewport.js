@@ -1,7 +1,7 @@
 import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
-import { assert } from '@ember/debug';
+import { assert, debug } from '@ember/debug';
 import { inject } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
 import { bind, debounce, scheduleOnce } from '@ember/runloop';
@@ -62,6 +62,8 @@ export default Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
+    debug('[ember-in-viewport Mixin] This mixin will be removed in the next major release.  We suggest you migrate to our service based approach as outline in the README.');
+
     if (!canUseDOM) {
       return;
     }
@@ -90,11 +92,9 @@ export default Mixin.create({
     this._setInitialViewport(element);
     this._addObserverIfNotSpying(element);
 
-    // TODO: future make this by default false in major release
-    // This adds a performance hit and likely many aren't using didScroll hook
-    // Willing to leave as true if enough people do use it
     const viewportDidScroll = get(this, 'viewportDidScroll');
     if (viewportDidScroll) {
+      debug('[viewportDidScroll] This will be false by default in the next major release');
       this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
     }
 

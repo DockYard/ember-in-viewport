@@ -173,7 +173,7 @@ export default Component.extend(InViewportMixin, {
 
   Read-only
 
-  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
+  This library, by default, will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
 
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
@@ -208,7 +208,7 @@ export default Component.extend(InViewportMixin, {
 
   Default: `false`
 
-  When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
+  When `true`, the library will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
 
   NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
