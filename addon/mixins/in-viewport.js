@@ -62,6 +62,8 @@ export default Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
+    debug('[ember-in-viewport Mixin] This mixin will be removed in the next major release.  We suggest you migrate to our service based approach as outline in the README.');
+
     if (!canUseDOM) {
       return;
     }
