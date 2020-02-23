@@ -7,7 +7,7 @@
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg) [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/DockYard/ember-in-viewport.svg)](https://travis-ci.org/DockYard/ember-in-viewport) [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
-This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if that `Component` has entered the browser's viewport. By default, the this uses the `IntersectionObserver` API if it detects it in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
+This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if a `Component` or DOM element has entered the browser's viewport. By default, this uses the `IntersectionObserver` API if it detects it the DOM element is in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
 We utilize pooling techniques to reuse Intersection Observers and rAF observers in order to make your app as performant as possible and do as little works as possible.
 
@@ -26,16 +26,15 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
 
 - [Installation](#installation)
   * [Usage](#usage)
-    + [Basic usage](#basic-usage)
-      - [Available hooks](#available-hooks)
-        * [`didEnterViewport`, `didExitViewport`](#didenterviewport-didexitviewport)
-        * [`didScroll(up,down,left,right)`](#didscrollupdownleftright)
-        * [`viewportEntered`](#viewportentered)
-        * [`viewportExited`](#viewportexited)
-    + [Advanced usage (options)](#advanced-usage-options)
+    + [Configuration](#configuration)
     + [Global options](#global-options)
     + [Modifiers](#modifiers)
     + [Classes](#classes)
+    + [Available Mixin hooks](#available-hooks)
+      * [`didEnterViewport`, `didExitViewport`](#didenterviewport-didexitviewport)
+      * [`didScroll(up,down,left,right)`](#didscrollupdownleftright)
+      * [`viewportEntered`](#viewportentered)
+      * [`viewportExited`](#viewportexited)
   * [**IntersectionObserver**'s Browser Support](#intersectionobservers-browser-support)
     + [Out of the box](#out-of-the-box)
   * [Running](#running)
@@ -52,7 +51,51 @@ ember install ember-in-viewport
 ```
 
 ## Usage
-Usage is simple. First, add the Mixin to your `Component`:
+Usage is simple. First, inject the service to your component and start "watching" DOM elements.
+
+```js
+import Component from '@ember/component';
+import { tagName } from '@ember-decorators/component';
+import { inject as service } from '@ember/service'; // with polyfill
+
+@tagName('')
+export default class MyClass extends Component {
+  @service inViewport
+
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+
+    const loader = document.getElementById('loader');
+    const viewportTolerance = { bottom: 200 };
+    const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
+    // pass the bound method to `onEnter` or `onExit`
+    onEnter(this.didEnterViewport.bind(this));
+  }
+
+  didEnterViewport() {
+    // do some other stuff
+    this.infinityLoad();
+  },
+
+  willDestroyElement() {
+    // need to manage cache yourself if you don't use the mixin
+    const loader = document.getElementById('loader');
+    this.inViewport.stopWatching(loader);
+  }
+}
+```
+
+```hbs
+<ul>
+  <li></li>
+  ...
+</ul>
+<div id="loader"></div>
+```
+
+You can also use [`Modifiers`](#modifiers) as well.  Using modifiers cleans up the boilerplate needed and is shown in a later example.
+
+This addon also supports the use of a Mixin to your `Component`:
 
 ```js
 import Component from '@ember/component';
@@ -63,57 +106,32 @@ export default Component.extend(InViewportMixin, {
 });
 ```
 
-### Basic usage
-#### Available hooks
-##### `didEnterViewport`, `didExitViewport`
-These hooks fire once whenever the `Component` enters or exits the viewport. You can handle them the same way you would handle any other native Ember hook:
+### Configuration
+To use with the service based approach, simply pass in the options to `watchElement` as the second argument.
 
 ```js
 import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
+import { inject as service }  from '@ember/service';
 
-export default Component.extend(InViewportMixin, {
-  didEnterViewport() {
-    console.log('entered');
-  },
+export default class MyClass extends Component {
+  @service inViewport
 
-  didExitViewport() {
-    console.log('exited');
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+
+    const { onEnter, _onExit } = this.inViewport.watchElement(
+      loader,
+      {
+        viewportTolerance: { bottom: 200 },
+        intersectionThreadhold: 0.25,
+        scrollableArea: '#scrollable-area'
+      }
+    );
   }
-});
+}
 ```
 
-##### `didScroll(up,down,left,right)`
-The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receive the direction as a string. You can then handle it like another hook as in the above example.
-
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
-
-export default Component.extend(InViewportMixin, {
-  didScroll(direction) {
-    console.log(direction); // 'up' || 'down' || 'left' || 'right'
-  }
-});
-```
-
-##### `viewportEntered`
-To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
-
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
-
-export default Component.extend(InViewportMixin, {
-  classNameBindings: [ 'viewportEntered:active' ]
-});
-```
-
-##### `viewportExited`
-This hook fires whenever the `Component` leaves the viewport.
-
-### Advanced usage (options)
-The mixin comes with some options. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
+The mixin comes with some options as well. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
 
 ```js
 import Component from '@ember/component';
@@ -155,7 +173,7 @@ export default Component.extend(InViewportMixin, {
 
   Read-only
 
-  The Mixin by default will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
+  This library, by default, will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
 
   (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
   (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
@@ -190,7 +208,7 @@ export default Component.extend(InViewportMixin, {
 
   Default: `false`
 
-  When `true`, the Mixin will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
+  When `true`, the library will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
 
   NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
@@ -288,30 +306,29 @@ Note - This is in lieu of a `did-enter-viewport` modifier, which we plan on addi
 ```js
 import Component from '@ember/component';
 import { set } from '@ember/object';
+import { tagName } from '@ember-decorators/component';
 import InViewportMixin from 'ember-in-viewport';
 
-export default Component.extend(InViewportMixin, {
-  tagName: '',
-
+@tagName('')
+export default class Infinity extends Component(InViewportMixin) {
   didInsertNode(element, [instance]) {
     instance.watchElement(element);
   },
 
   didInsertElement() {
-    this._super(...arguments);
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
       bottom: 300
     });
 
-    this._super(...arguments);
+    super.didInsertElement(...arguments);
   },
 
   didEnterViewport() {
     // this will only work with one element being watched in the container. This is still a TODO to enable
     this.infinityLoad();
   }
-});
+}
 ```
 
 ```hbs
@@ -322,7 +339,7 @@ export default Component.extend(InViewportMixin, {
 
 ### Classes
 
-This allows you to absolve yourself from using a mixin in native classes!
+Special note: The service based approach allows you to absolve yourself from using a mixin in native classes!
 
 ```js
 import Component from '@ember/component';
@@ -334,10 +351,10 @@ export default class MyClass extends Component {
   @service inViewport
 
   didInsertElement() {
-    super();
+    super.didInsertElement(...arguments);
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
-    const { onEnter, onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
+    const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
     onEnter(this.didEnterViewport.bind(this));
   }
 
@@ -350,6 +367,8 @@ export default class MyClass extends Component {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
+
+    super.willDestroyElement(...arguments);
   }
 }
 ```
@@ -390,7 +409,55 @@ export default class MyClass extends Component {
 </div>
 ```
 
-Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`
+Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`.
+
+#### Available Mixin hooks
+##### `didEnterViewport`, `didExitViewport`
+These hooks fire once whenever the `Component` enters or exits the viewport. You can handle them the same way you would handle any other native Ember hook:
+
+```js
+import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
+
+export default Component.extend(InViewportMixin, {
+  didEnterViewport() {
+    console.log('entered');
+  },
+
+  didExitViewport() {
+    console.log('exited');
+  }
+});
+```
+
+##### `didScroll(up,down,left,right)`
+The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receive the direction as a string. You can then handle it like another hook as in the above example. This is only available with the Mixin and likely not something you will need.
+
+```js
+import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
+
+export default Component.extend(InViewportMixin, {
+  didScroll(direction) {
+    console.log(direction); // 'up' || 'down' || 'left' || 'right'
+  }
+});
+```
+
+##### `viewportEntered`
+To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
+
+```js
+import Component from '@ember/component';
+import InViewportMixin from 'ember-in-viewport';
+
+export default Component.extend(InViewportMixin, {
+  classNameBindings: [ 'viewportEntered:active' ]
+});
+```
+
+##### `viewportExited`
+This hook fires whenever the `Component` leaves the viewport.
 
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 

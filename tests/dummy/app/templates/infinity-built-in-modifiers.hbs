@@ -7,9 +7,7 @@
 {{#if (eq this.direction "both")}}
   <ul class="infinity-container">
     {{#each this.models as |artwork i|}}
-      <li
-        class="infinity-item infinity-item-{{i}}"
-      >
+      <li class="infinity-item infinity-item-{{i}}">
         <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
