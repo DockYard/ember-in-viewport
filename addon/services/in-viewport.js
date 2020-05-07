@@ -63,6 +63,10 @@ export default class InViewport extends Service {
       const observerOptions = this.buildObserverOptions(configOptions);
 
       scheduleOnce('afterRender', this, () => {
+        if (this.isDestroyed || this.isDestroying) {
+          return;
+        }
+
         // create IntersectionObserver instance or add to existing
         this.setupIntersectionObserver(
           element,
@@ -76,6 +80,10 @@ export default class InViewport extends Service {
         this.startRAF();
       }
       scheduleOnce('afterRender', this, () => {
+        if (this.isDestroyed || this.isDestroying) {
+          return;
+        }
+
         // grab the user added callbacks when we enter/leave the element
         const {
           enterCallback = noop,
