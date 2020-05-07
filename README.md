@@ -54,17 +54,15 @@ ember install ember-in-viewport
 Usage is simple. First, inject the service to your component and start "watching" DOM elements.
 
 ```js
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
-import { inject as service } from '@ember/service'; // with polyfill
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 
-@tagName('')
 export default class MyClass extends Component {
   @service inViewport
 
-  didInsertElement() {
-    super.didInsertElement(...arguments);
-
+  @action
+  didInsertNode() {
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
     const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
@@ -77,10 +75,12 @@ export default class MyClass extends Component {
     this.infinityLoad();
   },
 
-  willDestroyElement() {
+  willDestroy() {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
+
+    super.willDestroy(...arguments);
   }
 }
 ```
@@ -306,24 +306,19 @@ If you need more than our built in modifier...
 Note - This is in lieu of a `did-enter-viewport` modifier, which we plan on adding in the future.  Compared to the solution below, `did-enter-viewport` won't need a container (`this`) passed to it.  But for now, to start using modifiers, this is the easy path.
 
 ```js
-import Component from '@ember/component';
-import { set } from '@ember/object';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
+import { action, set } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
-@tagName('')
-export default class Infinity extends Component(InViewportMixin) {
-  didInsertNode(element, [instance]) {
-    instance.watchElement(element);
-  },
-
-  didInsertElement() {
+export default class Infinity extends Component.extend(InViewportMixin) {
+  @action
+  didInsertNode(element) {
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
       bottom: 300
     });
 
-    super.didInsertElement(...arguments);
+    this.watchElement(element);
   },
 
   didEnterViewport() {
@@ -334,7 +329,7 @@ export default class Infinity extends Component(InViewportMixin) {
 ```
 
 ```hbs
-<div {{did-insert this.didInsertNode this}}>
+<div {{did-insert this.didInsertNode}}>
   {{yield}}
 </div>
 ```
@@ -344,16 +339,15 @@ export default class Infinity extends Component(InViewportMixin) {
 Special note: The service based approach allows you to absolve yourself from using a mixin in native classes!
 
 ```js
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
-import { inject as service } from '@ember/service'; // with polyfill
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 
-@tagName('')
 export default class MyClass extends Component {
   @service inViewport
 
-  didInsertElement() {
-    super.didInsertElement(...arguments);
+  @action
+  didInsertNode() {
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
     const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
@@ -365,12 +359,12 @@ export default class MyClass extends Component {
     this.infinityLoad();
   },
 
-  willDestroyElement() {
+  willDestroy() {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
 
-    super.willDestroyElement(...arguments);
+    super.willDestroy(...arguments);
   }
 }
 ```
@@ -378,35 +372,36 @@ export default class MyClass extends Component {
 And with Classes + Modifiers!
 
 ```js
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
-import { inject as service } from '@ember/service'; // with polyfill
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 
-@tagName('')
 export default class MyClass extends Component {
   @service inViewport
 
-  didInsertNode(element, [instance]) {
+  @action
+  didInsertNode(element) {
     const viewportTolerance = { bottom: 200 };
-    const { onEnter, onExit } = instance.inViewport.watchElement(element, { viewportTolerance });
-    onEnter(instance.didEnterViewport.bind(instance));
+    const { onEnter, onExit } = this.inViewport.watchElement(element, { viewportTolerance });
+    onEnter(this.didEnterViewport.bind(instance));
   }
 
   didEnterViewport() {
     // do some other stuff
-    this.infinityLoad();
   },
 
-  willDestroyElement() {
+  willDestroy() {
     // need to manage cache yourself if you don't use the mixin
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
+
+    super.willDestroy(...arguments);
   }
 }
 ```
 
 ```hbs
-<div {{did-insert this.didInsertNode this}}>
+<div {{did-insert this.didInsertNode}}>
   {{yield}}
 </div>
 ```
