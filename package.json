@@ -17,7 +17,7 @@
   },
   "repository": "https://github.com/dockyard/ember-in-viewport",
   "engines": {
-    "node": "8.* || >= 10.*"
+    "node": "10.* || >= 12.*"
   },
   "author": "Scott Newcomer",
   "license": "MIT",
