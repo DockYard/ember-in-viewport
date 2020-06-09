@@ -1,7 +1,8 @@
 import Service from '@ember/service';
-import { get, set, setProperties } from '@ember/object';
+import { set, setProperties } from '@ember/object';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
+import { warn } from '@ember/debug';
 import { scheduleOnce } from '@ember/runloop';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
@@ -56,8 +57,8 @@ export default class InViewport extends Service {
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
-    if (get(this, 'viewportUseIntersectionObserver')) {
-      if (!get(this, 'observerAdmin')) {
+    if (this.viewportUseIntersectionObserver) {
+      if (!this.observerAdmin) {
         this.startIntersectionObserver();
       }
       const observerOptions = this.buildObserverOptions(configOptions);
@@ -76,7 +77,7 @@ export default class InViewport extends Service {
         );
       });
     } else {
-      if (!get(this, 'rafAdmin')) {
+      if (!this.rafAdmin) {
         this.startRAF();
       }
       scheduleOnce('afterRender', this, () => {
@@ -113,7 +114,7 @@ export default class InViewport extends Service {
    * @void
    */
   addEnterCallback(element, enterCallback) {
-    if (get(this, 'viewportUseIntersectionObserver')) {
+    if (this.viewportUseIntersectionObserver) {
       this.observerAdmin.addEnterCallback(element, enterCallback);
     } else {
       this.rafAdmin.addEnterCallback(element, enterCallback);
@@ -125,7 +126,7 @@ export default class InViewport extends Service {
    * @void
    */
   addExitCallback(element, exitCallback) {
-    if (get(this, 'viewportUseIntersectionObserver')) {
+    if (this.viewportUseIntersectionObserver) {
       this.observerAdmin.addExitCallback(element, exitCallback);
     } else {
       this.rafAdmin.addExitCallback(element, exitCallback);
@@ -133,7 +134,7 @@ export default class InViewport extends Service {
   }
 
   getCallbacks(target) {
-    return get(this, 'rafAdmin').getCallbacks(target);
+    return this.rafAdmin.getCallbacks(target);
   }
 
   /** IntersectionObserver **/
@@ -146,7 +147,11 @@ export default class InViewport extends Service {
    * @void
    */
   addToRegistry(element, observerOptions) {
-    get(this, 'registry').set(element, { observerOptions });
+    if (this.registry) {
+      this.registry.set(element, { observerOptions });
+    } else {
+      warn('in-viewport Service has already been destroyed');
+    }
   }
 
   /**
@@ -160,7 +165,7 @@ export default class InViewport extends Service {
   setupIntersectionObserver(element, observerOptions, enterCallback, exitCallback) {
     this.addToRegistry(element, observerOptions);
 
-    get(this, 'observerAdmin').add(
+    this.observerAdmin.add(
       element,
       observerOptions,
       enterCallback,
@@ -189,9 +194,9 @@ export default class InViewport extends Service {
       return;
     }
 
-    const registeredTarget = get(this, 'registry').get(target);
+    const registeredTarget = this.registry.get(target);
     if (typeof registeredTarget === 'object') {
-      get(this, 'observerAdmin').unobserve(
+      this.observerAdmin.unobserve(
         target,
         registeredTarget.observerOptions,
         registeredTarget.scrollableArea
@@ -202,12 +207,12 @@ export default class InViewport extends Service {
   /** RAF **/
 
   addRAF(elementId, fn) {
-    get(this, 'rafAdmin').add(elementId, fn);
+    this.rafAdmin.add(elementId, fn);
   }
 
   removeRAF(elementId) {
-    if (get(this, 'rafAdmin')) {
-      get(this, 'rafAdmin').remove(elementId);
+    if (this.rafAdmin) {
+      this.rafAdmin.remove(elementId);
     }
   }
 
@@ -217,21 +222,22 @@ export default class InViewport extends Service {
 
   /** other **/
   stopWatching(target) {
-    if (get(this, 'observerAdmin')) {
+    if (this.observerAdmin) {
       this.unobserveIntersectionObserver(target);
     }
-    if (get(this, 'rafAdmin')) {
+    if (this.rafAdmin) {
       this.removeRAF(target);
     }
   }
 
   destroy() {
+    super.destroy(...arguments);
     set(this, 'registry', null);
-    if (get(this, 'observerAdmin')) {
-      get(this, 'observerAdmin').destroy();
+    if (this.observerAdmin) {
+      this.observerAdmin.destroy();
     }
-    if (get(this, 'rafAdmin')) {
-      get(this, 'rafAdmin').reset();
+    if (this.rafAdmin) {
+      this.rafAdmin.reset();
     }
   }
 
