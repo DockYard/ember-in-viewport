@@ -75,13 +75,6 @@ export default class DummyArtwork extends Component {
     class;
 
     /**
-     * @property artworkProfile
-     * @type {String|Object}
-     * @public
-     */
-    artworkProfile;
-
-    /**
      * @property isDownloaded
      * @type {Boolean}
      * @default false

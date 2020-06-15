@@ -58,10 +58,6 @@ export default class RAFAdmin {
       Object.assign({}, this.elementRegistry.get(element), { exitCallback })
     );
   }
-
-  getCallbacks(element) {
-    return this.elementRegistry.get(element);
-  }
 }
 
 /**

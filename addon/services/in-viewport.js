@@ -85,11 +85,9 @@ export default class InViewport extends Service {
           return;
         }
 
-        // grab the user added callbacks when we enter/leave the element
-        const {
-          enterCallback = noop,
-          exitCallback = noop
-        } = this.getCallbacks(element) || {};
+        enterCallback = enterCallback || noop;
+        exitCallback = exitCallback || noop;
+
         // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
         // So just rewrote it with pure functions for now
         startRAF(
@@ -131,10 +129,6 @@ export default class InViewport extends Service {
     } else {
       this.rafAdmin.addExitCallback(element, exitCallback);
     }
-  }
-
-  getCallbacks(target) {
-    return this.rafAdmin.getCallbacks(target);
   }
 
   /** IntersectionObserver **/
