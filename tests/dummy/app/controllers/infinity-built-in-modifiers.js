@@ -4,26 +4,21 @@ import { action, set, get } from '@ember/object';
 
 const images = ['jarjan', 'aio___', 'kushsolitary', 'kolage', 'idiot', 'gt'];
 
-const arr = Array.apply(null, Array(10));
-const models = [
-  ...arr.map(() => {
-    return {
-      bgColor: 'E8D26F',
-      url: `https://s3.amazonaws.com/uifaces/faces/twitter/${
-        images[(Math.random() * images.length) | 0]
-      }/128.jpg`
-    };
-  })
-];
-
 export default class BuiltIn extends Controller {
   queryParams = ['direction'];
   direction = 'both';
 
-  init() {
-    super.init(...arguments);
+  constructor() {
+    super(...arguments);
 
-    this.models = models;
+    this.models = [...Array.apply(null, Array(10)).map(() => {
+      return {
+        bgColor: 'E8D26F',
+        url: `https://s3.amazonaws.com/uifaces/faces/twitter/${
+          images[(Math.random() * images.length) | 0]
+        }/128.jpg`
+      };
+    })];
     set(this, 'viewportTolerance', {
       bottom: 300
     });
