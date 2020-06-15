@@ -131,10 +131,6 @@ export default class InViewport extends Service {
     }
   }
 
-  getCallbacks(target) {
-    return this.rafAdmin.getCallbacks(target);
-  }
-
   /** IntersectionObserver **/
 
   /**
