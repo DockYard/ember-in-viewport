@@ -28,8 +28,28 @@ module('Acceptance | infinity-scrollable', function(hooks) {
   test('works with in-viewport modifier', async function(assert) {
     await visit('/infinity-built-in-modifiers');
 
-    // TODO: bring back (failing on 3.4)
-    // assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
+    assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
+
+    document.querySelector('.infinity-item-9').scrollIntoView(false);
+
+    await waitUntil(() => {
+      return findAll('.infinity-item').length === 20;
+    }, { timeoutMessage: 'did not find all items in time' });
+
+    await settled();
+
+    assert.equal(findAll('.infinity-item').length, 20, 'after infinity has more items');
+  });
+
+  test('works with in-viewport modifier (rAF)', async function(assert) {
+    let inViewportService = this.owner.lookup('service:in-viewport');
+
+    inViewportService.set('viewportUseIntersectionObserver', false);
+
+    await visit('/infinity-built-in-modifiers');
+
+    assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
+
     document.querySelector('.infinity-item-9').scrollIntoView(false);
 
     await waitUntil(() => {
