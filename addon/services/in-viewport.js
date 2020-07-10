@@ -224,8 +224,7 @@ export default class InViewport extends Service {
     }
   }
 
-  destroy() {
-    super.destroy(...arguments);
+  willDestroy() {
     set(this, 'registry', null);
     if (this.observerAdmin) {
       this.observerAdmin.destroy();
