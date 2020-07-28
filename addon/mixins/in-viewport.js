@@ -1,7 +1,7 @@
 import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';
-import { assert, debug } from '@ember/debug';
+import { assert, debug, deprecate } from '@ember/debug';
 import { inject } from '@ember/service';
 import { set, get, setProperties } from '@ember/object';
 import { bind, debounce, scheduleOnce } from '@ember/runloop';
@@ -62,7 +62,15 @@ export default Mixin.create({
   didInsertElement() {
     this._super(...arguments);
 
-    debug('[ember-in-viewport Mixin] This mixin will be removed in the next major release.  We suggest you migrate to our service based approach as outline in the README.');
+    deprecate(
+      'This mixin is deprecated. We suggest you migrate to the inViewport service or use the {{in-viewport}} modifier',
+      false,
+      {
+        id: 'ember-in-viewport.mixin',
+        until: '4.0.0',
+        url: 'https://github.com/DockYard/ember-in-viewport#readme'
+      }
+    );
 
     if (!canUseDOM) {
       return;
