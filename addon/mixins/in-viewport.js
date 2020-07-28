@@ -63,7 +63,7 @@ export default Mixin.create({
     this._super(...arguments);
 
     deprecate(
-      'The InViewport mixin is deprecated. Inject the \'inViewport\` service or use the {{in-viewport}} modifier',
+      'This mixin is deprecated. We suggest you migrate to the inViewport service or use the {{in-viewport}} modifier',
       false,
       {
         id: 'ember-in-viewport.mixin',
