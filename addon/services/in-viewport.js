@@ -63,42 +63,12 @@ export default class InViewport extends Service {
       }
       const observerOptions = this.buildObserverOptions(configOptions);
 
-      scheduleOnce('afterRender', this, () => {
-        if (this.isDestroyed || this.isDestroying) {
-          return;
-        }
-
-        // create IntersectionObserver instance or add to existing
-        this.setupIntersectionObserver(
-          element,
-          observerOptions,
-          enterCallback,
-          exitCallback
-        );
-      });
+      scheduleOnce('afterRender', this, this.setupIntersectionObserver, element, observerOptions, enterCallback, exitCallback);
     } else {
       if (!this.rafAdmin) {
         this.startRAF();
       }
-      scheduleOnce('afterRender', this, () => {
-        if (this.isDestroyed || this.isDestroying) {
-          return;
-        }
-
-        enterCallback = enterCallback || noop;
-        exitCallback = exitCallback || noop;
-
-        // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
-        // So just rewrote it with pure functions for now
-        startRAF(
-          element,
-          configOptions,
-          enterCallback,
-          exitCallback,
-          this.addRAF.bind(this, element.id),
-          this.removeRAF.bind(this, element.id)
-        );
-      });
+      scheduleOnce('afterRender', this, this._startRaf, element, configOptions, enterCallback, exitCallback);
     }
 
     return {
@@ -157,6 +127,10 @@ export default class InViewport extends Service {
    * @void
    */
   setupIntersectionObserver(element, observerOptions, enterCallback, exitCallback) {
+    if (this.isDestroyed || this.isDestroying) {
+      return;
+    }
+
     this.addToRegistry(element, observerOptions);
 
     this.observerAdmin.add(
@@ -240,5 +214,25 @@ export default class InViewport extends Service {
     if (owner) {
       return assign(defaultOptions, owner.lookup('config:in-viewport'));
     }
+  }
+
+  _startRaf(element, configOptions, enterCallback, exitCallback) {
+      if (this.isDestroyed || this.isDestroying) {
+        return;
+      }
+
+      enterCallback = enterCallback || noop;
+      exitCallback = exitCallback || noop;
+
+      // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
+      // So just rewrote it with pure functions for now
+      startRAF(
+        element,
+        configOptions,
+        enterCallback,
+        exitCallback,
+        this.addRAF.bind(this, element.id),
+        this.removeRAF.bind(this, element.id)
+      );
   }
 }
