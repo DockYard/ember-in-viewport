@@ -28,7 +28,6 @@ module('Acceptance | infinity-scrollable', function(hooks) {
   test('works with in-viewport modifier', async function(assert) {
     await visit('/infinity-built-in-modifiers');
 
-    assert.equal(find('h1').textContent.trim(), '{{in-viewport}} modifier', 'has title');
     assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
 
     document.querySelector('.infinity-item-9').scrollIntoView(false);
@@ -40,6 +39,7 @@ module('Acceptance | infinity-scrollable', function(hooks) {
     await settled();
 
     assert.equal(findAll('.infinity-item').length, 20, 'after infinity has more items');
+    assert.equal(find('h1').textContent.trim(), '{{in-viewport}} modifier', 'has title');
   });
 
   test('works with in-viewport modifier (rAF)', async function(assert) {
