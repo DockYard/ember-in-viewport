@@ -7,7 +7,7 @@ export default Component.extend(InViewportMixin, {
 
   // if you do have a tagName ^^, then you can use `didInsertElement` or no-op it
   // didInsertElement() {},
-  didInsertNode(element, [instance]) {
+  setupInViewport(element, [instance]) {
     instance.watchElement(element);
   },
 

@@ -421,7 +421,7 @@ export default class DummyArtwork extends Component {
         this.guid = guidFor(this);
     }
 
-    didInsertNode(element, [instance]) {
+    setupInViewport(element, [instance]) {
         if (instance.lazyLoad) {
             // find distance of top left corner of artwork to bottom of screen. Shave off 50px so user has to scroll slightly to trigger load
             window.requestAnimationFrame(() => {

@@ -4,6 +4,7 @@
   {{link-to "enter" (query-params direction="enter")}}
   {{link-to "exit" (query-params direction="exit")}}
 </nav>
+<h1 {{in-viewport onEnter=(action "setTitle") viewportTolerance=this.other}}></h1>
 {{#if (eq this.direction "both")}}
   <ul class="infinity-container">
     {{#each this.models as |artwork i|}}

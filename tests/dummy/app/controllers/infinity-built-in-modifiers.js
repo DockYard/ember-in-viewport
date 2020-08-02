@@ -25,6 +25,11 @@ export default class BuiltIn extends Controller {
   }
 
   @action
+  setTitle(element) {
+    element.textContent = '{{in-viewport}} modifier';
+  }
+
+  @action
   didEnterViewport(/*artwork, i, element*/) {
     const arr = Array.apply(null, Array(10));
     const newModels = [...arr.map(() => {

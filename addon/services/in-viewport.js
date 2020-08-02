@@ -3,7 +3,7 @@ import { set, setProperties } from '@ember/object';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
 import { warn } from '@ember/debug';
-import { scheduleOnce } from '@ember/runloop';
+import { schedule } from '@ember/runloop';
 import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
 import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
@@ -63,12 +63,12 @@ export default class InViewport extends Service {
       }
       const observerOptions = this.buildObserverOptions(configOptions);
 
-      scheduleOnce('afterRender', this, this.setupIntersectionObserver, element, observerOptions, enterCallback, exitCallback);
+      schedule('afterRender', this, this.setupIntersectionObserver, element, observerOptions, enterCallback, exitCallback);
     } else {
       if (!this.rafAdmin) {
         this.startRAF();
       }
-      scheduleOnce('afterRender', this, this._startRaf, element, configOptions, enterCallback, exitCallback);
+      schedule('afterRender', this, this._startRaf, element, configOptions, enterCallback, exitCallback);
     }
 
     return {
@@ -105,7 +105,7 @@ export default class InViewport extends Service {
 
   /**
    * In order to track elements and the state that comes with them, we need to keep track
-   * of them in order to get at them at a later time
+   * of elements in order to get at them at a later time, specifically to unobserve
    *
    * @method addToRegistry
    * @void
