@@ -62,7 +62,7 @@ export default class MyClass extends Component {
   @service inViewport
 
   @action
-  didInsertNode() {
+  setupInViewport() {
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
     const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
@@ -312,7 +312,7 @@ import InViewportMixin from 'ember-in-viewport';
 
 export default class Infinity extends Component.extend(InViewportMixin) {
   @action
-  didInsertNode(element) {
+  setupInViewport(element) {
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
       bottom: 300
@@ -329,7 +329,7 @@ export default class Infinity extends Component.extend(InViewportMixin) {
 ```
 
 ```hbs
-<div {{did-insert this.didInsertNode}}>
+<div {{did-insert this.setupInViewport}}>
   {{yield}}
 </div>
 ```
@@ -347,7 +347,7 @@ export default class MyClass extends Component {
   @service inViewport
 
   @action
-  didInsertNode() {
+  setupInViewport() {
     const loader = document.getElementById('loader');
     const viewportTolerance = { bottom: 200 };
     const { onEnter, _onExit } = this.inViewport.watchElement(loader, { viewportTolerance });
@@ -380,7 +380,7 @@ export default class MyClass extends Component {
   @service inViewport
 
   @action
-  didInsertNode(element) {
+  setupInViewport(element) {
     const viewportTolerance = { bottom: 200 };
     const { onEnter, onExit } = this.inViewport.watchElement(element, { viewportTolerance });
     onEnter(this.didEnterViewport.bind(instance));
@@ -401,7 +401,7 @@ export default class MyClass extends Component {
 ```
 
 ```hbs
-<div {{did-insert this.didInsertNode}}>
+<div {{did-insert this.setupInViewport}}>
   {{yield}}
 </div>
 ```
