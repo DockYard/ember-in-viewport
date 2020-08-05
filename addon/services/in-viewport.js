@@ -202,9 +202,11 @@ export default class InViewport extends Service {
     set(this, 'registry', null);
     if (this.observerAdmin) {
       this.observerAdmin.destroy();
+      set(this, 'observerAdmin', null);
     }
     if (this.rafAdmin) {
       this.rafAdmin.reset();
+      set(this, 'rafAdmin', null);
     }
   }
 
