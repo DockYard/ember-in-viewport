@@ -13,7 +13,8 @@
     "start": "ember serve",
     "test": "ember test",
     "test:all": "ember try:each",
-    "contributors": "npx contributor-faces -e \"(*-bot|*\\[bot\\]|*-tomster|homu|bors)\""
+    "contributors": "npx contributor-faces -e \"(*-bot|*\\[bot\\]|*-tomster|homu|bors)\"",
+    "release": "release-it"
   },
   "repository": "https://github.com/dockyard/ember-in-viewport",
   "engines": {
@@ -59,7 +60,10 @@
     "ember-try": "^1.4.0",
     "eslint-plugin-ember": "^6.0.1",
     "eslint-plugin-node": "^8.0.0",
-    "loader.js": "^4.7.0"
+    "lerna-changelog": "^1.0.1",
+    "loader.js": "^4.7.0",
+    "release-it": "^13.6.6",
+    "release-it-lerna-changelog": "^2.3.0"
   },
   "keywords": [
     "ember-addon",
