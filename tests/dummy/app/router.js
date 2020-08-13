@@ -8,6 +8,7 @@ const Router = EmberRouter.extend({
 
 Router.map(function() {
   this.route('infinity');
+  this.route('infinity-custom-element');
   this.route('infinity-modifier');
   this.route('infinity-built-in-modifiers');
   this.route('infinity-scrollable');

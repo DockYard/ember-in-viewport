@@ -147,5 +147,23 @@ module('Acceptance | infinity-scrollable', function(hooks) {
 
     assert.ok(find('.infinity-scrollable-scrollEvent.inactive'), 'component is inactive after scrolling');
   });
+
+  test('works with custom elements', async function(assert) {
+    await visit('/infinity-custom-element');
+
+    await settled();
+
+    assert.equal(findAll('.infinity-item').length, 10, 'has items to start');
+
+    document.querySelector('custom-sentinel').scrollIntoView(false);
+
+    await waitUntil(() => {
+      return findAll('.infinity-item').length === 20;
+    }, { timeoutMessage: 'did not find all items in time' });
+
+    await settled();
+
+    // assert.equal(findAll('.infinity-item').length, 20, 'after infinity has more items');
+  });
 });
 

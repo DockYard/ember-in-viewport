@@ -2,7 +2,7 @@ import Component from '@ember/component';
 import { tagName } from '@ember-decorators/component';
 import { htmlSafe } from '@ember/string';
 import { assign } from '@ember/polyfills';
-import { set, computed } from '@ember/object';
+import { action, set, computed } from '@ember/object';
 import { inject as service } from '@ember/service';
 import config from '../-config';
 import { guidFor } from '@ember/object/internals'
@@ -53,10 +53,10 @@ export function buildSrcset(url, options, pixelDensity = 1) {
  */
 @tagName('')
 export default class DummyArtwork extends Component {
-    @service inViewport
-    @service media
+    @service inViewport;
+    @service media;
 
-    rootURL = ENV.rootURL
+    rootURL = ENV.rootURL;
 
     /**
      * Provide an `alt` attribute for the `<img>` tag. Default is an empty string.
@@ -421,15 +421,16 @@ export default class DummyArtwork extends Component {
         this.guid = guidFor(this);
     }
 
-    setupInViewport(element, [instance]) {
-        if (instance.lazyLoad) {
+    @action
+    setupInViewport(element) {
+        if (this.lazyLoad) {
             // find distance of top left corner of artwork to bottom of screen. Shave off 50px so user has to scroll slightly to trigger load
             window.requestAnimationFrame(() => {
-                const { onEnter } = instance.inViewport.watchElement(element, {
+                const { onEnter } = this.inViewport.watchElement(element, {
                     viewportTolerance: { top: 200, right: 200, bottom: 200, left: 200 }
                 });
 
-                onEnter(instance.didEnterViewport.bind(instance));
+                onEnter(this.didEnterViewport.bind(this));
             });
         }
     }
