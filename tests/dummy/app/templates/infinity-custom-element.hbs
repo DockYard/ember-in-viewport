@@ -1,0 +1,9 @@
+<ul>
+  {{#each models as |artwork index|}}
+    <li class="infinity-item" data-index={{index}}>
+      <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
+    </li>
+
+  {{/each}}
+</ul>
+<custom-sentinel {{did-insert this.setupInViewport}}></custom-sentinel>
