@@ -166,8 +166,7 @@ export default class InViewport extends Service {
     if (typeof registeredTarget === 'object') {
       this.observerAdmin.unobserve(
         target,
-        registeredTarget.observerOptions,
-        registeredTarget.scrollableArea
+        registeredTarget.observerOptions
       );
     }
   }
