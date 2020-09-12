@@ -10,11 +10,11 @@ export const artworkProfiles = {
 }
 
 export const artworkFallbacks = {
-    'missing-artwork': {
-        isVector: true,
-        url: `${ENV.rootURL}assets/missing-artwork.svg`,
-        aspectRatio: 1
-    }
+  'missing-artwork': {
+    isVector: true,
+    url: `${ENV.rootURL}assets/missing-artwork.svg`,
+    aspectRatio: 1
+  }
 };
 
 export const viewports = [

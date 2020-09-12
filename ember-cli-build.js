@@ -14,5 +14,15 @@ module.exports = function(defaults) {
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
 
+  if ('@embroider/webpack' in app.dependencies()) {
+    const { Webpack } = require('@embroider/webpack'); // eslint-disable-line
+    return require('@embroider/compat') // eslint-disable-line
+      .compatBuild(app, Webpack, {
+        staticAddonTestSupportTrees: true,
+        staticAddonTrees: true,
+        staticHelpers: true,
+        staticComponents: true,
+      });
+  }
   return app.toTree();
 };
