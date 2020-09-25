@@ -1999,6 +1999,15 @@
     "@babel/helper-plugin-utils" "^7.0.0"
     "@babel/plugin-syntax-typescript" "^7.2.0"
 
+"@babel/plugin-transform-typescript@~7.5.0":
+  version "7.5.5"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.5.5.tgz#6d862766f09b2da1cb1f7d505fe2aedab6b7d4b8"
+  integrity sha512-pehKf4m640myZu5B2ZviLaiBlxMCjSZ1qTEO459AXKX5GnPueyulJeCqZFs1nz/Ya2dDzXQ1NxZ/kKNWyD4h6w==
+  dependencies:
+    "@babel/helper-create-class-features-plugin" "^7.5.5"
+    "@babel/helper-plugin-utils" "^7.0.0"
+    "@babel/plugin-syntax-typescript" "^7.2.0"
+
 "@babel/plugin-transform-typescript@~7.8.0":
   version "7.8.7"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.8.7.tgz#48bccff331108a7b3a28c3a4adc89e036dc3efda"
@@ -2561,12 +2570,37 @@
     resolve "^1.8.1"
     semver "^5.6.0"
 
+"@glimmer/component@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@glimmer/component/-/component-1.0.2.tgz#679307972d29a849225c13062ab11c779956ff60"
+  integrity sha512-st6YroDjkvUeYWE36NglNG9hXmJOuOI8t44UEp1tufGc4B1L/CTlt1ziQGkaxkhY7/o2r0ZCcWHvf5bpq838YQ==
+  dependencies:
+    "@glimmer/di" "^0.1.9"
+    "@glimmer/env" "^0.1.7"
+    "@glimmer/util" "^0.44.0"
+    broccoli-file-creator "^2.1.1"
+    broccoli-merge-trees "^3.0.2"
+    ember-cli-babel "^7.7.3"
+    ember-cli-get-component-path-option "^1.0.0"
+    ember-cli-is-package-missing "^1.0.0"
+    ember-cli-normalize-entity-name "^1.0.0"
+    ember-cli-path-utils "^1.0.0"
+    ember-cli-string-utils "^1.1.0"
+    ember-cli-typescript "3.0.0"
+    ember-cli-version-checker "^3.1.3"
+    ember-compatibility-helpers "^1.1.2"
+
+"@glimmer/di@^0.1.9":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@glimmer/di/-/di-0.1.11.tgz#a6878c07a13a2c2c76fcde598a5c97637bfc4280"
+  integrity sha1-poeMB6E6LCx2/N5ZilyXY3v8QoA=
+
 "@glimmer/di@^0.2.0":
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@glimmer/di/-/di-0.2.1.tgz#5286b6b32040232b751138f6d006130c728d4b3d"
   integrity sha512-0D53YVuEgGdHfTl9LGWDZqVzGhn4cT0CXqyAuOYkKFLvqboJXz6SnkRhQNPhhA2hLVrPnvUz3+choQmPhHLGGQ==
 
-"@glimmer/env@0.1.7":
+"@glimmer/env@0.1.7", "@glimmer/env@^0.1.7":
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/@glimmer/env/-/env-0.1.7.tgz#fd2d2b55a9029c6b37a6c935e8c8871ae70dfa07"
   integrity sha1-/S0rVakCnGs3psk16MiHGucN+gc=
@@ -2594,6 +2628,11 @@
     "@glimmer/util" "^0.47.9"
     handlebars "^4.5.1"
     simple-html-tokenizer "^0.5.9"
+
+"@glimmer/util@^0.44.0":
+  version "0.44.0"
+  resolved "https://registry.yarnpkg.com/@glimmer/util/-/util-0.44.0.tgz#45df98d73812440206ae7bda87cfe04aaae21ed9"
+  integrity sha512-duAsm30uVK9jSysElCbLyU6QQYO2X9iLDLBIBUcCqck9qN1o3tK2qWiHbGK5d6g8E2AJ4H88UrfElkyaJlGrwg==
 
 "@glimmer/util@^0.47.9":
   version "0.47.9"
@@ -4581,6 +4620,14 @@ broccoli-file-creator@^1.1.1:
     broccoli-plugin "^1.1.0"
     mkdirp "^0.5.1"
 
+broccoli-file-creator@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/broccoli-file-creator/-/broccoli-file-creator-2.1.1.tgz#7351dd2496c762cfce7736ce9b49e3fce0c7b7db"
+  integrity sha512-YpjOExWr92C5vhnK0kmD81kM7U09kdIRZk9w4ZDCDHuHXW+VE/x6AGEOQQW3loBQQ6Jk+k+TSm8dESy4uZsnjw==
+  dependencies:
+    broccoli-plugin "^1.1.0"
+    mkdirp "^0.5.1"
+
 broccoli-filter@^1.2.2, broccoli-filter@^1.2.3:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/broccoli-filter/-/broccoli-filter-1.3.0.tgz#71e3a8e32a17f309e12261919c5b1006d6766de6"
@@ -6518,6 +6565,23 @@ ember-cli-test-loader@^2.2.0:
   dependencies:
     ember-cli-babel "^6.8.1"
 
+ember-cli-typescript@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ember-cli-typescript/-/ember-cli-typescript-3.0.0.tgz#3b838d1ce9e4d22a98e68da22ceac6dc0cfd9bfc"
+  integrity sha512-lo5YArbJzJi5ssvaGqTt6+FnhTALnSvYVuxM7lfyL1UCMudyNJ94ovH5C7n5il7ATd6WsNiAPRUO/v+s5Jq/aA==
+  dependencies:
+    "@babel/plugin-transform-typescript" "~7.5.0"
+    ansi-to-html "^0.6.6"
+    debug "^4.0.0"
+    ember-cli-babel-plugin-helpers "^1.0.0"
+    execa "^2.0.0"
+    fs-extra "^8.0.0"
+    resolve "^1.5.0"
+    rsvp "^4.8.1"
+    semver "^6.0.0"
+    stagehand "^1.0.0"
+    walk-sync "^2.0.0"
+
 ember-cli-typescript@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/ember-cli-typescript/-/ember-cli-typescript-2.0.2.tgz#464984131fbdc05655eb61d1c3cdd911d3137f0d"
@@ -6693,19 +6757,19 @@ ember-cli@~3.20.0:
     watch-detector "^1.0.0"
     yam "^1.0.0"
 
-ember-compatibility-helpers@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/ember-compatibility-helpers/-/ember-compatibility-helpers-1.2.0.tgz#feee16c5e9ef1b1f1e53903b241740ad4b01097e"
-  integrity sha512-pUW4MzJdcaQtwGsErYmitFRs0rlCYBAnunVzlFFUBr4xhjlCjgHJo0b53gFnhTgenNM3d3/NqLarzRhDTjXRTg==
+ember-compatibility-helpers@^1.1.2, ember-compatibility-helpers@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/ember-compatibility-helpers/-/ember-compatibility-helpers-1.2.1.tgz#87c92c4303f990ff455c28ca39fb3ee11441aa16"
+  integrity sha512-6wzYvnhg1ihQUT5yGqnLtleq3Nv5KNv79WhrEuNU9SwR4uIxCO+KpyC7r3d5VI0EM7/Nmv9Nd0yTkzmTMdVG1A==
   dependencies:
     babel-plugin-debug-macros "^0.2.0"
     ember-cli-version-checker "^2.1.1"
     semver "^5.4.1"
 
-ember-compatibility-helpers@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/ember-compatibility-helpers/-/ember-compatibility-helpers-1.2.1.tgz#87c92c4303f990ff455c28ca39fb3ee11441aa16"
-  integrity sha512-6wzYvnhg1ihQUT5yGqnLtleq3Nv5KNv79WhrEuNU9SwR4uIxCO+KpyC7r3d5VI0EM7/Nmv9Nd0yTkzmTMdVG1A==
+ember-compatibility-helpers@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/ember-compatibility-helpers/-/ember-compatibility-helpers-1.2.0.tgz#feee16c5e9ef1b1f1e53903b241740ad4b01097e"
+  integrity sha512-pUW4MzJdcaQtwGsErYmitFRs0rlCYBAnunVzlFFUBr4xhjlCjgHJo0b53gFnhTgenNM3d3/NqLarzRhDTjXRTg==
   dependencies:
     babel-plugin-debug-macros "^0.2.0"
     ember-cli-version-checker "^2.1.1"
@@ -7350,6 +7414,21 @@ execa@^1.0.0:
     p-finally "^1.0.0"
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
+
+execa@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/execa/-/execa-2.1.0.tgz#e5d3ecd837d2a60ec50f3da78fd39767747bbe99"
+  integrity sha512-Y/URAVapfbYy2Xp/gb6A0E7iR8xeqOCXsuuaoMn7A5PzrXUK84E1gyiEfq0wQd/GHA6GsoHWwhNq8anb0mleIw==
+  dependencies:
+    cross-spawn "^7.0.0"
+    get-stream "^5.0.0"
+    is-stream "^2.0.0"
+    merge-stream "^2.0.0"
+    npm-run-path "^3.0.0"
+    onetime "^5.1.0"
+    p-finally "^2.0.0"
+    signal-exit "^3.0.2"
+    strip-final-newline "^2.0.0"
 
 execa@^3.0.0:
   version "3.4.0"
@@ -10636,6 +10715,13 @@ npm-run-path@^2.0.0:
   integrity sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8=
   dependencies:
     path-key "^2.0.0"
+
+npm-run-path@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-3.1.0.tgz#7f91be317f6a466efed3c9f2980ad8a4ee8b0fa5"
+  integrity sha512-Dbl4A/VfiVGLgQv29URL9xshU8XDY1GeLy+fsaZ1AA8JDSfjvr5P5+pzRbWqRSBxk6/DW7MIh8lTM/PaGnP2kg==
+  dependencies:
+    path-key "^3.0.0"
 
 npm-run-path@^4.0.0:
   version "4.0.1"

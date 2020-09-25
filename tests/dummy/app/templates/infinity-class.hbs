@@ -10,7 +10,7 @@
       {{/each}}
     </ul>
 
-    {{my-class infinityLoad=(action "infinityLoad")}}
+    <MyClass @infinityLoad={{this.infinityLoad}} />
   </div>
 
   <div class="right">
@@ -24,6 +24,6 @@
       {{/each}}
     </ul>
 
-    {{my-class-raf infinityLoad=(action "infinityLoad")}}
+    <MyClassRaf @infinityLoad={{this.infinityLoad}} />
   </div>
 </div>
