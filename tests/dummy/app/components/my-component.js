@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { setProperties, getProperties, get } from '@ember/object';
+import { setProperties, getProperties } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
 export default Component.extend(InViewportMixin, {
@@ -55,8 +55,8 @@ export default Component.extend(InViewportMixin, {
   },
 
   didEnterViewport() {
-    if (get(this, 'infinityLoad')) {
-      get(this, 'infinityLoad')();
+    if (this.infinityLoad) {
+      this.infinityLoad();
     }
   }
 });

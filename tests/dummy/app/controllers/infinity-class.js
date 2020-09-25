@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { set, get } from '@ember/object';
+import { action, set, get } from '@ember/object';
 
 let rect = '<rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"/>';
 let circle = '<circle cx="25" cy="75" r="20" stroke="red" fill="transparent" stroke-width="5"/>';
@@ -9,23 +9,22 @@ const images = [rect, circle, line];
 const arr = Array.apply(null, Array(10));
 const models = [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
 
-export default Controller.extend({
+export default class InfinityClass extends Controller {
   init() {
-    this._super(...arguments);
+    super.init(...arguments);
     this.viewportToleranceOverride = {
       bottom: 200
     }
-  },
-
-  models,
-
-  actions: {
-    infinityLoad() {
-      const arr = Array.apply(null, Array(10));
-      const newModels = [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
-      const models = get(this, 'models');
-      models.push(...newModels);
-      set(this, 'models', Array.prototype.slice.call(models));
-    }
   }
-});
+
+  models = models;
+
+  @action
+  infinityLoad() {
+    const arr = Array.apply(null, Array(10));
+    const newModels = [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
+    const models = get(this, 'models');
+    models.push(...newModels);
+    set(this, 'models', Array.prototype.slice.call(models));
+  }
+}
