@@ -1,4 +1,5 @@
 import EmberObject from '@ember/object';
+// eslint-disable-next-line ember/no-mixins
 import InViewportMixin from 'ember-in-viewport/mixins/in-viewport';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
@@ -12,6 +13,7 @@ module('Unit | Mixin | in viewport', function(hooks) {
   });
 
   test('mixin works', function(assert) {
+    // eslint-disable-next-line ember/no-new-mixins
     let InViewportObject = EmberObject.extend(InViewportMixin);
     let subject = InViewportObject.create();
     assert.ok(subject);

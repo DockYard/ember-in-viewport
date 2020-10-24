@@ -73,7 +73,7 @@ export default class MyClass extends Component {
   didEnterViewport() {
     // do some other stuff
     this.infinityLoad();
-  },
+  }
 
   willDestroy() {
     // need to manage cache yourself if you don't use the mixin
@@ -272,7 +272,7 @@ module.exports = function(environment) {
   };
 };
 
-Note if you want to disable right and left in-viewport triggers, set these values to `Infinity`.
+// Note if you want to disable right and left in-viewport triggers, set these values to `Infinity`.
 ```
 
 ### Modifiers
@@ -319,7 +319,7 @@ export default class Infinity extends Component.extend(InViewportMixin) {
     });
 
     this.watchElement(element);
-  },
+  }
 
   didEnterViewport() {
     // this will only work with one element being watched in the container. This is still a TODO to enable
@@ -357,7 +357,7 @@ export default class MyClass extends Component {
   didEnterViewport() {
     // do some other stuff
     this.infinityLoad();
-  },
+  }
 
   willDestroy() {
     // need to manage cache yourself if you don't use the mixin
@@ -388,7 +388,7 @@ export default class MyClass extends Component {
 
   didEnterViewport() {
     // do some other stuff
-  },
+  }
 
   willDestroy() {
     // need to manage cache yourself if you don't use the mixin

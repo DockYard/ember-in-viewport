@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { action, set, get } from '@ember/object';
+import { action, set } from '@ember/object';
 
 let rect = '<rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"/>';
 let circle = '<circle cx="25" cy="75" r="20" stroke="red" fill="transparent" stroke-width="5"/>';
@@ -23,7 +23,7 @@ export default class InfinityClass extends Controller {
   infinityLoad() {
     const arr = Array.apply(null, Array(10));
     const newModels = [...arr.map(() => `${images[(Math.random() * images.length) | 0]}`)];
-    const models = get(this, 'models');
+    const models = this.models;
     models.push(...newModels);
     set(this, 'models', Array.prototype.slice.call(models));
   }

@@ -1,6 +1,6 @@
 <div class="list" style="height: 200px; overflow: scroll;">
   <ul style="display:flex">
-    {{#each model as |val|}}
+    {{#each this.model as |val|}}
       <div class="infinity-svg">
         <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
           {{{val}}}
@@ -8,15 +8,15 @@
       </div>
     {{/each}}
 
-    {{#my-component
+    <MyComponent
       class="infinity-scrollable"
-      scrollableAreaOverride=".list"
-      viewportSpyOverride=true
-      viewportToleranceOverride=viewportToleranceOverride
-      intersectionThresholdOverride=1
-      viewportSpyOverride=true
-      infinityLoad=(action "infinityLoad")}}
+      @scrollableAreaOverride=".list"
+      @viewportSpyOverride={{true}}
+      @viewportToleranceOverride={{this.viewportToleranceOverride}}
+      @intersectionThresholdOverride={{1}}
+      @infinityLoad={{this.infinityLoad}}
+    >
       &npbs;
-    {{/my-component}}
+    </MyComponent>
   </ul>
 </div>

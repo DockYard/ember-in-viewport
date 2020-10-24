@@ -16,7 +16,7 @@
         src={{this.fallbackSrc}}
         height={{this.height}}
         width={{this.width}}
-        alt={{alt}}>
+        alt={{@alt}}>
 
     {{else if this.lazyLoad}}
       <img
@@ -27,7 +27,7 @@
         height={{this.height}}
         width={{this.width}}
         style={{this.imgBgColor}}
-        alt={{alt}}>
+        alt={{@alt}}>
 
     {{else}}
       <img
@@ -38,10 +38,10 @@
         height={{this.height}}
         width={{this.width}}
         style={{this.imgBgColor}}
-        alt={{alt}}>
+        alt={{@alt}}>
 
     {{/if}}
   {{/if}}
 
-{{yield}}
+  {{yield}}
 </div>

@@ -1,10 +1,10 @@
 <nav>
   Direction:
-  {{link-to "both" (query-params direction="both")}}
-  {{link-to "enter" (query-params direction="enter")}}
-  {{link-to "exit" (query-params direction="exit")}}
+  <LinkTo @route="infinity-built-in-modifiers" @query={{hash direction="both"}}>both</LinkTo>
+  <LinkTo @route="infinity-built-in-modifiers" @query={{hash direction="enter"}}>enter</LinkTo>
+  <LinkTo @route="infinity-built-in-modifiers" @query={{hash direction="exit"}}>exit</LinkTo>
 </nav>
-<h1 {{in-viewport onEnter=(action "setTitle") viewportTolerance=this.other}}></h1>
+<h1 {{in-viewport onEnter=this.setTitle viewportTolerance=this.other}}></h1>
 {{#if (eq this.direction "both")}}
   <ul class="infinity-container">
     {{#each this.models as |artwork i|}}
@@ -16,7 +16,12 @@
     {{/each}}
     <div
       class="sentinel"
-      {{in-viewport onEnter=(action "didEnterViewport") onExit=(action "didExitViewport") viewportTolerance=this.viewportTolerance scrollableArea=".infinity-container"}}
+      {{in-viewport
+        onEnter=this.didEnterViewport
+        onExit=this.didExitViewport
+        viewportTolerance=this.viewportTolerance
+        scrollableArea=".infinity-container"
+      }}
     ></div>
   </ul>
 {{else if (eq this.direction "enter")}}
@@ -26,7 +31,7 @@
         <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
-    <div class="sentinel" {{in-viewport onEnter=(action "didEnterViewport" artwork i)}}></div>
+    <div class="sentinel" {{in-viewport onEnter=this.didEnterViewport}}></div>
   </ul>
 {{else if (eq this.direction "exit")}}
   <ul>
@@ -35,6 +40,6 @@
         <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
       </li>
     {{/each}}
-    <div class="sentinel" {{in-viewport onExit=(action "didExitViewport")}}></div>
+    <div class="sentinel" {{in-viewport onExit=this.didExitViewport}}></div>
   </ul>
 {{/if}}
