@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import { setProperties, getProperties } from '@ember/object';
+import { setProperties } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
 export default Component.extend(InViewportMixin, {
@@ -19,15 +19,7 @@ export default Component.extend(InViewportMixin, {
       viewportRAFOverride,
       scrollableAreaOverride,
       intersectionThresholdOverride,
-    } = getProperties(this,
-      'viewportSpyOverride',
-      'viewportEnabledOverride',
-      'viewportIntersectionObserverOverride',
-      'viewportToleranceOverride',
-      'viewportRAFOverride',
-      'scrollableAreaOverride',
-      'intersectionThresholdOverride'
-    );
+    } = this;
 
     if (viewportSpyOverride !== undefined) {
       options.viewportSpy = viewportSpyOverride;

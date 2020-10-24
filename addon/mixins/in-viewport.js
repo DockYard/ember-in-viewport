@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-new-mixins, ember/no-get, ember/no-observers, ember/no-incorrect-calls-with-inline-anonymous-functions */
 import { assign } from '@ember/polyfills';
 import Mixin from '@ember/object/mixin';
 import { typeOf } from '@ember/utils';

@@ -1,7 +1,7 @@
 <div class="class-components">
   <div class="left">
     <ul>
-      {{#each models as |val|}}
+      {{#each this.models as |val|}}
         <div class="infinity-class-item">
           <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
             {{{val}}}
@@ -15,7 +15,7 @@
 
   <div class="right">
     <ul>
-      {{#each models as |val|}}
+      {{#each this.models as |val|}}
         <div class="infinity-class-item">
           <svg width="200" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
             {{{val}}}

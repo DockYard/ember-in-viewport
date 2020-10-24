@@ -1,5 +1,5 @@
 <ul>
-  {{#each models as |artwork index|}}
+  {{#each this.models as |artwork index|}}
     <li class="infinity-item" data-index={{index}}>
       <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
     </li>

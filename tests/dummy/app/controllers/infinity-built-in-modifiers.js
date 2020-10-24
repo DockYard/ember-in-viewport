@@ -1,10 +1,10 @@
 import Controller from '@ember/controller';
 import { later } from '@ember/runloop';
-import { action, set, get } from '@ember/object';
+import { action, set } from '@ember/object';
 
 const images = ['jarjan', 'aio___', 'kushsolitary', 'kolage', 'idiot', 'gt'];
 
-export default class BuiltIn extends Controller {
+export default class InfinityBuiltInModifiers extends Controller {
   queryParams = ['direction'];
   direction = 'both';
 
@@ -41,7 +41,7 @@ export default class BuiltIn extends Controller {
 
     return new Promise((resolve) => {
       later(() => {
-        const models = get(this, 'models');
+        const models = this.models;
         models.push(...newModels);
         set(this, 'models', Array.prototype.slice.call(models));
         resolve();

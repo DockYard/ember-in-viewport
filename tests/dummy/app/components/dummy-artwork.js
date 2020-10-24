@@ -151,7 +151,7 @@ export default class DummyArtwork extends Component {
    * @type {String}
    * @public
    */
-  @computed('isDownloaded')
+  @computed('class', 'isDownloaded')
   get artworkClasses() {
     let classes = this.class || '';
     if (this.isDownloaded) {
@@ -166,7 +166,7 @@ export default class DummyArtwork extends Component {
    * @type {String|Number}
    * @public
    */
-  @computed('profiles', 'media.matches.[]')
+  @computed('media.matches.[]', 'profiles.large.height')
   get height() {
     const [viewport = 'medium'] = this.media.matches;
     if (this.profiles && this.profiles[viewport]) {
@@ -181,7 +181,7 @@ export default class DummyArtwork extends Component {
    * @type {String|Number}
    * @public
    */
-  @computed('profiles', 'media.matches.[]')
+  @computed('media.matches.[]', 'profiles.large.width')
   get width() {
     const [viewport = 'medium'] = this.media.matches;
     if (this.profiles && this.profiles[viewport]) {
@@ -200,7 +200,7 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  @computed('actualArtwork.{bgColor,hasAlpha}', 'addBgColor')
+  @computed('actualArtwork.{bgColor,hasAlpha}', 'addBgColor', 'overrideBgColor')
   get bgColor() {
     if (!this.actualArtwork || this.actualArtwork.hasAlpha) {
       return htmlSafe('');
@@ -281,7 +281,7 @@ export default class DummyArtwork extends Component {
    * @type Object
    * @public
    */
-  @computed('height', 'width', 'profile')
+  @computed('profile')
   get profiles() {
     // eslint-disable-next-line arrow-body-style
     return viewports.reduce((acc, view) => {
@@ -384,7 +384,7 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  @computed('profiles')
+  @computed('guid', 'profiles')
   get imgStyle() {
     return Object.keys(this.profiles).map(name => {
       const source = this.profiles[name];
@@ -415,7 +415,7 @@ export default class DummyArtwork extends Component {
     // for use in template
     this.boundOnError = this.onError.bind(this);
     this.boundOnLoad = this.onLoad.bind(this);
-    this.guid = guidFor(this);
+    this.set('guid', guidFor(this));
   }
 
   @action
