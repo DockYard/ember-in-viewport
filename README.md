@@ -123,7 +123,7 @@ export default class MyClass extends Component {
       loader,
       {
         viewportTolerance: { bottom: 200 },
-        intersectionThreadhold: 0.25,
+        intersectionThreshold: 0.25,
         scrollableArea: '#scrollable-area'
       }
     );
