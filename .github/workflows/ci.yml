@@ -20,7 +20,6 @@ jobs:
           ember-lts-3.16,
           ember-lts-3.20,
           ember-beta,
-          ember-canary,
           ember-default-with-jquery,
           ember-classic
         ]
