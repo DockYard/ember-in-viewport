@@ -1,6 +1,5 @@
 import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/string';
-import { assign } from '@ember/polyfills';
 import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import {
@@ -39,7 +38,7 @@ export function buildSrcset(url, options, pixelDensity = 1) {
  * #### Usage
  *
  * ```hbs
- *  <DummyArtwork @artwork={{artwork}} @artworkProfile="user-profile" />
+ *  <DummyArtwork @artwork={{this.artwork}} @artworkProfile="user-profile" />
  * ```
  *
  * @class DummyArtwork
@@ -60,14 +59,6 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  alt;
-
-  /**
-   * @property class
-   * @type {String}
-   * @public
-   */
-  class;
 
   /**
    * @property isDownloaded
@@ -318,7 +309,7 @@ export default class DummyArtwork extends Component {
     const { actualArtwork: { url, isFallback = false } } = this;
     return [1, 2].map(pixelDensity =>
       viewports.map(({ name }) => {
-        const settings = assign({}, { fileType: this.fileType }, this.profiles[name]);
+        const settings = Object.assign({}, { fileType: this.fileType }, this.profiles[name]);
         // Build a srcset from patterned URL
         if (isFallback) {
           return;
@@ -338,7 +329,7 @@ export default class DummyArtwork extends Component {
     const { fallbackArtwork, isErrored } = this;
 
     if (!url && fallbackArtwork || isErrored) {
-      return assign(
+      return Object.assign(
         {},
         fallbackArtwork,
         { isFallback: true }
