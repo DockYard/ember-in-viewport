@@ -1,26 +1,23 @@
-import Component from '@ember/component';
-import { set } from '@ember/object';
+import Component from '@glimmer/component';
+import { action, set } from '@ember/object';
 import InViewportMixin from 'ember-in-viewport';
 
-export default Component.extend(InViewportMixin, {
-  tagName: '',
+export default class MyModifier extends Component.extend(InViewportMixin) {
+  @action
+  setupInViewport(element) {
+    this.watchElement(element);
+  }
 
-  // if you do have a tagName ^^, then you can use `didInsertElement` or no-op it
-  // didInsertElement() {},
-  setupInViewport(element, [instance]) {
-    instance.watchElement(element);
-  },
-
-  init() {
-    this._super(...arguments);
+  constructor() {
+    super(...arguments);
 
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
       bottom: 300
     });
-  },
+  }
 
   didEnterViewport() {
     this.infinityLoad();
   }
-});
+}

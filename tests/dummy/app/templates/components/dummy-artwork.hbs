@@ -3,7 +3,8 @@
   class={{concat "dummy-artwork " this.artworkClasses}}
   id={{this.guid}}
   data-aspect-ratio={{this.aspectRatio}}
-  data-test-dummy-artwork={{true}}>
+   data-test-dummy-artwork={{true}}
+   ...attributes>
 
   {{#if this.actualArtwork}}
     {{#if this.isUserMonogram}}

@@ -1,8 +1,6 @@
-import Component from '@ember/component';
-import { tagName } from '@ember-decorators/component';
+import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/string';
-import { assign } from '@ember/polyfills';
-import { action, set, computed } from '@ember/object';
+import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import {
   artworkProfiles,
@@ -40,7 +38,7 @@ export function buildSrcset(url, options, pixelDensity = 1) {
  * #### Usage
  *
  * ```hbs
- *  <DummyArtwork @artwork={{artwork}} @artworkProfile="user-profile" />
+ *  <DummyArtwork @artwork={{this.artwork}} @artworkProfile="user-profile" />
  * ```
  *
  * @class DummyArtwork
@@ -48,7 +46,6 @@ export function buildSrcset(url, options, pixelDensity = 1) {
  * @extends {Ember.Component}
  * @public
  */
-@tagName('')
 export default class DummyArtwork extends Component {
   @service inViewport;
   @service media;
@@ -62,14 +59,6 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  alt;
-
-  /**
-   * @property class
-   * @type {String}
-   * @public
-   */
-  class;
 
   /**
    * @property isDownloaded
@@ -122,6 +111,15 @@ export default class DummyArtwork extends Component {
    */
   addBgColor;
 
+  constructor(...args) {
+    super(...args);
+
+    // for use in template
+    this.boundOnError = this.onError.bind(this);
+    this.boundOnLoad = this.onLoad.bind(this);
+    set(this, 'guid', guidFor(this));
+  }
+
   /**
    *
    * @property userInitials
@@ -151,7 +149,6 @@ export default class DummyArtwork extends Component {
    * @type {String}
    * @public
    */
-  @computed('class', 'isDownloaded')
   get artworkClasses() {
     let classes = this.class || '';
     if (this.isDownloaded) {
@@ -166,7 +163,6 @@ export default class DummyArtwork extends Component {
    * @type {String|Number}
    * @public
    */
-  @computed('media.matches.[]', 'profiles.large.height')
   get height() {
     const [viewport = 'medium'] = this.media.matches;
     if (this.profiles && this.profiles[viewport]) {
@@ -181,7 +177,6 @@ export default class DummyArtwork extends Component {
    * @type {String|Number}
    * @public
    */
-  @computed('media.matches.[]', 'profiles.large.width')
   get width() {
     const [viewport = 'medium'] = this.media.matches;
     if (this.profiles && this.profiles[viewport]) {
@@ -200,7 +195,6 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  @computed('actualArtwork.{bgColor,hasAlpha}', 'addBgColor', 'overrideBgColor')
   get bgColor() {
     if (!this.actualArtwork || this.actualArtwork.hasAlpha) {
       return htmlSafe('');
@@ -212,7 +206,6 @@ export default class DummyArtwork extends Component {
     }
   }
 
-  @computed('bgColor')
   get imgBgColor() {
     if (this.bgColor) {
       return htmlSafe(`background-color: ${this.bgColor};`);
@@ -224,7 +217,6 @@ export default class DummyArtwork extends Component {
    * @type Number
    * @private
    */
-  @computed('width', 'height')
   get aspectRatio() {
     return this.width / this.height;
   }
@@ -237,7 +229,6 @@ export default class DummyArtwork extends Component {
    * @type number
    * @private
    */
-  @computed('profiles')
   get mediaQueries() {
     return viewports.map(({ mediaQueryStrict, name }) => {
       if (!this.profiles[name]) {
@@ -264,13 +255,12 @@ export default class DummyArtwork extends Component {
    * @type Object
    * @public
    */
-  @computed('artworkProfile')
   get profile() {
     let profile = {};
-    if (typeof this.artworkProfile === 'string') {
-      profile = artworkProfiles[this.artworkProfile];
-    } else if (typeof this.artworkProfile === 'object') {
-      profile = this.artworkProfile;
+    if (typeof this.args.artworkProfile === 'string') {
+      profile = artworkProfiles[this.args.artworkProfile];
+    } else if (typeof this.args.artworkProfile === 'object') {
+      profile = this.args.artworkProfile;
     }
 
     return profile;
@@ -281,7 +271,6 @@ export default class DummyArtwork extends Component {
    * @type Object
    * @public
    */
-  @computed('profile')
   get profiles() {
     // eslint-disable-next-line arrow-body-style
     return viewports.reduce((acc, view) => {
@@ -302,7 +291,6 @@ export default class DummyArtwork extends Component {
    * @type String
    * @private
    */
-  @computed('actualArtwork.{url,urlDark,isFallback}')
   get fallbackSrc() {
     const {
       actualArtwork: { url, isFallback = false }
@@ -317,12 +305,11 @@ export default class DummyArtwork extends Component {
    * @type String
    * @private
    */
-  @computed('actualArtwork.url', 'fileType', 'profiles')
   get srcset() {
     const { actualArtwork: { url, isFallback = false } } = this;
     return [1, 2].map(pixelDensity =>
       viewports.map(({ name }) => {
-        const settings = assign({}, { fileType: this.fileType }, this.profiles[name]);
+        const settings = Object.assign({}, { fileType: this.fileType }, this.profiles[name]);
         // Build a srcset from patterned URL
         if (isFallback) {
           return;
@@ -337,20 +324,19 @@ export default class DummyArtwork extends Component {
    * @type Object
    * @private
    */
-  @computed('artwork.url', 'fallbackArtwork', 'isErrored')
   get actualArtwork() {
-    const { url } = this.artwork || {};
+    const { url } = this.args.artwork || {};
     const { fallbackArtwork, isErrored } = this;
 
     if (!url && fallbackArtwork || isErrored) {
-      return assign(
+      return Object.assign(
         {},
         fallbackArtwork,
         { isFallback: true }
       );
     }
 
-    return this.artwork;
+    return this.args.artwork;
   }
 
   /**
@@ -362,7 +348,6 @@ export default class DummyArtwork extends Component {
    * @type object
    * @private
    */
-  @computed('fallbackProfile')
   get fallbackArtwork() {
     const { fallbackProfile } = this;
     if (typeof fallbackProfile === 'object') {
@@ -384,7 +369,6 @@ export default class DummyArtwork extends Component {
    * @type String
    * @public
    */
-  @computed('guid', 'profiles')
   get imgStyle() {
     return Object.keys(this.profiles).map(name => {
       const source = this.profiles[name];
@@ -407,15 +391,6 @@ export default class DummyArtwork extends Component {
 
       return style;
     }).reverse().join('\n');
-  }
-
-  init(...args) {
-    super.init(...args);
-
-    // for use in template
-    this.boundOnError = this.onError.bind(this);
-    this.boundOnLoad = this.onLoad.bind(this);
-    this.set('guid', guidFor(this));
   }
 
   @action
@@ -468,10 +443,10 @@ export default class DummyArtwork extends Component {
     set(this, 'isDownloaded', true);
   }
 
-  willDestroyElement(...args) {
+  willDestroy(...args) {
     this.inViewport.stopWatching(document.getElementById(this.guid));
 
-    super.willDestroyElement(...args);
+    super.willDestroy(...args);
   }
 
   /**
