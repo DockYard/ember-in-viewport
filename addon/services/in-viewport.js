@@ -143,7 +143,7 @@ export default class InViewport extends Service {
 
   buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
     const domScrollableArea =
-      typeof scrollableArea === 'string' ? document.querySelector(scrollableArea)
+      typeof scrollableArea === 'string' && scrollableArea ? document.querySelector(scrollableArea)
       : scrollableArea instanceof HTMLElement ? scrollableArea
       : undefined;
 
