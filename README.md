@@ -35,7 +35,7 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
       * [`didScroll(up,down,left,right)`](#didscrollupdownleftright)
       * [`viewportEntered`](#viewportentered)
       * [`viewportExited`](#viewportexited)
-  * [**IntersectionObserver**'s Browser Support](#intersectionobservers-browser-support)
+  * [**IntersectionObserver**'s Browser Support](#intersectionobservers-browser-supportscrollableArea)
     + [Out of the box](#out-of-the-box)
   * [Running](#running)
   * [Running Tests](#running-tests)

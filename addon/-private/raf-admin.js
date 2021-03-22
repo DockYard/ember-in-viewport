@@ -83,7 +83,10 @@ export function startRAF(
   addRAF, // bound function from service to add elementId to raf pool
   removeRAF // bound function from service to remove elementId to raf pool
 ) {
-  const domScrollableArea = scrollableArea ? document.querySelector(scrollableArea) : undefined;
+  const domScrollableArea =
+    typeof scrollableArea === 'string' && scrollableArea ? document.querySelector(scrollableArea)
+      : scrollableArea instanceof HTMLElement ? scrollableArea
+      : undefined;
 
   const height = domScrollableArea
     ? domScrollableArea.offsetHeight + domScrollableArea.getBoundingClientRect().top
