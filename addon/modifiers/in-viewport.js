@@ -48,6 +48,10 @@ export default class InViewportModifier extends Modifier {
     if (this.args.named.onExit) {
       this.args.named.onExit.call(null, this.element);
     }
+
+    if (!this.options.viewportSpy) {
+      this.inViewport.stopWatching(this.element);
+    }
   }
 
   setupWatcher() {
