@@ -20,15 +20,17 @@ const noop = () => {};
  * @module Ember.Service
  */
 export default class InViewport extends Service {
-  init() {
-    super.init(...arguments);
-
+  constructor() {
+    super(...arguments);
 
     set(this, 'registry', new WeakMap());
 
-    let options = assign({
-      viewportUseRAF: canUseRAF()
-    }, this._buildOptions());
+    let options = assign(
+      {
+        viewportUseRAF: canUseRAF(),
+      },
+      this._buildOptions()
+    );
 
     // set viewportUseIntersectionObserver after merging users config to avoid errors in browsers that lack support (https://github.com/DockYard/ember-in-viewport/issues/146)
     options = assign(options, {
@@ -63,17 +65,33 @@ export default class InViewport extends Service {
       }
       const observerOptions = this.buildObserverOptions(configOptions);
 
-      schedule('afterRender', this, this.setupIntersectionObserver, element, observerOptions, enterCallback, exitCallback);
+      schedule(
+        'afterRender',
+        this,
+        this.setupIntersectionObserver,
+        element,
+        observerOptions,
+        enterCallback,
+        exitCallback
+      );
     } else {
       if (!this.rafAdmin) {
         this.startRAF();
       }
-      schedule('afterRender', this, this._startRaf, element, configOptions, enterCallback, exitCallback);
+      schedule(
+        'afterRender',
+        this,
+        this._startRaf,
+        element,
+        configOptions,
+        enterCallback,
+        exitCallback
+      );
     }
 
     return {
       onEnter: this.addEnterCallback.bind(this, element),
-      onExit: this.addExitCallback.bind(this, element)
+      onExit: this.addExitCallback.bind(this, element),
     };
   }
 
@@ -126,7 +144,12 @@ export default class InViewport extends Service {
    * @param Function exitCallback
    * @void
    */
-  setupIntersectionObserver(element, observerOptions, enterCallback, exitCallback) {
+  setupIntersectionObserver(
+    element,
+    observerOptions,
+    enterCallback,
+    exitCallback
+  ) {
     if (this.isDestroyed || this.isDestroying) {
       return;
     }
@@ -141,11 +164,17 @@ export default class InViewport extends Service {
     );
   }
 
-  buildObserverOptions({ intersectionThreshold = 0, scrollableArea = null, viewportTolerance = {} }) {
+  buildObserverOptions({
+    intersectionThreshold = 0,
+    scrollableArea = null,
+    viewportTolerance = {},
+  }) {
     const domScrollableArea =
-      typeof scrollableArea === 'string' && scrollableArea ? document.querySelector(scrollableArea)
-      : scrollableArea instanceof HTMLElement ? scrollableArea
-      : undefined;
+      typeof scrollableArea === 'string' && scrollableArea
+        ? document.querySelector(scrollableArea)
+        : scrollableArea instanceof HTMLElement
+        ? scrollableArea
+        : undefined;
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
     // IntersectionObserver takes either a Document Element or null for `root`
@@ -153,7 +182,7 @@ export default class InViewport extends Service {
     return {
       root: domScrollableArea,
       rootMargin: `${top}px ${right}px ${bottom}px ${left}px`,
-      threshold: intersectionThreshold
+      threshold: intersectionThreshold,
     };
   }
 
@@ -164,10 +193,7 @@ export default class InViewport extends Service {
 
     const registeredTarget = this.registry.get(target);
     if (typeof registeredTarget === 'object') {
-      this.observerAdmin.unobserve(
-        target,
-        registeredTarget.observerOptions
-      );
+      this.observerAdmin.unobserve(target, registeredTarget.observerOptions);
     }
   }
 
@@ -218,22 +244,22 @@ export default class InViewport extends Service {
   }
 
   _startRaf(element, configOptions, enterCallback, exitCallback) {
-      if (this.isDestroyed || this.isDestroying) {
-        return;
-      }
+    if (this.isDestroyed || this.isDestroying) {
+      return;
+    }
 
-      enterCallback = enterCallback || noop;
-      exitCallback = exitCallback || noop;
+    enterCallback = enterCallback || noop;
+    exitCallback = exitCallback || noop;
 
-      // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
-      // So just rewrote it with pure functions for now
-      startRAF(
-        element,
-        configOptions,
-        enterCallback,
-        exitCallback,
-        this.addRAF.bind(this, element.id),
-        this.removeRAF.bind(this, element.id)
-      );
+    // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
+    // So just rewrote it with pure functions for now
+    startRAF(
+      element,
+      configOptions,
+      enterCallback,
+      exitCallback,
+      this.addRAF.bind(this, element.id),
+      this.removeRAF.bind(this, element.id)
+    );
   }
 }

@@ -1,11 +1,11 @@
-export default function(context) {
+export default function (context) {
   let elem;
   if (
     context.nodeType === Node.ELEMENT_NODE ||
     context.nodeType === Node.DOCUMENT_NODE ||
     context instanceof Window
   ) {
-    elem = context
+    elem = context;
   } else {
     elem = document.querySelector(context);
   }

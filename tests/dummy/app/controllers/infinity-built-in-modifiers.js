@@ -11,16 +11,18 @@ export default class InfinityBuiltInModifiers extends Controller {
   constructor() {
     super(...arguments);
 
-    this.models = [...Array.apply(null, Array(10)).map(() => {
-      return {
-        bgColor: 'E8D26F',
-        url: `https://s3.amazonaws.com/uifaces/faces/twitter/${
-          images[(Math.random() * images.length) | 0]
-        }/128.jpg`
-      };
-    })];
+    this.models = [
+      ...Array.apply(null, Array(10)).map(() => {
+        return {
+          bgColor: 'E8D26F',
+          url: `https://s3.amazonaws.com/uifaces/faces/twitter/${
+            images[(Math.random() * images.length) | 0]
+          }/128.jpg`,
+        };
+      }),
+    ];
     set(this, 'viewportTolerance', {
-      bottom: 300
+      bottom: 300,
     });
   }
 
@@ -32,12 +34,16 @@ export default class InfinityBuiltInModifiers extends Controller {
   @action
   didEnterViewport(/*artwork, i, element*/) {
     const arr = Array.apply(null, Array(10));
-    const newModels = [...arr.map(() => {
-      return {
-        bgColor: '0790EB',
-        url: `https://s3.amazonaws.com/uifaces/faces/twitter/${images[(Math.random() * images.length) | 0]}/128.jpg`
-      }
-    })];
+    const newModels = [
+      ...arr.map(() => {
+        return {
+          bgColor: '0790EB',
+          url: `https://s3.amazonaws.com/uifaces/faces/twitter/${
+            images[(Math.random() * images.length) | 0]
+          }/128.jpg`,
+        };
+      }),
+    ];
 
     return new Promise((resolve) => {
       later(() => {

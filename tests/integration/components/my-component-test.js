@@ -3,13 +3,13 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Component | my component', function(hooks) {
+module('Integration | Component | my component', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders with viewportTolerance partially set', async function(assert) {
+  test('it renders with viewportTolerance partially set', async function (assert) {
     // viewportTolerance && viewportEnabled is usually setup in the initializer. Needs defaults
     this.viewportToleranceOverride = {
-      top: 1
+      top: 1,
     };
     await render(hbs`
       {{#my-component viewportEnabled=true viewportToleranceOverride=viewportToleranceOverride}}
@@ -20,7 +20,7 @@ module('Integration | Component | my component', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'template block text');
   });
 
-  test('it renders with intersectionThreshold set', async function(assert) {
+  test('it renders with intersectionThreshold set', async function (assert) {
     this.viewportTolerance = {
       top: 0,
       left: 0,

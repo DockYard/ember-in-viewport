@@ -73,26 +73,26 @@ export default class RAFAdmin {
  */
 export function startRAF(
   element,
-  {
-    scrollableArea,
-    viewportTolerance,
-    viewportSpy = false
-  },
+  { scrollableArea, viewportTolerance, viewportSpy = false },
   enterCallback,
   exitCallback,
   addRAF, // bound function from service to add elementId to raf pool
   removeRAF // bound function from service to remove elementId to raf pool
 ) {
   const domScrollableArea =
-    typeof scrollableArea === 'string' && scrollableArea ? document.querySelector(scrollableArea)
-      : scrollableArea instanceof HTMLElement ? scrollableArea
+    typeof scrollableArea === 'string' && scrollableArea
+      ? document.querySelector(scrollableArea)
+      : scrollableArea instanceof HTMLElement
+      ? scrollableArea
       : undefined;
 
   const height = domScrollableArea
-    ? domScrollableArea.offsetHeight + domScrollableArea.getBoundingClientRect().top
+    ? domScrollableArea.offsetHeight +
+      domScrollableArea.getBoundingClientRect().top
     : window.innerHeight;
   const width = scrollableArea
-    ? domScrollableArea.offsetWidth + domScrollableArea.getBoundingClientRect().left
+    ? domScrollableArea.offsetWidth +
+      domScrollableArea.getBoundingClientRect().left
     : window.innerWidth;
   const boundingClientRect = element.getBoundingClientRect();
 
@@ -101,12 +101,7 @@ export function startRAF(
 
     triggerDidEnterViewport(
       element,
-      isInViewport(
-        boundingClientRect,
-        height,
-        width,
-        viewportTolerance
-      ),
+      isInViewport(boundingClientRect, height, width, viewportTolerance),
       viewportSpy,
       enterCallback,
       exitCallback,
@@ -128,7 +123,7 @@ export function startRAF(
         )
       );
     } else {
-      removeRAF()
+      removeRAF();
     }
   }
 }
@@ -141,7 +136,8 @@ function triggerDidEnterViewport(
   exitCallback,
   viewportEntered = false
 ) {
-  const didEnter = (!viewportEntered || viewportEntered === 'false') && hasEnteredViewport;
+  const didEnter =
+    (!viewportEntered || viewportEntered === 'false') && hasEnteredViewport;
   const didLeave = viewportEntered === 'true' && !hasEnteredViewport;
 
   if (didEnter) {

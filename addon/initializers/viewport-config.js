@@ -9,22 +9,22 @@ const defaultConfig = {
   viewportRefreshRate: 100,
   viewportListeners: [
     { context: window, event: 'scroll' },
-    { context: window, event: 'resize' }
+    { context: window, event: 'resize' },
   ],
   viewportTolerance: {
     top: 0,
     left: 0,
     bottom: 0,
-    right: 0
+    right: 0,
   },
   intersectionThreshold: 0,
-  scrollableArea: null // defaults to layout view (document.documentElement)
+  scrollableArea: null, // defaults to layout view (document.documentElement)
 };
 
 if (canUseDOM) {
   defaultConfig.viewportListeners.push({
     context: document,
-    event: 'touchmove'
+    event: 'touchmove',
   });
 }
 
@@ -34,10 +34,12 @@ export function initialize() {
   const { viewportConfig = {} } = config;
   const mergedConfig = assign({}, defaultConfig, viewportConfig);
 
-  application.register('config:in-viewport', mergedConfig, { instantiate: false });
+  application.register('config:in-viewport', mergedConfig, {
+    instantiate: false,
+  });
 }
 
 export default {
   name: 'viewport-config',
-  initialize: initialize
+  initialize: initialize,
 };

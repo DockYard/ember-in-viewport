@@ -13,7 +13,7 @@ export default class MyModifier extends Component.extend(InViewportMixin) {
 
     set(this, 'viewportSpy', true);
     set(this, 'viewportTolerance', {
-      bottom: 300
+      bottom: 300,
     });
   }
 

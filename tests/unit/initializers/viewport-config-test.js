@@ -8,11 +8,11 @@ const { keys } = Object;
 
 let container, application;
 
-module('Unit | Initializer | viewport config', function(hooks) {
+module('Unit | Initializer | viewport config', function (hooks) {
   setupTest(hooks);
 
-  hooks.beforeEach(function() {
-    run(function() {
+  hooks.beforeEach(function () {
+    run(function () {
       application = Application.create();
       container = application.__container__;
       application.register('config:environment', {});
@@ -20,7 +20,7 @@ module('Unit | Initializer | viewport config', function(hooks) {
     });
   });
 
-  test('it has a viewportConfig object', function(assert) {
+  test('it has a viewportConfig object', function (assert) {
     ViewportConfigInitializer.initialize(application);
 
     const viewportConfig = container.lookup('config:in-viewport');
@@ -28,7 +28,13 @@ module('Unit | Initializer | viewport config', function(hooks) {
 
     assert.ok(viewportConfig);
     assert.ok(viewportConfigKeys.length);
-    assert.ok(viewportConfigKeys.includes('intersectionThreshold'), 'intersectionThreshold is in viewportConfig');
-    assert.ok(viewportConfigKeys.includes('scrollableArea'), 'scrollableArea is in viewportConfig');
+    assert.ok(
+      viewportConfigKeys.includes('intersectionThreshold'),
+      'intersectionThreshold is in viewportConfig'
+    );
+    assert.ok(
+      viewportConfigKeys.includes('scrollableArea'),
+      'scrollableArea is in viewportConfig'
+    );
   });
 });
