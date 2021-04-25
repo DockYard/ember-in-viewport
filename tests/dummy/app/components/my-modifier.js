@@ -1,23 +1,32 @@
 import Component from '@glimmer/component';
 import { action, set } from '@ember/object';
-import InViewportMixin from 'ember-in-viewport';
+import { inject as service } from '@ember/service';
 
-export default class MyModifier extends Component.extend(InViewportMixin) {
+export default class MyModifier extends Component {
+  @service inViewport;
+
   @action
   setupInViewport(element) {
-    this.watchElement(element);
+    const viewportSpy = true;
+    const viewportTolerance = {
+      bottom: 300,
+    };
+    const { onEnter } = this.inViewport.watchElement(element, { viewportSpy, viewportTolerance });
+    onEnter(this.didEnterViewport.bind(this));
   }
 
   constructor() {
     super(...arguments);
-
-    set(this, 'viewportSpy', true);
-    set(this, 'viewportTolerance', {
-      bottom: 300,
-    });
   }
 
   didEnterViewport() {
-    this.infinityLoad();
+    this.args.infinityLoad();
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+
+    const loader = document.getElementById('loader');
+    this.inViewport.stopWatching(loader);
   }
 }
