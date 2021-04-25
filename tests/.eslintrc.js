@@ -1,9 +1,9 @@
 module.exports = {
   parser: 'babel-eslint',
   env: {
-    embertest: true
+    embertest: true,
   },
   globals: {
-    waitFor: true
-  }
+    waitFor: true,
+  },
 };

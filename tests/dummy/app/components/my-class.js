@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class MyClass extends Component {
-  @service inViewport
+  @service inViewport;
 
   @action
   setupViewport() {
@@ -16,7 +16,9 @@ export default class MyClass extends Component {
     this.infinityLoad();
   }
 
-  willDestroyElement() {
+  willDestroy() {
+    super.willDestroy(...arguments);
+
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
   }

@@ -50,5 +50,5 @@ export default Component.extend(InViewportMixin, {
     if (this.infinityLoad) {
       this.infinityLoad();
     }
-  }
+  },
 });

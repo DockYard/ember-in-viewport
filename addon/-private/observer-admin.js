@@ -36,11 +36,11 @@ export default class ObserverAdmin {
   }
 
   addEnterCallback(element, enterCallback) {
-      this.instance.addEnterCallback(element, enterCallback);
+    this.instance.addEnterCallback(element, enterCallback);
   }
 
   addExitCallback(element, exitCallback) {
-      this.instance.addExitCallback(element, exitCallback);
+    this.instance.addExitCallback(element, exitCallback);
   }
 
   /**

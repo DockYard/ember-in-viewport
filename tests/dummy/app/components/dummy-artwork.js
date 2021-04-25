@@ -2,13 +2,8 @@ import Component from '@glimmer/component';
 import { htmlSafe } from '@ember/string';
 import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
-import {
-  artworkProfiles,
-  artworkFallbacks,
-  viewports
-} from '../-config';
-import { guidFor } from '@ember/object/internals'
-import { and, readOnly } from '@ember/object/computed';
+import { artworkProfiles, artworkFallbacks, viewports } from '../-config';
+import { guidFor } from '@ember/object/internals';
 import ENV from 'dummy/config/environment';
 
 /**
@@ -126,7 +121,9 @@ export default class DummyArtwork extends Component {
    * @type {String}
    * @public
    */
-  @readOnly('actualArtwork.userInitials') userInitials
+  get userInitials() {
+    return this.actualArtwork.userInitials;
+  }
 
   /**
    *
@@ -134,7 +131,9 @@ export default class DummyArtwork extends Component {
    * @type {Boolean}
    * @public
    */
-  @readOnly('actualArtwork.isFallback') isFallbackArtwork
+  get isFallbackArtwork() {
+    return this.actualArtwork.isFallback;
+  }
 
   /**
    *
@@ -142,7 +141,9 @@ export default class DummyArtwork extends Component {
    * @type {Boolean}
    * @public
    */
-  @and('isFallbackArtwork', 'userInitials') isUserMonogram
+  get isUserMonogram() {
+    return this.isFallbackArtwork && !!this.userInitials;
+  }
 
   /**
    * @property artworkClasses
@@ -230,13 +231,16 @@ export default class DummyArtwork extends Component {
    * @private
    */
   get mediaQueries() {
-    return viewports.map(({ mediaQueryStrict, name }) => {
-      if (!this.profiles[name]) {
-        return;
-      }
-      return `${mediaQueryStrict} ${this.profiles[name].width}px`;
-    }
-    ).filter(Boolean).join(', ').trim();
+    return viewports
+      .map(({ mediaQueryStrict, name }) => {
+        if (!this.profiles[name]) {
+          return;
+        }
+        return `${mediaQueryStrict} ${this.profiles[name].width}px`;
+      })
+      .filter(Boolean)
+      .join(', ')
+      .trim();
   }
 
   /**
@@ -293,7 +297,7 @@ export default class DummyArtwork extends Component {
    */
   get fallbackSrc() {
     const {
-      actualArtwork: { url, isFallback = false }
+      actualArtwork: { url, isFallback = false },
     } = this;
     if (isFallback) {
       return url;
@@ -306,17 +310,25 @@ export default class DummyArtwork extends Component {
    * @private
    */
   get srcset() {
-    const { actualArtwork: { url, isFallback = false } } = this;
-    return [1, 2].map(pixelDensity =>
-      viewports.map(({ name }) => {
-        const settings = Object.assign({}, { fileType: this.fileType }, this.profiles[name]);
-        // Build a srcset from patterned URL
-        if (isFallback) {
-          return;
-        }
-        return buildSrcset(url, settings, pixelDensity);
-      })
-    ).join(', ');
+    const {
+      actualArtwork: { url, isFallback = false },
+    } = this;
+    return [1, 2]
+      .map((pixelDensity) =>
+        viewports.map(({ name }) => {
+          const settings = Object.assign(
+            {},
+            { fileType: this.fileType },
+            this.profiles[name]
+          );
+          // Build a srcset from patterned URL
+          if (isFallback) {
+            return;
+          }
+          return buildSrcset(url, settings, pixelDensity);
+        })
+      )
+      .join(', ');
   }
 
   /**
@@ -328,12 +340,8 @@ export default class DummyArtwork extends Component {
     const { url } = this.args.artwork || {};
     const { fallbackArtwork, isErrored } = this;
 
-    if (!url && fallbackArtwork || isErrored) {
-      return Object.assign(
-        {},
-        fallbackArtwork,
-        { isFallback: true }
-      );
+    if ((!url && fallbackArtwork) || isErrored) {
+      return Object.assign({}, fallbackArtwork, { isFallback: true });
     }
 
     return this.args.artwork;
@@ -370,27 +378,30 @@ export default class DummyArtwork extends Component {
    * @public
    */
   get imgStyle() {
-    return Object.keys(this.profiles).map(name => {
-      const source = this.profiles[name];
-      let style = '';
-      if (source.width > 0) {
-        style = `#${this.guid}, #${this.guid}::before {
+    return Object.keys(this.profiles)
+      .map((name) => {
+        const source = this.profiles[name];
+        let style = '';
+        if (source.width > 0) {
+          style = `#${this.guid}, #${this.guid}::before {
                     width: ${source.width}px;
                     height: ${source.height}px;
                 }
                 #${this.guid}::before {
-                    padding-top: ${source.height / source.width * 100}%;
+                    padding-top: ${(source.height / source.width) * 100}%;
                 }`;
-      }
+        }
 
-      if (source.mediaQuery && style.length > 0) {
-        return `@media ${source.mediaQuery} {
+        if (source.mediaQuery && style.length > 0) {
+          return `@media ${source.mediaQuery} {
                   ${style}
                 }`;
-      }
+        }
 
-      return style;
-    }).reverse().join('\n');
+        return style;
+      })
+      .reverse()
+      .join('\n');
   }
 
   @action
@@ -399,7 +410,7 @@ export default class DummyArtwork extends Component {
       // find distance of top left corner of artwork to bottom of screen. Shave off 50px so user has to scroll slightly to trigger load
       window.requestAnimationFrame(() => {
         const { onEnter } = this.inViewport.watchElement(element, {
-          viewportTolerance: { top: 200, right: 200, bottom: 200, left: 200 }
+          viewportTolerance: { top: 200, right: 200, bottom: 200, left: 200 },
         });
 
         onEnter(this.didEnterViewport.bind(this));

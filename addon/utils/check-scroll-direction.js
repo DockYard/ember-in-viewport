@@ -1,7 +1,11 @@
 import { assert } from '@ember/debug';
 const { floor } = Math;
 
-export default function checkScrollDirection(lastPosition = null, newPosition = {}, sensitivity = 1) {
+export default function checkScrollDirection(
+  lastPosition = null,
+  newPosition = {},
+  sensitivity = 1
+) {
   if (!lastPosition) {
     return 'none';
   }
@@ -12,8 +16,8 @@ export default function checkScrollDirection(lastPosition = null, newPosition = 
   const { top: lastTop, left: lastLeft } = lastPosition;
 
   const delta = {
-    top: floor((top  - lastTop)  / sensitivity) * sensitivity,
-    left: floor((left - lastLeft) / sensitivity) * sensitivity
+    top: floor((top - lastTop) / sensitivity) * sensitivity,
+    left: floor((left - lastLeft) / sensitivity) * sensitivity,
   };
 
   if (delta.top > 0) {

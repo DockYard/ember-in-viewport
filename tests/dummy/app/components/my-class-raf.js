@@ -3,7 +3,7 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class MyRafClass extends Component {
-  @service inViewport
+  @service inViewport;
 
   @action
   setupViewport() {

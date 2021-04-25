@@ -45,11 +45,14 @@ export default Mixin.create({
     // ensure this mixin runs first, then your component can override the options
     this._super(...arguments);
 
-    let options = assign({
-      viewportUseRAF: canUseRAF(),
-      viewportEntered: false,
-      viewportListeners: []
-    }, this._buildOptions());
+    let options = assign(
+      {
+        viewportUseRAF: canUseRAF(),
+        viewportEntered: false,
+        viewportListeners: [],
+      },
+      this._buildOptions()
+    );
 
     // set viewportUseIntersectionObserver after merging users config to avoid errors in browsers that lack support (https://github.com/DockYard/ember-in-viewport/issues/146)
     options = assign(options, {
@@ -69,7 +72,7 @@ export default Mixin.create({
       {
         id: 'ember-in-viewport.mixin',
         until: '4.0.0',
-        url: 'https://github.com/DockYard/ember-in-viewport#readme'
+        url: 'https://github.com/DockYard/ember-in-viewport#readme',
       }
     );
 
@@ -103,11 +106,16 @@ export default Mixin.create({
 
     const viewportDidScroll = get(this, 'viewportDidScroll');
     if (viewportDidScroll) {
-      debug('[viewportDidScroll] This will be false by default in the next major release');
+      debug(
+        '[viewportDidScroll] This will be false by default in the next major release'
+      );
       this._bindScrollDirectionListener(get(this, 'viewportScrollSensitivity'));
     }
 
-    if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
+    if (
+      !get(this, 'viewportUseIntersectionObserver') &&
+      !get(this, 'viewportUseRAF')
+    ) {
       get(this, 'viewportListeners').forEach((listener) => {
         let { context, event } = listener;
         context = get(this, 'scrollableArea') || context;
@@ -118,7 +126,11 @@ export default Mixin.create({
 
   _addObserverIfNotSpying(element) {
     if (!get(this, 'viewportSpy')) {
-      this.addObserver('viewportEntered', this, bind(this, '_unbindIfEntered', element));
+      this.addObserver(
+        'viewportEntered',
+        this,
+        bind(this, '_unbindIfEntered', element)
+      );
     }
   },
 
@@ -152,19 +164,20 @@ export default Mixin.create({
 
       const enterCallback = () => {
         const isTearingDown = this.isDestroyed || this.isDestroying;
-        const viewportEntered = element.getAttribute('data-in-viewport-entered') === "true";
+        const viewportEntered =
+          element.getAttribute('data-in-viewport-entered') === 'true';
         if (!isTearingDown && (viewportSpy || viewportEntered)) {
           set(this, 'viewportEntered', true);
           this.trigger('didEnterViewport');
         }
-      }
+      };
       const exitCallback = () => {
         const isTearingDown = this.isDestroyed || this.isDestroying;
         if (!isTearingDown && viewportSpy) {
           set(this, 'viewportEntered', false);
           this.trigger('didExitViewport');
         }
-      }
+      };
 
       startRAF(
         element,
@@ -188,7 +201,9 @@ export default Mixin.create({
    * @method _setViewportEntered
    */
   _setViewportEntered(element) {
-    const scrollableArea = get(this, 'scrollableArea') ? document.querySelector(get(this, 'scrollableArea')) : undefined;
+    const scrollableArea = get(this, 'scrollableArea')
+      ? document.querySelector(get(this, 'scrollableArea'))
+      : undefined;
 
     const height = scrollableArea
       ? scrollableArea.offsetHeight + scrollableArea.getBoundingClientRect().top
@@ -255,7 +270,10 @@ export default Mixin.create({
    * @param sensitivity
    */
   _triggerDidScrollDirection(contextEl = null, sensitivity = 1) {
-    assert('You must pass a valid context element to _triggerDidScrollDirection', contextEl);
+    assert(
+      'You must pass a valid context element to _triggerDidScrollDirection',
+      contextEl
+    );
     assert('sensitivity cannot be 0', sensitivity);
 
     const elementId = get(this, 'elementId');
@@ -263,10 +281,14 @@ export default Mixin.create({
     const lastPositionForEl = lastPosition[elementId];
     const newPosition = {
       top: contextEl.scrollTop,
-      left: contextEl.scrollLeft
+      left: contextEl.scrollLeft,
     };
 
-    const scrollDirection = checkScrollDirection(lastPositionForEl, newPosition, sensitivity);
+    const scrollDirection = checkScrollDirection(
+      lastPositionForEl,
+      newPosition,
+      sensitivity
+    );
     const directionChanged = scrollDirection !== lastDirectionForEl;
 
     if (scrollDirection && directionChanged && get(this, 'viewportDidScroll')) {
@@ -331,7 +353,11 @@ export default Mixin.create({
     assert('You must pass a methodName to _debouncedEvent', methodName);
     assert('methodName must be a string', typeOf(methodName) === 'string');
 
-    debounce(this, () => this[methodName](...args), get(this, 'viewportRefreshRate'));
+    debounce(
+      this,
+      () => this[methodName](...args),
+      get(this, 'viewportRefreshRate')
+    );
   },
 
   _bindScrollDirectionListener(sensitivity = 1) {
@@ -340,8 +366,15 @@ export default Mixin.create({
     const contextEl = get(this, 'scrollableArea') || window;
     const elem = findElem(contextEl);
 
-    this._debouncedEventHandler = this._debouncedEvent.bind(this, '_triggerDidScrollDirection', elem, sensitivity);
-    elem.addEventListener('scroll', this._debouncedEventHandler, { passive: true });
+    this._debouncedEventHandler = this._debouncedEvent.bind(
+      this,
+      '_triggerDidScrollDirection',
+      elem,
+      sensitivity
+    );
+    elem.addEventListener('scroll', this._debouncedEventHandler, {
+      passive: true,
+    });
   },
 
   _unbindScrollDirectionListener() {
@@ -350,7 +383,9 @@ export default Mixin.create({
     const elem = findElem(context);
 
     if (elem) {
-      elem.removeEventListener('scroll', this._debouncedEventHandler, { passive: true });
+      elem.removeEventListener('scroll', this._debouncedEventHandler, {
+        passive: true,
+      });
       delete lastPosition[elementId];
       delete lastDirection[elementId];
     }
@@ -367,7 +402,8 @@ export default Mixin.create({
 
     let elem = findElem(context);
 
-    let evtListener = (() => this._debouncedEvent('_setViewportEntered', element));
+    let evtListener = () =>
+      this._debouncedEvent('_setViewportEntered', element);
     this._evtListenerClosures.push({ event: event, evtListener });
     elem.addEventListener(event, evtListener, false);
   },
@@ -383,24 +419,36 @@ export default Mixin.create({
     set(this, '_stopListening', true);
 
     // if IntersectionObserver
-    if (get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportEnabled')) {
+    if (
+      get(this, 'viewportUseIntersectionObserver') &&
+      get(this, 'viewportEnabled')
+    ) {
       get(this, 'inViewport').unobserveIntersectionObserver(element);
     }
 
     // if rAF
-    if (!get(this, 'viewportUseIntersectionObserver') && get(this, 'viewportUseRAF')) {
+    if (
+      !get(this, 'viewportUseIntersectionObserver') &&
+      get(this, 'viewportUseRAF')
+    ) {
       const elementId = get(this, 'elementId');
 
       get(this, 'inViewport').removeRAF(elementId);
     }
 
     // if scroll event listeners
-    if (!get(this, 'viewportUseIntersectionObserver') && !get(this, 'viewportUseRAF')) {
+    if (
+      !get(this, 'viewportUseIntersectionObserver') &&
+      !get(this, 'viewportUseRAF')
+    ) {
       get(this, 'viewportListeners').forEach((listener) => {
         let { context, event } = listener;
         context = get(this, 'scrollableArea') || context;
         let elem = findElem(context);
-        let { evtListener } = this._evtListenerClosures.find((closure) => event === closure.event) || {};
+        let { evtListener } =
+          this._evtListenerClosures.find(
+            (closure) => event === closure.event
+          ) || {};
 
         elem.removeEventListener(event, evtListener, false);
       });
