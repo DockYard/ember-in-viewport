@@ -33,16 +33,12 @@ export default class InfinityBuiltInModifiers extends Controller {
 
   @action
   setTitleGreen() {
-    setTimeout(() => {
-      document.querySelector('h1#green-target').style = 'color: green';
-    }, 500);
+    document.querySelector('h1#green-target').style = 'color: green';
   }
 
   @action
   removeTitleGreen() {
-    setTimeout(() => {
-      document.querySelector('h1#green-target').style = '';
-    }, 500);
+    document.querySelector('h1#green-target').style = '';
   }
 
   @action
