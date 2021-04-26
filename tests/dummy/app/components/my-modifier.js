@@ -1,5 +1,5 @@
 import Component from '@glimmer/component';
-import { action, set } from '@ember/object';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
 export default class MyModifier extends Component {
@@ -11,7 +11,10 @@ export default class MyModifier extends Component {
     const viewportTolerance = {
       bottom: 300,
     };
-    const { onEnter } = this.inViewport.watchElement(element, { viewportSpy, viewportTolerance });
+    const { onEnter } = this.inViewport.watchElement(element, {
+      viewportSpy,
+      viewportTolerance,
+    });
     onEnter(this.didEnterViewport.bind(this));
   }
 
