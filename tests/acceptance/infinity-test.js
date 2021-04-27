@@ -62,6 +62,28 @@ module('Acceptance | infinity-scrollable', function (hooks) {
       '{{in-viewport}} modifier',
       'has title'
     );
+
+    document.querySelector('.infinity-item-19').scrollIntoView(false);
+
+    await waitUntil(
+      () => {
+        return findAll('.infinity-item').length === 30;
+      },
+      { timeoutMessage: 'did not find all items in time' }
+    );
+
+    await settled();
+
+    assert.equal(
+      findAll('.infinity-item').length,
+      30,
+      'after infinity has more items'
+    );
+    assert.equal(
+      find('h1').textContent.trim(),
+      '{{in-viewport}} modifier',
+      'has title'
+    );
   });
 
   test('works with in-viewport modifier (rAF)', async function (assert) {
