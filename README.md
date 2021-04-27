@@ -208,11 +208,14 @@ export default Component.extend(InViewportMixin, {
 
   Default: `false`
 
+  `viewportSpy: true` is often useful when you have "infinite lists" that need to keep loading more data.
+  `viewportSpy: false` is often useful for one time loading of artwork, metrics, etc when the come into the viewport.
+
   If you support IE11 and detect and run logic `onExit`, then it is necessary to have this `true` to that the requestAnimationFrame watching your sentinel is not torn down.
 
   When `true`, the library will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
 
-  NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
+  NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari < 12.1) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
 
 - `viewportDidScroll: boolean`
 

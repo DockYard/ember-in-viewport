@@ -41,6 +41,10 @@ export default class InViewportModifier extends Modifier {
     if (this.args.named.onEnter) {
       this.args.named.onEnter.call(null, this.element);
     }
+
+    if (!this.options.viewportSpy) {
+      this.inViewport.stopWatching(this.element);
+    }
   }
 
   @action

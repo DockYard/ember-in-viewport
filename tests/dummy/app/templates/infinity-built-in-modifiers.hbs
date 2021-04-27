@@ -4,42 +4,48 @@
   <LinkTo @route="infinity-built-in-modifiers" @query={{hash direction="enter"}}>enter</LinkTo>
   <LinkTo @route="infinity-built-in-modifiers" @query={{hash direction="exit"}}>exit</LinkTo>
 </nav>
-<h1 {{in-viewport onEnter=this.setTitle viewportTolerance=this.other}}></h1>
-{{#if (eq this.direction "both")}}
-  <ul class="infinity-container">
-    {{#each this.models as |artwork i|}}
-      <li
-        class="infinity-item infinity-item-{{i}}"
-      >
-        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
-      </li>
-    {{/each}}
-    <div
-      class="sentinel"
-      {{in-viewport
-        onEnter=this.didEnterViewport
-        onExit=this.didExitViewport
-        viewportTolerance=this.viewportTolerance
-        scrollableArea=".infinity-container"
-      }}
-    ></div>
-  </ul>
-{{else if (eq this.direction "enter")}}
-  <ul>
-    {{#each this.models as |artwork|}}
-      <li>
-        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
-      </li>
-    {{/each}}
-    <div class="sentinel" {{in-viewport onEnter=this.didEnterViewport}}></div>
-  </ul>
-{{else if (eq this.direction "exit")}}
-  <ul>
-    {{#each this.models as |artwork|}}
-      <li>
-        <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
-      </li>
-    {{/each}}
-    <div class="sentinel" {{in-viewport onExit=this.didExitViewport}}></div>
-  </ul>
-{{/if}}
+<div style="height: 2500px;">
+  <h1 id="green-target" {{in-viewport onEnter=this.setTitle viewportTolerance=this.other}}></h1>
+
+  {{#if (eq this.direction "both")}}
+    <ul class="infinity-container">
+      {{#each this.models as |artwork i|}}
+        <li
+          class="infinity-item infinity-item-{{i}}"
+        >
+          <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
+        </li>
+      {{/each}}
+      <div
+        class="sentinel"
+        {{in-viewport
+          onEnter=this.didEnterViewport
+          onExit=this.didExitViewport
+          viewportTolerance=this.viewportTolerance
+          scrollableArea=".infinity-container"
+          viewportSpy=true
+        }}
+      ></div>
+    </ul>
+  {{else if (eq this.direction "enter")}}
+    <ul>
+      {{#each this.models as |artwork|}}
+        <li>
+          <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
+        </li>
+      {{/each}}
+      <div class="sentinel" {{in-viewport onEnter=this.didEnterViewport}}></div>
+    </ul>
+  {{else if (eq this.direction "exit")}}
+    <ul>
+      {{#each this.models as |artwork|}}
+        <li>
+          <DummyArtwork @artwork={{artwork}} @artworkProfile="dummy" />
+        </li>
+      {{/each}}
+      <div class="sentinel" {{in-viewport onExit=this.didExitViewport}}></div>
+    </ul>
+  {{/if}}
+
+  <div {{in-viewport onEnter=this.setTitleGreen onExit=this.removeTitleGreen viewportSpy=true}}></div>
+</div>

@@ -12,9 +12,9 @@ module('Integration | Component | my component', function (hooks) {
       top: 1,
     };
     await render(hbs`
-      {{#my-component viewportEnabled=true viewportToleranceOverride=viewportToleranceOverride}}
+      <MyComponent @viewportEnabled={{true}} @viewportToleranceOverride={{this.viewportToleranceOverride}}>
         template block text
-      {{/my-component}}
+      </MyComponent>
     `);
 
     assert.equal(this.element.textContent.trim(), 'template block text');
@@ -28,10 +28,11 @@ module('Integration | Component | my component', function (hooks) {
       bottom: 0,
     };
     this.intersectionThreshold = 1.0;
+
     await render(hbs`
-      {{#my-component viewportEnabled=true viewportTolerance=viewportTolerance intersectionThreshold=intersectionThreshold}}
+      <MyComponent @viewportEnabled={{true}} @viewportToleranceOverride={{this.viewportToleranceOverride}} @intersectionThreshold={{this.intersectionThreshold}}>
         template block text
-      {{/my-component}}
+      </MyComponent>
     `);
 
     assert.equal(this.element.textContent.trim(), 'template block text');

@@ -32,6 +32,16 @@ export default class InfinityBuiltInModifiers extends Controller {
   }
 
   @action
+  setTitleGreen() {
+    document.querySelector('h1#green-target').style = 'color: green';
+  }
+
+  @action
+  removeTitleGreen() {
+    document.querySelector('h1#green-target').style = '';
+  }
+
+  @action
   didEnterViewport(/*artwork, i, element*/) {
     const arr = Array.apply(null, Array(10));
     const newModels = [
