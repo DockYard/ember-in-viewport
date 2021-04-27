@@ -14,7 +14,7 @@ const models = [
   ...arr.map(() => `${images[(Math.random() * images.length) | 0]}`),
 ];
 
-export default class InfinityClass extends Controller {
+export default class InfinityModifier extends Controller {
   constructor() {
     super(...arguments);
     this.viewportToleranceOverride = {
