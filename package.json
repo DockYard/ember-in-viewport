@@ -28,7 +28,7 @@
     "ember-cli-babel": "^7.26.3",
     "ember-modifier": "^2.1.0",
     "fast-deep-equal": "^2.0.1",
-    "intersection-observer-admin": "~0.3.0",
+    "intersection-observer-admin": "~0.3.1",
     "raf-pool": "~0.1.4"
   },
   "devDependencies": {
