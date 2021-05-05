@@ -39,7 +39,7 @@ export default class InViewportModifier extends Modifier {
   @action
   onEnter() {
     if (this.args.named.onEnter) {
-      this.args.named.onEnter.call(null, this.element);
+      this.args.named.onEnter.call(null, this.element, ...arguments);
     }
 
     if (!this.options.viewportSpy) {
@@ -50,7 +50,7 @@ export default class InViewportModifier extends Modifier {
   @action
   onExit() {
     if (this.args.named.onExit) {
-      this.args.named.onExit.call(null, this.element);
+      this.args.named.onExit.call(null, this.element, ...arguments);
     }
   }
 
