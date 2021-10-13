@@ -39,7 +39,11 @@ export default class InViewportModifier extends Modifier {
   @action
   onEnter(intersectionObserverEntry) {
     if (this.args.named.onEnter) {
-      this.args.named.onEnter.call(null, this.element, intersectionObserverEntry);
+      this.args.named.onEnter.call(
+        null,
+        this.element,
+        intersectionObserverEntry
+      );
     }
 
     if (!this.options.viewportSpy) {
@@ -50,7 +54,11 @@ export default class InViewportModifier extends Modifier {
   @action
   onExit(intersectionObserverEntry) {
     if (this.args.named.onExit) {
-      this.args.named.onExit.call(null, this.element, intersectionObserverEntry);
+      this.args.named.onExit.call(
+        null,
+        this.element,
+        intersectionObserverEntry
+      );
     }
   }
 

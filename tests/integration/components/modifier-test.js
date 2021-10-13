@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, settled, scrollTo } from '@ember/test-helpers';
+import { render, scrollTo } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Modifiers | {{in-viewport}}', function (hooks) {
@@ -10,11 +10,17 @@ module('Integration | Modifiers | {{in-viewport}}', function (hooks) {
     assert.expect(4);
     this.onEnter = function(el, intersectionObserverEntry) {
       assert.dom(el).hasText('Four');
-      assert.ok(Math.abs(intersectionObserverEntry.intersectionRatio - 1) < 0.05, 'It receives an intersectionObserverEntry');
+      assert.ok(
+        Math.abs(intersectionObserverEntry.intersectionRatio - 1) < 0.05,
+        'It receives an intersectionObserverEntry'
+      );
     }
     this.onExit = function(el, intersectionObserverEntry) {
       assert.dom(el).hasText('One');
-      assert.ok(Math.abs(intersectionObserverEntry.intersectionRatio - 0.411) < 0.05, 'It receives an intersectionObserverEntry');
+      assert.ok(
+        Math.abs(intersectionObserverEntry.intersectionRatio - 0.411) < 0.05,
+        'It receives an intersectionObserverEntry'
+      );
     }
     await render(hbs`
       <div style="height: 210px; max-height: 210px;border: 1px solid red;overflow-y: scroll" id="wrapper">
@@ -37,8 +43,8 @@ module('Integration | Modifiers | {{in-viewport}}', function (hooks) {
       </div>
     `);
     await scrollTo('#wrapper', 0, 60);
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 150));
     await scrollTo('#wrapper', 0, 260);
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 150));
   });
 });
