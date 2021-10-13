@@ -37,12 +37,12 @@ export default class InViewportModifier extends Modifier {
   }
 
   @action
-  onEnter(intersectionObserverEntry) {
+  onEnter(...args) {
     if (this.args.named.onEnter) {
       this.args.named.onEnter.call(
         null,
         this.element,
-        intersectionObserverEntry
+        ...args
       );
     }
 
@@ -52,12 +52,12 @@ export default class InViewportModifier extends Modifier {
   }
 
   @action
-  onExit(intersectionObserverEntry) {
+  onExit(...args) {
     if (this.args.named.onExit) {
       this.args.named.onExit.call(
         null,
         this.element,
-        intersectionObserverEntry
+        ...args
       );
     }
   }
