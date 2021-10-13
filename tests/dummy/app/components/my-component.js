@@ -28,7 +28,8 @@ export default Component.extend(InViewportMixin, {
       options.viewportEnabled = viewportEnabledOverride;
     }
     if (viewportIntersectionObserverOverride !== undefined) {
-      options.viewportUseIntersectionObserver = viewportIntersectionObserverOverride;
+      options.viewportUseIntersectionObserver =
+        viewportIntersectionObserverOverride;
     }
     if (viewportToleranceOverride !== undefined) {
       options.viewportTolerance = viewportToleranceOverride;
