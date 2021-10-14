@@ -67,7 +67,7 @@ module('Unit | Utility | is in viewport', function (hooks) {
       innerWidth,
       fakeNoTolerance
     );
-    assert.ok(!result);
+    assert.false(result);
   });
 
   test('returns true if dimensions not within viewport but within tolerance', function (assert) {
