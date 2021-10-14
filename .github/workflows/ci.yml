@@ -48,9 +48,9 @@ jobs:
         try-scenario: [
           ember-lts-3.16,
           ember-lts-3.20,
-          ember-beta,
-          ember-default-with-jquery,
-          ember-classic
+          # ember-beta,
+          # ember-default-with-jquery,
+          # ember-classic
         ]
     steps:
     - uses: actions/checkout@v2
