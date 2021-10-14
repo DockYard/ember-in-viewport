@@ -71,6 +71,8 @@ export default Mixin.create({
       false,
       {
         id: 'ember-in-viewport.mixin',
+        for: 'ember-in-viewport',
+        since: '3.7.7',
         until: '4.0.0',
         url: 'https://github.com/DockYard/ember-in-viewport#readme',
       }
