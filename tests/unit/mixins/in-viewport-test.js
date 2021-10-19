@@ -25,7 +25,7 @@ module('Unit | Mixin | in viewport', function (hooks) {
     assert.equal(obj, cb);
   });
 
-  test('can remove from pool manager', function (assert) {
+  test('can remove from pool manager (single element)', function (assert) {
     let cb = () => {};
     this.rAFPoolManager.add(123, cb);
     assert.equal(this.rAFPoolManager.pool.length, 1);
@@ -33,7 +33,7 @@ module('Unit | Mixin | in viewport', function (hooks) {
     assert.equal(this.rAFPoolManager.pool.length, 0);
   });
 
-  test('can remove from pool manager', function (assert) {
+  test('can remove from pool manager (multiple elements)', function (assert) {
     let cb = () => {};
     this.rAFPoolManager.add(123, cb);
     this.rAFPoolManager.add(124, cb);
