@@ -10,7 +10,7 @@
 [![GitHub Actions Build Status](https://img.shields.io/github/workflow/status/DockYard/ember-in-viewport/CI/master)](https://github.com/DockYard/ember-in-viewport/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
-This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if a `Component` or DOM element has entered the browser's viewport. By default, this uses the `IntersectionObserver` API if it detects it the DOM element is in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
+This Ember addon adds a simple, highly performant Service or modifier to your app. This library will allow you to check if a `Component` or DOM element has entered the browser's viewport. By default, this uses the `IntersectionObserver` API if it detects it the DOM element is in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
 We utilize pooling techniques to reuse Intersection Observers and rAF observers in order to make your app as performant as possible and do as little works as possible.
 
@@ -32,12 +32,6 @@ We utilize pooling techniques to reuse Intersection Observers and rAF observers 
     + [Configuration](#configuration)
     + [Global options](#global-options)
     + [Modifiers](#modifiers)
-    + [Classes](#classes)
-    + [Available Mixin hooks](#available-hooks)
-      * [`didEnterViewport`, `didExitViewport`](#didenterviewport-didexitviewport)
-      * [`didScroll(up,down,left,right)`](#didscrollupdownleftright)
-      * [`viewportEntered`](#viewportentered)
-      * [`viewportExited`](#viewportexited)
   * [**IntersectionObserver**'s Browser Support](#intersectionobservers-browser-supportscrollableArea)
     + [Out of the box](#out-of-the-box)
   * [Running](#running)
@@ -79,7 +73,7 @@ export default class MyClass extends Component {
   }
 
   willDestroy() {
-    // need to manage cache yourself if you don't use the mixin
+    // need to manage cache yourself
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
 
@@ -98,29 +92,19 @@ export default class MyClass extends Component {
 
 You can also use [`Modifiers`](#modifiers) as well.  Using modifiers cleans up the boilerplate needed and is shown in a later example.
 
-This addon also supports the use of a Mixin to your `Component`:
-
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
-
-export default Component.extend(InViewportMixin, {
-  // ...
-});
-```
-
 ### Configuration
 To use with the service based approach, simply pass in the options to `watchElement` as the second argument.
 
 ```js
-import Component from '@ember/component';
+import Component from '@glimmer/component';
 import { inject as service }  from '@ember/service';
 
 export default class MyClass extends Component {
   @service inViewport
 
-  didInsertElement() {
-    super.didInsertElement(...arguments);
+  @action
+  setupInViewport() {
+    const loader = document.getElementById('loader');
 
     const { onEnter, _onExit } = this.inViewport.watchElement(
       loader,
@@ -133,123 +117,6 @@ export default class MyClass extends Component {
   }
 }
 ```
-
-The mixin comes with some options as well. Due to the way listeners and `IntersectionObserver API` or `requestAnimationFrame` is setup, you'll have to override the options this way:
-
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
-import { setProperties }  from '@ember/object';
-
-export default Component.extend(InViewportMixin, {
-  init() {
-    this._super(...arguments);
-
-    setProperties(this, {
-      viewportEnabled                 : true,
-      viewportUseRAF                  : true,
-      viewportSpy                     : false,
-      viewportScrollSensitivity       : 1,
-      viewportRefreshRate             : 150,
-      intersectionThreshold           : 0,
-      scrollableArea                  : null,
-      viewportTolerance: {
-        top    : 50,
-        bottom : 50,
-        left   : 20,
-        right  : 20
-      }
-    });
-  }
-});
-```
-
-- `viewportEnabled: boolean`
-
-  Default: `true`
-
-  Set to false to have no listeners registered. Useful if you have components that function with either viewport listening on or off.
-
-- `viewportUseIntersectionObserver: boolean`
-
-  Default: Depends on browser
-
-  Read-only
-
-  This library, by default, will use the IntersectionObserver API. If IntersectionObserver is not supported in the target browser, ember-in-viewport will fallback to rAF.  We prevent users from explicitly setting this to `true` as browsers lacking support for IntersectionObserver will throw an error.
-
-  (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
-  (https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/thresholds#Browser_compatibility)
-
-- `intersectionThreshold: decimal or array`
-
-  Default: 0
-
-  A single number or array of numbers between 0.0 and 1.0.  A value of 0.0 means the target will be visible when the first pixel enters the viewport.  A value of 1.0 means the entire target must be visible to fire the didEnterViewport hook.
-  Similarily, [0, .25, .5, .75, 1] will fire didEnterViewport every 25% of the target that is visible.
-  (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Thresholds)
-
-  Some notes:
-    - If the target is offscreen, you will get a notification via `didExitViewport` that the target is initially offscreen.  Similarily, this is possible to notify if onscreen when your site loads.
-    - If intersectionThreshold is set to anything greater than 0, you will not see `didExitViewport` hook fired due to our use of the `isIntersecting` property.  See last comment here: https://bugs.chromium.org/p/chromium/issues/detail?id=713819 for purpose of `isIntersecting`
-    - To get around the above issue and have `didExitViewport` fire, set your `intersectionThreshold` to `[0, 1.0]`.  When set to just `1.0`, when the element is 99% visible and still has isIntersecting as true, when the element leaves the viewport, the element isn't applicable to the observer anymore, so the callback isn't called again.
-    - If your intersectionThreshold is set to 0 you will get notified if the target `didEnterViewport` and `didExitViewport` at the appropriate time.
-
-- `scrollableArea: string | HTMLElement`
-
-  Default: null
-
-  A CSS selector for the scrollable area.  e.g. `".my-list"`
-
-- `viewportUseRAF: boolean`
-
-  Default: Depends on browser
-
-  As its name suggests, if this is `true` and the IntersectionObserver API is not available in the target browser, the Mixin will use `requestAnimationFrame`. Unless you want to force enabling or disabling this, you won't need to override this option.
-
-- `viewportSpy: boolean`
-
-  Default: `false`
-
-  `viewportSpy: true` is often useful when you have "infinite lists" that need to keep loading more data.
-  `viewportSpy: false` is often useful for one time loading of artwork, metrics, etc when the come into the viewport.
-
-  If you support IE11 and detect and run logic `onExit`, then it is necessary to have this `true` to that the requestAnimationFrame watching your sentinel is not torn down.
-
-  When `true`, the library will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the Mixin will only watch the `Component` until it enters the viewport once, and then it sets `viewportEntered` to `true` (permanently), and unbinds listeners. This reduces the load on the Ember run loop and your application.
-
-  NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari < 12.1) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
-
-- `viewportDidScroll: boolean`
-
-  Default: `true`
-
-  When `true`, the Mixin enables listening to the `didScroll` hook.  This will become by default false in a future major release
-
-- `viewportScrollSensitivity: number`
-
-  Default: `1`
-
-  This value determines the degree of sensitivity (in `px`) in which a DOM element is considered to have scrolled into the viewport. For example, if you set `viewportScrollSensitivity` to `10`, the `didScroll{...}` hooks would only fire if the scroll was greater than `10px`.  Only applicable if IntersectionObserver and rAF are not applied.
-
-- `viewportRefreshRate: number`
-
-  Default: `100`
-
-  If `IntersectionObserver` and `requestAnimationFrame` is not present, this value determines how often the Mixin checks your component to determine whether or not it has entered or left the viewport. The lower this number, the more often it checks, and the more load is placed on your application. Generally, you'll want this value between `100` to `300`, which is about the range at which people consider things to be "real-time".
-
-  This value also affects how often the Mixin checks scroll direction.
-
-- `viewportTolerance: object`
-
-  Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
-
-  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.  Add bottom margin to preemptively trigger didEnterViewport.
-
-  For IntersectionObserver, this property interpolates to [rootMargin](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin).
-  For rAF, this property will use `bottom` tolerance and measure against the height of the container to determine when to trigger didEnterViewport.
-
-  Also, if your sentinel (component that uses this mixin) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
 
 ### Global options
 
@@ -313,39 +180,6 @@ Note - This is in lieu of a `did-enter-viewport` modifier, which we plan on addi
 
 ```js
 import Component from '@glimmer/component';
-import { action, set } from '@ember/object';
-import InViewportMixin from 'ember-in-viewport';
-
-export default class Infinity extends Component.extend(InViewportMixin) {
-  @action
-  setupInViewport(element) {
-    set(this, 'viewportSpy', true);
-    set(this, 'viewportTolerance', {
-      bottom: 300
-    });
-
-    this.watchElement(element);
-  }
-
-  didEnterViewport() {
-    // this will only work with one element being watched in the container. This is still a TODO to enable
-    this.infinityLoad();
-  }
-}
-```
-
-```hbs
-<div {{did-insert this.setupInViewport}}>
-  {{yield}}
-</div>
-```
-
-### Classes
-
-Special note: The service based approach allows you to absolve yourself from using a mixin in native classes!
-
-```js
-import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 
@@ -366,38 +200,7 @@ export default class MyClass extends Component {
   }
 
   willDestroy() {
-    // need to manage cache yourself if you don't use the mixin
-    const loader = document.getElementById('loader');
-    this.inViewport.stopWatching(loader);
-
-    super.willDestroy(...arguments);
-  }
-}
-```
-
-And with Classes + Modifiers!
-
-```js
-import Component from '@glimmer/component';
-import { inject as service } from '@ember/service';
-import { action } from '@ember/object';
-
-export default class MyClass extends Component {
-  @service inViewport
-
-  @action
-  setupInViewport(element) {
-    const viewportTolerance = { bottom: 200 };
-    const { onEnter, onExit } = this.inViewport.watchElement(element, { viewportTolerance });
-    onEnter(this.didEnterViewport.bind(instance));
-  }
-
-  didEnterViewport() {
-    // do some other stuff
-  }
-
-  willDestroy() {
-    // need to manage cache yourself if you don't use the mixin
+    // need to manage cache yourself
     const loader = document.getElementById('loader');
     this.inViewport.stopWatching(loader);
 
@@ -412,55 +215,51 @@ export default class MyClass extends Component {
 </div>
 ```
 
-Options as the second argument to `inViewport.watchElement` include `intersectionThreshold`, `scrollableArea`, `viewportSpy` && `viewportTolerance`.
+Options as the second argument to `inViewport.watchElement` include:
+- `intersectionThreshold: decimal or array`
 
-#### Available Mixin hooks
-##### `didEnterViewport`, `didExitViewport`
-These hooks fire once whenever the `Component` enters or exits the viewport. You can handle them the same way you would handle any other native Ember hook:
+  Default: 0
 
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
+  A single number or array of numbers between 0.0 and 1.0.  A value of 0.0 means the target will be visible when the first pixel enters the viewport.  A value of 1.0 means the entire target must be visible to fire the didEnterViewport hook.
+  Similarily, [0, .25, .5, .75, 1] will fire didEnterViewport every 25% of the target that is visible.
+  (https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API#Thresholds)
 
-export default Component.extend(InViewportMixin, {
-  didEnterViewport() {
-    console.log('entered');
-  },
+  Some notes:
+  - If the target is offscreen, you will get a notification via `didExitViewport` that the target is initially offscreen.  Similarily, this is possible to notify if onscreen when your site loads.
+  - If intersectionThreshold is set to anything greater than 0, you will not see `didExitViewport` hook fired due to our use of the `isIntersecting` property.  See last comment here: https://bugs.chromium.org/p/chromium/issues/detail?id=713819 for purpose of `isIntersecting`
+  - To get around the above issue and have `didExitViewport` fire, set your `intersectionThreshold` to `[0, 1.0]`.  When set to just `1.0`, when the element is 99% visible and still has isIntersecting as true, when the element leaves the viewport, the element isn't applicable to the observer anymore, so the callback isn't called again.
+  - If your intersectionThreshold is set to 0 you will get notified if the target `didEnterViewport` and `didExitViewport` at the appropriate time.
 
-  didExitViewport() {
-    console.log('exited');
-  }
-});
-```
+- `scrollableArea: string | HTMLElement`
 
-##### `didScroll(up,down,left,right)`
-The `didScroll` hook fires when an element enters the viewport. For example, if you scrolled down in order to move the element in the viewport, the `didScroll` hook would fire and also receive the direction as a string. You can then handle it like another hook as in the above example. This is only available with the Mixin and likely not something you will need.
+  Default: null
 
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
+  A CSS selector for the scrollable area.  e.g. `".my-list"`
 
-export default Component.extend(InViewportMixin, {
-  didScroll(direction) {
-    console.log(direction); // 'up' || 'down' || 'left' || 'right'
-  }
-});
-```
+- `viewportSpy: boolean`
 
-##### `viewportEntered`
-To apply an `.active` class to your `Component` when it enters the viewport, you can simply bind the `active` class to the mixed in property `viewportEntered`, like so:
+  Default: `false`
 
-```js
-import Component from '@ember/component';
-import InViewportMixin from 'ember-in-viewport';
+  `viewportSpy: true` is often useful when you have "infinite lists" that need to keep loading more data.
+  `viewportSpy: false` is often useful for one time loading of artwork, metrics, etc when the come into the viewport.
 
-export default Component.extend(InViewportMixin, {
-  classNameBindings: [ 'viewportEntered:active' ]
-});
-```
+  If you support IE11 and detect and run logic `onExit`, then it is necessary to have this `true` to that the requestAnimationFrame watching your sentinel is not torn down.
 
-##### `viewportExited`
-This hook fires whenever the `Component` leaves the viewport.
+  When `true`, the library will continually watch the `Component` and re-fire hooks whenever it enters or leaves the viewport. Because this is expensive, this behaviour is opt-in. When false, the intersection observer will only watch the `Component` until it enters the viewport once, and then it unbinds listeners. This reduces the load on the Ember run loop and your application.
+
+  NOTE: If using IntersectionObserver (default), viewportSpy wont put too much of a tax on your application.  However, for browsers (Safari < 12.1) that don't currently support IntersectionObserver, we fallback to rAF.  Depending on your use case, the default of `false` may be acceptable.
+
+- `viewportTolerance: object`
+
+  Default: `{ top: 0, left: 0, bottom: 0, right: 0 }`
+
+  This option determines how accurately the `Component` needs to be within the viewport for it to be considered as entered.  Add bottom margin to preemptively trigger didEnterViewport.
+
+  For IntersectionObserver, this property interpolates to [rootMargin](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin).
+  For rAF, this property will use `bottom` tolerance and measure against the height of the container to determine when to trigger didEnterViewport.
+
+  Also, if your sentinel (the watched element) is a zero-height element, ensure that the sentinel actually is able to enter the viewport.
+
 
 ## [**IntersectionObserver**'s Browser Support](https://platform-status.mozilla.org/)
 
