@@ -5,7 +5,10 @@
 
 [Read the blogpost](https://medium.com/delightful-ui-for-ember-apps/creating-an-ember-cli-addon-detecting-ember-js-components-entering-or-leaving-the-viewport-7d95ceb4f5ed)
 
-![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg) [![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport) [![Build Status](https://travis-ci.org/DockYard/ember-in-viewport.svg)](https://travis-ci.org/DockYard/ember-in-viewport) [![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
+![Download count all time](https://img.shields.io/npm/dt/ember-in-viewport.svg)
+[![npm version](https://badge.fury.io/js/ember-in-viewport.svg)](http://badge.fury.io/js/ember-in-viewport)
+[![GitHub Actions Build Status](https://img.shields.io/github/workflow/status/DockYard/ember-in-viewport/CI/master)](https://github.com/DockYard/ember-in-viewport/actions/workflows/ci.yml?query=branch%3Amaster)
+[![Ember Observer Score](http://emberobserver.com/badges/ember-in-viewport.svg)](http://emberobserver.com/addons/ember-in-viewport)
 
 This Ember addon adds a simple, highly performant Service or Mixin to your app. This library will allow you to check if a `Component` or DOM element has entered the browser's viewport. By default, this uses the `IntersectionObserver` API if it detects it the DOM element is in your user's browser – failing which, it falls back to using `requestAnimationFrame`, then if not available, the Ember run loop and event listeners.
 
