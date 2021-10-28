@@ -14,14 +14,17 @@
 /.eslintignore
 /.eslintrc.js
 /.git/
+/.github/
 /.gitignore
 /.prettierignore
 /.prettierrc.js
+/.release-it.json
 /.template-lintrc.js
 /.travis.yml
 /.watchmanconfig
 /bower.json
 /config/ember-try.js
+/CODE_OF_CONDUCT.md
 /CONTRIBUTING.md
 /ember-cli-build.js
 /testem.js
