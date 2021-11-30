@@ -1,3 +1,20 @@
+## v4.0.0 (2021-11-29)
+
+#### :boom: Breaking Change
+* [#285](https://github.com/DockYard/ember-in-viewport/pull/285) Upgrade ember-auto-import to v2 ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### :rocket: Enhancement
+* [#291](https://github.com/DockYard/ember-in-viewport/pull/291) Add 3.28 to test suite ([@snewcomer](https://github.com/snewcomer))
+* [#290](https://github.com/DockYard/ember-in-viewport/pull/290) Add 3.28 testing scenario ([@snewcomer](https://github.com/snewcomer))
+* [#289](https://github.com/DockYard/ember-in-viewport/pull/289) Bump ember-modifier to v3 and allow either v2 or v3 ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#288](https://github.com/DockYard/ember-in-viewport/pull/288) Update Build Status badge: Travis -> GH Actions ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#287](https://github.com/DockYard/ember-in-viewport/pull/287) Update npmignore file ([@SergeAstapov](https://github.com/SergeAstapov))
+* [#284](https://github.com/DockYard/ember-in-viewport/pull/284) Add changelog via lerna-changelog ([@SergeAstapov](https://github.com/SergeAstapov))
+
+#### Committers: 2
+- Scott Newcomer ([@snewcomer](https://github.com/snewcomer))
+- Sergey Astapov ([@SergeAstapov](https://github.com/SergeAstapov))
+
 
 ## v3.10.3 (2021-10-14)
 
