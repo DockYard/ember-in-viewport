@@ -1,14 +1,14 @@
-import Component from '@ember/component';
-import { setProperties } from '@ember/object';
-import InViewportMixin from 'ember-in-viewport';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 
-export default Component.extend(InViewportMixin, {
-  classNames: ['my-component'],
-  classNameBindings: ['viewportEntered:active:inactive'],
+export default class MyComponent extends Component {
+  @service inViewport;
+  @tracked viewportEntered;
 
-  init() {
-    this._super(...arguments);
-
+  @action
+  setupViewport(element) {
     let options = {};
 
     let {
@@ -19,7 +19,7 @@ export default Component.extend(InViewportMixin, {
       viewportRAFOverride,
       scrollableAreaOverride,
       intersectionThresholdOverride,
-    } = this;
+    } = this.args;
 
     if (viewportSpyOverride !== undefined) {
       options.viewportSpy = viewportSpyOverride;
@@ -44,12 +44,24 @@ export default Component.extend(InViewportMixin, {
       options.intersectionThreshold = intersectionThresholdOverride;
     }
 
-    setProperties(this, options);
-  },
+    const { onEnter, onExit } = this.inViewport.watchElement(element, options);
+    onEnter(this.didEnterViewport.bind(this));
+    onExit(this.didExitViewport.bind(this));
+  }
+
+  constructor() {
+    super(...arguments);
+  }
 
   didEnterViewport() {
-    if (this.infinityLoad) {
-      this.infinityLoad();
+    this.viewportEntered = true;
+
+    if (this.args.infinityLoad) {
+      this.args.infinityLoad();
     }
-  },
-});
+  }
+
+  didExitViewport() {
+    this.viewportEntered = false;
+  }
+}
