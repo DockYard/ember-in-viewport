@@ -13,7 +13,6 @@ export default class MyComponent extends Component {
 
     let {
       viewportSpyOverride,
-      viewportEnabledOverride,
       viewportIntersectionObserverOverride,
       viewportToleranceOverride,
       viewportRAFOverride,
@@ -23,9 +22,6 @@ export default class MyComponent extends Component {
 
     if (viewportSpyOverride !== undefined) {
       options.viewportSpy = viewportSpyOverride;
-    }
-    if (viewportEnabledOverride !== undefined) {
-      options.viewportEnabled = viewportEnabledOverride;
     }
     if (viewportIntersectionObserverOverride !== undefined) {
       options.viewportUseIntersectionObserver =

@@ -2,11 +2,8 @@ import { assign } from '@ember/polyfills';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
 const defaultConfig = {
-  viewportEnabled: true,
   viewportDidScroll: true,
   viewportSpy: false,
-  viewportScrollSensitivity: 1,
-  viewportRefreshRate: 100,
   viewportListeners: [
     { context: window, event: 'scroll' },
     { context: window, event: 'resize' },

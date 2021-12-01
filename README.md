@@ -127,11 +127,8 @@ module.exports = function(environment) {
   var ENV = {
     // ...
     viewportConfig: {
-      viewportEnabled                 : false,
       viewportUseRAF                  : true,
       viewportSpy                     : false,
-      viewportScrollSensitivity       : 1,
-      viewportRefreshRate             : 100,
       viewportListeners               : [],
       intersectionThreshold           : 0,
       scrollableArea                  : null,
