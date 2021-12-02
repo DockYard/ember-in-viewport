@@ -7,8 +7,12 @@ export default class MyComponent extends Component {
   @service inViewport;
   @tracked viewportEntered;
 
+  // can't use preset id, because some tests use more than one instance on page
+  elementRef;
+
   @action
-  setupViewport(element) {
+  setupViewport(elementRef) {
+    this.elementRef = elementRef;
     let options = {};
 
     let {
@@ -40,7 +44,10 @@ export default class MyComponent extends Component {
       options.intersectionThreshold = intersectionThresholdOverride;
     }
 
-    const { onEnter, onExit } = this.inViewport.watchElement(element, options);
+    const { onEnter, onExit } = this.inViewport.watchElement(
+      elementRef,
+      options
+    );
     onEnter(this.didEnterViewport.bind(this));
     onExit(this.didExitViewport.bind(this));
   }
@@ -59,5 +66,10 @@ export default class MyComponent extends Component {
 
   didExitViewport() {
     this.viewportEntered = false;
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    if (this.elementRef) this.inViewport.stopWatching(this.elementRef);
   }
 }
