@@ -52,10 +52,6 @@ export default class MyComponent extends Component {
     onExit(this.didExitViewport.bind(this));
   }
 
-  constructor() {
-    super(...arguments);
-  }
-
   didEnterViewport() {
     this.viewportEntered = true;
 

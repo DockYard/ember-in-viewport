@@ -14,7 +14,7 @@ const noop = () => {};
 
 /**
  * ensure use on requestAnimationFrame, no matter how many components
- * on the page are using this mixin
+ * on the page are using this class
  *
  * @class InViewport
  * @module Ember.Service
@@ -54,8 +54,8 @@ export default class InViewport extends Service {
    * @method watchElement
    * @param HTMLElement element
    * @param Object configOptions
-   * @param Function enterCallback - support mixin approach
-   * @param Function exitCallback - support mixin approach
+   * @param Function enterCallback
+   * @param Function exitCallback
    * @void
    */
   watchElement(element, configOptions = {}, enterCallback, exitCallback) {
@@ -251,7 +251,7 @@ export default class InViewport extends Service {
     enterCallback = enterCallback || noop;
     exitCallback = exitCallback || noop;
 
-    // this isn't using the same functions as the mixin case, but that is b/c it is a bit harder to unwind.
+    // this isn't using the same functions as the RAFAdmin, but that is b/c it is a bit harder to unwind.
     // So just rewrote it with pure functions for now
     startRAF(
       element,

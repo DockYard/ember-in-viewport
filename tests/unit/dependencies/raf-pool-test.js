@@ -2,7 +2,13 @@ import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import RafPool from 'raf-pool';
 
-module('Unit | Mixin | in viewport', function (hooks) {
+/**
+ * Tests for raf-pool dependency
+ *
+ * @see {@link https://www.npmjs.com/package/raf-pool}
+ */
+
+module('Unit | Dependency | rAF pool', function (hooks) {
   setupTest(hooks);
 
   hooks.beforeEach(function () {
