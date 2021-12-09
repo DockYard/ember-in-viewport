@@ -8,7 +8,7 @@ import RafPool from 'raf-pool';
  * @see {@link https://www.npmjs.com/package/raf-pool}
  */
 
-module('Unit | Dependency | rAF pool', function (hooks) {
+module('Unit | Raf Pool', function (hooks) {
   setupTest(hooks);
 
   hooks.beforeEach(function () {
