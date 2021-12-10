@@ -1,31 +1,31 @@
-import Component from '@ember/component';
-import { setProperties } from '@ember/object';
-import InViewportMixin from 'ember-in-viewport';
+import Component from '@glimmer/component';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
 
-export default Component.extend(InViewportMixin, {
-  classNames: ['my-component'],
-  classNameBindings: ['viewportEntered:active:inactive'],
+export default class MyComponent extends Component {
+  @service inViewport;
+  @tracked viewportEntered;
 
-  init() {
-    this._super(...arguments);
+  // can't use preset id, because some tests use more than one instance on page
+  elementRef;
 
+  @action
+  setupViewport(elementRef) {
+    this.elementRef = elementRef;
     let options = {};
 
     let {
       viewportSpyOverride,
-      viewportEnabledOverride,
       viewportIntersectionObserverOverride,
       viewportToleranceOverride,
       viewportRAFOverride,
       scrollableAreaOverride,
       intersectionThresholdOverride,
-    } = this;
+    } = this.args;
 
     if (viewportSpyOverride !== undefined) {
       options.viewportSpy = viewportSpyOverride;
-    }
-    if (viewportEnabledOverride !== undefined) {
-      options.viewportEnabled = viewportEnabledOverride;
     }
     if (viewportIntersectionObserverOverride !== undefined) {
       options.viewportUseIntersectionObserver =
@@ -44,12 +44,28 @@ export default Component.extend(InViewportMixin, {
       options.intersectionThreshold = intersectionThresholdOverride;
     }
 
-    setProperties(this, options);
-  },
+    const { onEnter, onExit } = this.inViewport.watchElement(
+      elementRef,
+      options
+    );
+    onEnter(this.didEnterViewport.bind(this));
+    onExit(this.didExitViewport.bind(this));
+  }
 
   didEnterViewport() {
-    if (this.infinityLoad) {
-      this.infinityLoad();
+    this.viewportEntered = true;
+
+    if (this.args.infinityLoad) {
+      this.args.infinityLoad();
     }
-  },
-});
+  }
+
+  didExitViewport() {
+    this.viewportEntered = false;
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    if (this.elementRef) this.inViewport.stopWatching(this.elementRef);
+  }
+}

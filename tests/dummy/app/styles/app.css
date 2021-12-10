@@ -27,6 +27,7 @@ a.active {
 
 #ember-testing-container {
   margin-bottom: 500px !important;
+  top: 0;
 }
 
 .infinity-container {

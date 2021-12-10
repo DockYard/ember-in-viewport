@@ -3,7 +3,7 @@ import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
 
 /**
  * ensure use on requestAnimationFrame, no matter how many components
- * on the page are using this mixin
+ * on the page are using this class
  *
  * @class RAFAdmin
  */
