@@ -7,12 +7,12 @@ module('Integration | Component | my component', function (hooks) {
   setupRenderingTest(hooks);
 
   test('it renders with viewportTolerance partially set', async function (assert) {
-    // viewportTolerance && viewportEnabled is usually setup in the initializer. Needs defaults
+    // viewportTolerance is usually setup in the initializer. Needs defaults
     this.viewportToleranceOverride = {
       top: 1,
     };
     await render(hbs`
-      <MyComponent @viewportEnabled={{true}} @viewportToleranceOverride={{this.viewportToleranceOverride}}>
+      <MyComponent @viewportToleranceOverride={{this.viewportToleranceOverride}}>
         template block text
       </MyComponent>
     `);
@@ -30,7 +30,7 @@ module('Integration | Component | my component', function (hooks) {
     this.intersectionThreshold = 1.0;
 
     await render(hbs`
-      <MyComponent @viewportEnabled={{true}} @viewportToleranceOverride={{this.viewportToleranceOverride}} @intersectionThreshold={{this.intersectionThreshold}}>
+      <MyComponent @viewportToleranceOverride={{this.viewportToleranceOverride}} @intersectionThreshold={{this.intersectionThreshold}}>
         template block text
       </MyComponent>
     `);

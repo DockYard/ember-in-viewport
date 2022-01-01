@@ -15,6 +15,7 @@ module('Acceptance | Intersection Observer', function (hooks) {
 
     await visit('/');
 
+    await waitFor('.my-component.top.start-enabled.active');
     assert.ok(
       find('.my-component.top.start-enabled.active'),
       'component is active'
@@ -38,7 +39,6 @@ module('Acceptance | Intersection Observer', function (hooks) {
     document.querySelector('.my-component.bottom').scrollIntoView();
 
     await waitFor('.my-component.bottom.active');
-
     assert.ok(find('.my-component.bottom.active'), 'component is active');
   });
 
@@ -50,20 +50,8 @@ module('Acceptance | Intersection Observer', function (hooks) {
     document.querySelector('.my-component.bottom').scrollIntoView(false);
 
     await waitFor('.my-component.top.start-enabled.inactive');
-
     assert.ok(
       find('.my-component.top.start-enabled.inactive'),
-      'component is inactive'
-    );
-  });
-
-  test('Component can be disabled', async function (assert) {
-    assert.expect(1);
-
-    await visit('/');
-
-    assert.ok(
-      find('.my-component.top.start-disabled.inactive'),
       'component is inactive'
     );
   });
