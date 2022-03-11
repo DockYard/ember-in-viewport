@@ -15,9 +15,7 @@ export default class InViewportModifier extends Modifier {
   lastOptions;
 
   get options() {
-    // eslint-disable-next-line no-unused-vars
-    const { onEnter, onExit, ...options } = this.args.named;
-    return options;
+    return this.args.named.options ?? {};
   }
 
   get hasStaleOptions() {
