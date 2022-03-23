@@ -1,4 +1,3 @@
-import { assign } from '@ember/polyfills';
 import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
 
 const defaultConfig = {
@@ -29,7 +28,7 @@ export function initialize() {
   const application = arguments[1] || arguments[0];
   const config = application.resolveRegistration('config:environment');
   const { viewportConfig = {} } = config;
-  const mergedConfig = assign({}, defaultConfig, viewportConfig);
+  const mergedConfig = Object.assign({}, defaultConfig, viewportConfig);
 
   application.register('config:in-viewport', mergedConfig, {
     instantiate: false,
