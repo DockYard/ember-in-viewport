@@ -1,5 +1,3 @@
-import { assign } from '@ember/polyfills';
-
 const defaultTolerance = {
   top: 0,
   left: 0,
@@ -14,7 +12,7 @@ export default function isInViewport(
   tolerance = defaultTolerance
 ) {
   const { top, left, bottom, right, height: h, width: w } = boundingClientRect;
-  const tolerances = assign(assign({}, defaultTolerance), tolerance);
+  const tolerances = Object.assign(Object.assign({}, defaultTolerance), tolerance);
   const {
     top: topTolerance,
     left: leftTolerance,

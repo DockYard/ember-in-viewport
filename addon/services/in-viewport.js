@@ -1,6 +1,5 @@
 import Service from '@ember/service';
 import { set, setProperties } from '@ember/object';
-import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
 import { warn } from '@ember/debug';
 import { schedule } from '@ember/runloop';
@@ -25,7 +24,7 @@ export default class InViewport extends Service {
 
     set(this, 'registry', new WeakMap());
 
-    let options = assign(
+    let options = Object.assign(
       {
         viewportUseRAF: canUseRAF(),
       },
@@ -33,7 +32,7 @@ export default class InViewport extends Service {
     );
 
     // set viewportUseIntersectionObserver after merging users config to avoid errors in browsers that lack support (https://github.com/DockYard/ember-in-viewport/issues/146)
-    options = assign(options, {
+    options = Object.assign(options, {
       viewportUseIntersectionObserver: canUseIntersectionObserver(),
     });
 
@@ -239,7 +238,7 @@ export default class InViewport extends Service {
     const owner = getOwner(this);
 
     if (owner) {
-      return assign(defaultOptions, owner.lookup('config:in-viewport'));
+      return Object.assign(defaultOptions, owner.lookup('config:in-viewport'));
     }
   }
 
