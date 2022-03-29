@@ -12,7 +12,10 @@ export default function isInViewport(
   tolerance = defaultTolerance
 ) {
   const { top, left, bottom, right, height: h, width: w } = boundingClientRect;
-  const tolerances = Object.assign(Object.assign({}, defaultTolerance), tolerance);
+  const tolerances = Object.assign(
+    Object.assign({}, defaultTolerance),
+    tolerance
+  );
   const {
     top: topTolerance,
     left: leftTolerance,
