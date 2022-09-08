@@ -63,6 +63,38 @@ module.exports = async function () {
         },
       },
       {
+        name: 'ember-modifier-2.1',
+        npm: {
+          dependencies: {
+            'ember-modifier': '^2.1.2',
+          },
+        },
+      },
+      {
+        name: 'ember-modifier-3.1',
+        npm: {
+          dependencies: {
+            'ember-modifier': '^3.1.0',
+          },
+        },
+      },
+      {
+        name: 'ember-modifier-3.2',
+        npm: {
+          dependencies: {
+            'ember-modifier': '^3.2.7',
+          },
+        },
+      },
+      {
+        name: 'ember-modifier-4.0.0-beta.1',
+        npm: {
+          dependencies: {
+            'ember-modifier': '^4.0.0-beta.1',
+          },
+        },
+      },
+      {
         name: 'ember-default-with-jquery',
         env: {
           EMBER_OPTIONAL_FEATURES: JSON.stringify({
