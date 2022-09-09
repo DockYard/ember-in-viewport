@@ -63,7 +63,7 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-modifier-2.1',
+        name: 'ember-modifier@2',
         npm: {
           dependencies: {
             'ember-modifier': '^2.1.2',
@@ -71,7 +71,7 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-modifier-3.1',
+        name: 'ember-modifier@3.1',
         npm: {
           dependencies: {
             'ember-modifier': '^3.1.0',
@@ -79,7 +79,7 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-modifier-3.2',
+        name: 'ember-modifier@3.2',
         npm: {
           dependencies: {
             'ember-modifier': '^3.2.7',
@@ -87,7 +87,7 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-modifier-4.0.0-beta.1',
+        name: 'ember-modifier@^4.0.0-beta.0',
         npm: {
           dependencies: {
             'ember-modifier': '^4.0.0-beta.1',
