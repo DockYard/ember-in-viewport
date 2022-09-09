@@ -87,7 +87,7 @@ module.exports = async function () {
         },
       },
       {
-        name: 'ember-modifier@^4.0.0-beta.0',
+        name: 'ember-modifier@^4.0.0-beta.1',
         npm: {
           dependencies: {
             'ember-modifier': '^4.0.0-beta.1',

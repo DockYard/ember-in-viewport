@@ -57,7 +57,7 @@
     "ember-qunit": "^5.1.5",
     "ember-resolver": "^8.0.3",
     "ember-responsive": "^4.0.2",
-    "ember-source": "https://s3.amazonaws.com/builds.emberjs.com/release/shas/464e694afd611e2203759e5f76a14c7bfb023006.tgz",
+    "ember-source": "~3.28.1",
     "ember-source-channel-url": "^3.0.0",
     "ember-template-lint": "^3.10.0",
     "ember-truth-helpers": "^3.0.0",
@@ -77,9 +77,6 @@
     "release-it": "^13.6.6",
     "release-it-lerna-changelog": "^2.3.0",
     "webpack": "^5.58.2"
-  },
-  "peerDependencies": {
-    "ember-source": "^3.8 || 4.*"
   },
   "keywords": [
     "ember-addon",
