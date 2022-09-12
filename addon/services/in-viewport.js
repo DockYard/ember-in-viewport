@@ -10,6 +10,7 @@ import ObserverAdmin from 'ember-in-viewport/-private/observer-admin';
 import RAFAdmin, { startRAF } from 'ember-in-viewport/-private/raf-admin';
 
 const noop = () => {};
+
 /**
  * ensure use on requestAnimationFrame, no matter how many components
  * on the page are using this class
