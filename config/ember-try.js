@@ -91,7 +91,6 @@ module.exports = async function () {
         npm: {
           dependencies: {
             'ember-modifier': '^4.0.0-beta.1',
-            '@embroider/macros': '^1.8.3',
           },
         },
       },
