@@ -28,7 +28,7 @@ if (macroCondition(dependencySatisfies('ember-modifier', '>=3.2.0 || 4.x'))) {
 
       if (!this.didSetup) {
         this.setupWatcher(element);
-        registerDestructor(() => this.destroyWatcher(element));
+        registerDestructor(this, () => this.destroyWatcher(element));
       } else if (this.hasStaleOptions) {
         this.destroyWatcher(element);
         this.setupWatcher(element);
