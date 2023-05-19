@@ -1,4 +1,4 @@
-import ENV from 'dummy/config/environment';
+import ENV from 'test-app/config/environment';
 
 export const artworkProfiles = {
   dummy: {

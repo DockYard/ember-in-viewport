@@ -4,7 +4,7 @@ import { action, set } from '@ember/object';
 import { inject as service } from '@ember/service';
 import { artworkProfiles, artworkFallbacks, viewports } from '../-config';
 import { guidFor } from '@ember/object/internals';
-import ENV from 'dummy/config/environment';
+import ENV from 'test-app/config/environment';
 
 /**
  * This function generates a value for the `srcset` attribute

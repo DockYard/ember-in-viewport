@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import RafPool from 'raf-pool';
+import RafPool from 'raf-pool/dist/raf-pool.es5';
 
 /**
  * Tests for raf-pool dependency
