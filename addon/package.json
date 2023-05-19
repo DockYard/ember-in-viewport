@@ -1,0 +1,39 @@
+{
+  "name": "ember-in-viewport",
+  "version": "4.1.0",
+  "description": "Detect if an Ember View or Component is in the viewport @ 60FPS",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "repository": "https://github.com/dockyard/ember-in-viewport",
+  "engines": {
+    "node": "12.* || 14.* || >= 16"
+  },
+  "author": "Scott Newcomer",
+  "license": "MIT",
+  "dependencies": {
+    "@embroider/macros": "^1.8.3",
+    "ember-auto-import": "^2.2.3",
+    "ember-cli-babel": "^7.26.6",
+    "ember-destroyable-polyfill": "^2.0.3",
+    "ember-modifier": "^2.1.2 || ^3.0.0 || ^4.0.0",
+    "fast-deep-equal": "^2.0.1",
+    "intersection-observer-admin": "~0.3.2",
+    "raf-pool": "~0.1.4"
+  },
+  "keywords": [
+    "ember-addon",
+    "ember",
+    "viewport",
+    "intersection observer",
+    "lazy load",
+    "scrollspy"
+  ],
+  "ember": {
+    "edition": "octane"
+  },
+  "volta": {
+    "node": "14.18.1"
+  }
+}
