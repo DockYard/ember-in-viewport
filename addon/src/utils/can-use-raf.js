@@ -6,7 +6,7 @@
 
 // MIT license
 
-import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
+import canUseDOM from './can-use-dom';
 
 function checkRAF(window, rAF, cAF) {
   let x;

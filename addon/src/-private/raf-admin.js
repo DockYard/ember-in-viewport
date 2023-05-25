@@ -1,5 +1,5 @@
 import RafPool from 'raf-pool';
-import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
+import isInViewport from '../utils/is-in-viewport';
 
 /**
  * ensure use on requestAnimationFrame, no matter how many components

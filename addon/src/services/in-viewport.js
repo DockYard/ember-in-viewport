@@ -3,11 +3,11 @@ import { set, setProperties } from '@ember/object';
 import { getOwner } from '@ember/application';
 import { warn } from '@ember/debug';
 import { schedule } from '@ember/runloop';
-import isInViewport from 'ember-in-viewport/utils/is-in-viewport';
-import canUseRAF from 'ember-in-viewport/utils/can-use-raf';
-import canUseIntersectionObserver from 'ember-in-viewport/utils/can-use-intersection-observer';
-import ObserverAdmin from 'ember-in-viewport/-private/observer-admin';
-import RAFAdmin, { startRAF } from 'ember-in-viewport/-private/raf-admin';
+import isInViewport from '../utils/is-in-viewport';
+import canUseRAF from '../utils/can-use-raf';
+import canUseIntersectionObserver from '../utils/can-use-intersection-observer';
+import ObserverAdmin from '../-private/observer-admin';
+import RAFAdmin, { startRAF } from '../-private/raf-admin';
 
 const noop = () => {};
 

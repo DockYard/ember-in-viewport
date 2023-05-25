@@ -1,4 +1,4 @@
-import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
+import canUseDOM from '../utils/can-use-dom';
 
 const defaultConfig = {
   viewportDidScroll: true,

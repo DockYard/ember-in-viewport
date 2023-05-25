@@ -1,7 +1,7 @@
 // Adapted from WC3's intersection polyfill
 // https://github.com/w3c/IntersectionObserver/blob/master/polyfill/intersection-observer.js
 
-import canUseDOM from 'ember-in-viewport/utils/can-use-dom';
+import canUseDOM from './can-use-dom';
 
 function checkIntersectionObserver(window) {
   if (
