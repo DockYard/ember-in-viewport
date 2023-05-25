@@ -1,7 +1,6 @@
 import { module, test } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import {
-  pauseTest,
   find,
   findAll,
   visit,
