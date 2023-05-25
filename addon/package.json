@@ -8,8 +8,7 @@
   },
   "scripts": {
     "build": "rollup --config",
-    "lint": "npm-run-all --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
-    "lint:js": "eslint .",
+    "lint": "eslint .",
     "prepublishOnly": "rollup --config",
     "start": "rollup --config --watch"
   },
