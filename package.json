@@ -3,5 +3,8 @@
   "workspaces": [
     "addon",
     "test-app"
-  ]
+  ],
+  "volta": {
+    "node": "14.18.1"
+  }
 }
