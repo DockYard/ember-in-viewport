@@ -4,6 +4,9 @@
     "addon",
     "test-app"
   ],
+  "scripts":{
+    "lint": "npm run --prefix addon lint && npm run --prefix test-app lint"
+  },
   "volta": {
     "node": "14.18.1"
   },

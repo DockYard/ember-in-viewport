@@ -31,7 +31,6 @@
     "eslint-plugin-qunit": "^6.2.0",
     "fast-deep-equal": "^2.0.1",
     "intersection-observer-admin": "~0.3.2",
-    "npm-run-all": "^4.1.5",
     "prettier": "^2.4.1",
     "raf-pool": "~0.1.4"
   },
@@ -55,6 +54,8 @@
     "@babel/plugin-proposal-decorators": "^7.21.0",
     "@embroider/addon-dev": "^3.1.0",
     "@rollup/plugin-babel": "^6.0.3",
+    "babel-eslint": "^10.1.0",
+    "npm-run-all": "^4.1.5",
     "rollup": "^3.23.0"
   },
   "exports": {
